@@ -19,6 +19,7 @@ module.exports = class LewdCmd extends Command {
       'send-nudes.png',
       'lewd-potato.png',
       'succubus.png',
+      'lust.png',
     ];
     this.nsfwImages = this.nsfwImageNames.reduce(
       (images, filename) => (images[filename] = {
