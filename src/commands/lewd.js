@@ -27,7 +27,6 @@ module.exports = class LewdCmd extends Command {
       }, images),
       {}
     );
-    console.log(this.nsfwImages);
   }
 
   async run(msg, [imageName = arrayRandom(this.nsfwImageNames)]) {
