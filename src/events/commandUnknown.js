@@ -17,20 +17,20 @@ module.exports = class UnknownCmd extends Event {
   }
 
   init() {
-    const mention = `<@​!?${this.client.user.id}>`;
+    const mention = `<@!?${this.client.user.id}>`;
     this.mentionRegex = new RegExp(mention);
     this.missyRegex = new RegExp(`missy|${mention}`, 'gi');
   }
 
   run(msg, command) {
-    // command + args (the commandUnknown event doesn't give us args)
-    const text = msg.content.substring(msg.prefixLength).trim();
     switch (command) {
-      case 'missy': {
-        const whats = text.match(this.missyRegex)
+      case 'missy':
+      case `<@${this.client.user.id}>`:
+      case `<@!${this.client.user.id}>`: {
+        const whats = msg.content.match(this.missyRegex)
           .map(UnknownCmd.missiesToWhats(this.mentionRegex))
           .join(' ');
-        return msg.send(`${capitalizeFirstLetter(whats)}?`);
+        return msg.send(`${whats}?`);
       }
       default: return msg.send(arrayRandom(this.unknownUnknown));
     }
@@ -38,8 +38,8 @@ module.exports = class UnknownCmd extends Event {
 
   static missiesToWhats(mentionRegex) {
     const what = 'what';
-    return missy => mentionRegex.test(missy) ?
-      what :
+    return (missy, i) => mentionRegex.test(missy) ?
+      (i === 0 ? capitalizeFirstLetter(what) : what) :
       what.split('').map(UnknownCmd.missyCase(missy, what)).join('');
   }
 
