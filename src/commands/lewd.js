@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { Command } = require('klasa');
-const { arrayRandom } = require('../lib/util');
+const { arrayRandom, postImage, postImageSomewhere } = require('../lib/util');
 
 module.exports = class LewdCmd extends Command {
 
@@ -39,24 +39,26 @@ module.exports = class LewdCmd extends Command {
     }
   }
 
-  postSfwImage(msg) {
-    return LewdCmd.postImage(msg, this.sfwImage);
+  postSfwImage(channel) {
+    return postImage(channel, this.sfwImage);
+  }
+  postSfwImageSomewhere(hereChan, toChan) {
+    return postImageSomewhere(hereChan, toChan, this.sfwImage);
   }
 
-  postNsfwImage(msg, imageName) {
+  postNsfwImage(channel, imageName) {
+    return this._postNsfwImage(true, channel, null, imageName);
+  }
+  postNsfwImageSomewhere(hereChan, toChan, imageName) {
+    return this._postNsfwImage(false, hereChan, toChan, imageName);
+  }
+  _postNsfwImage(postHere, hereChan, toChan, imageName) {
     const image = this.nsfwImages[imageName] ||
       this.nsfwImages[this.nsfwImageNames.find(name => name.startsWith(imageName))];
-    if (!image) return msg.send("That image doesn't exist");
-
-    return LewdCmd.postImage(msg, image, '<.<\n>.>');
-  }
-
-  static async postImage(msg, image, loadingText = 'Just a moment.') {
-    const loadingMsg = await msg.send(loadingText);
-    await msg.channel.send({
-      files: [image],
-    });
-    await loadingMsg.delete();
+    if (!image) return hereChan.send("That image doesn't exist");
+    return postHere ?
+      postImage(hereChan, image, {loadingText: '<.<\n>.>'}) :
+      postImageSomewhere(hereChan, toChan, image, {loadingText: '<.<\n>.>'});
   }
 
 };

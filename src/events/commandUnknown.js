@@ -10,6 +10,7 @@ module.exports = class UnknownCmd extends Event {
       "I don't know what that means, sorry @_@",
       "I'm so confused @_@",
       "I'm too dumb, sorry XD",
+      "I'm a potato!",
     ];
 
     this.mentionRegex = null;
@@ -32,6 +33,9 @@ module.exports = class UnknownCmd extends Event {
           .join(' ');
         return msg.send(`${whats}?`);
       }
+
+      case 'marbles': return msg.send("They're nice, and all, but I seem to have lost all of mine @_@");
+
       default: return msg.send(arrayRandom(this.unknownUnknown));
     }
   }
