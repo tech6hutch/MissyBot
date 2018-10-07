@@ -6,6 +6,14 @@ class Util {
     return string.charAt(0).toUpperCase() + string.substring(1);
   }
 
+  static scalarOrFirst(arrayOrScalar) {
+    return Array.isArray(arrayOrScalar) ? arrayOrScalar[0] : arrayOrScalar;
+  }
+
+  static ensureArray(arrayOrScalar) {
+    return Array.isArray(arrayOrScalar) ? arrayOrScalar : [arrayOrScalar];
+  }
+
   static arrayRandom(array) {
     return array[Math.floor(Math.random() * array.length)];
   }

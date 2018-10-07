@@ -19,23 +19,12 @@ module.exports = class SendCmd extends Command {
     switch (what) {
       case 'help': {
         const helpCmd = this.client.commands.get('help');
-
-        if (local) return helpCmd.run(msg, []);
-
-        // Copy-pasted from help command xD TODO: just transfer the help cmd & change it
-        const help = await helpCmd.buildHelp(msg);
-        const categories = Object.keys(help);
-        const helpMessage = [];
-        for (let cat = 0; cat < categories.length; cat++) {
-          helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');
-          const subCategories = Object.keys(help[categories[cat]]);
-          for (let subCat = 0; subCat < subCategories.length; subCat++) helpMessage.push(`= ${subCategories[subCat]} =`, `${help[categories[cat]][subCategories[subCat]].join('\n')}\n`);
-          helpMessage.push('```', '\u200b');
-        }
-
-        return whom.send(helpMessage, { split: { char: '\u200b' } })
-          .then(() => msg.send('📥 | I sent them help about my commands.'))
-          .catch(() => msg.send('❌ | I couldn\'t DM them :/'));
+        return msg === whom ?
+          helpCmd.sendHelp(msg) :
+          helpCmd.sendHelp(msg, null, undefined, {
+            doneText: '📥 | I sent them help about my commands.',
+            failText: '❌ | I couldn\'t DM them :/',
+          });
       }
 
       case 'nudes':
