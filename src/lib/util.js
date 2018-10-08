@@ -53,7 +53,7 @@ class Util {
 	static async postImage(channel, image, {
 		loadingText = 'Just a moment.',
 		imageText = '',
-	}) {
+	} = {}) {
 		const loadingMsg = await channel.send(loadingText);
 		const imgMsg = await channel.send(imageText, {
 			files: [image],
@@ -66,7 +66,7 @@ class Util {
 		loadingText = 'Just a moment.',
 		imageText = '',
 		doneText = 'Sent the image 👌',
-	}) {
+	} = {}) {
 		if (hereChan === toChan) throw 'Incorrect usage';
 		await hereChan.send(loadingText);
 		const imgMsg = await toChan.send(imageText, {
