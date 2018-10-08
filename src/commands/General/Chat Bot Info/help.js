@@ -46,15 +46,15 @@ module.exports = class extends Command {
 		if (!guildDisabledAPrefix) guildPrefixList = guildPrefixList.filter(p => !prefixes.includes(p));
 		guildPrefixList = smartJoin(guildPrefixList.map(p => `\`${p}\``));
 		const helpMessage = noGuildOnlyPrefixes ? [
-				'The prefix is "Missy" (with or without a comma).',
-				'\u200b',
-			] : [
-				'The default prefix is "Missy" (with or without a comma).',
-				guildPrefixList.length === 0 ?
-					'In that server, however, I will only respond to @mentions.' :
-					`In that server, however, you may ${guildDisabledAPrefix ? 'only' : 'also'} use ${guildPrefixList}.`,
-				'\u200b',
-			];
+			'The prefix is "Missy" (with or without a comma).',
+			'\u200b',
+		] : [
+			'The default prefix is "Missy" (with or without a comma).',
+			guildPrefixList.length === 0 ?
+				'In that server, however, I will only respond to @mentions.' :
+				`In that server, however, you may ${guildDisabledAPrefix ? 'only' : 'also'} use ${guildPrefixList}.`,
+			'\u200b',
+		];
 		for (let cat = 0; cat < categories.length; cat++) {
 			helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');
 			const subCategories = Object.keys(help[categories[cat]]);

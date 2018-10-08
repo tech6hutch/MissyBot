@@ -2,14 +2,14 @@ const { Command } = require('klasa');
 
 module.exports = class HugCmd extends Command {
 
-  constructor(...args) {
-    super(...args, {
-      description: 'Need a hug? 🙂',
-    });
-  }
+	constructor(...args) {
+		super(...args, {
+			description: 'Need a hug? 🙂',
+		});
+	}
 
-  run(msg) {
-    return msg.send('_Hugs_');
-  }
+	run(msg) {
+		return msg.send('_Hugs_');
+	}
 
 };
