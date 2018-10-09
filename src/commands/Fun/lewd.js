@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { Command } = require('klasa');
-const { arrayRandom, postImage, postImageSomewhere } = require('../lib/util');
+const { arrayRandom, postImage, postImageSomewhere } = require('../../lib/util');
 
 module.exports = class LewdCmd extends Command {
 

@@ -1,5 +1,5 @@
 const { Command } = require('klasa');
-const { arrayRandom } = require('../lib/util');
+const { arrayRandom } = require('../../lib/util');
 
 module.exports = class PotatoCmd extends Command {
 
