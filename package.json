@@ -9,6 +9,8 @@
   "author": "Hutch Moore",
   "license": "ISC",
   "dependencies": {
+    "canvas": "^1.6.12",
+    "canvas-constructor": "^1.1.2",
     "discord.js": "github:discordjs/discord.js",
     "klasa": "github:dirigeants/klasa"
   },
