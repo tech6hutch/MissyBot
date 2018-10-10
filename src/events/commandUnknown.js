@@ -1,3 +1,4 @@
+const assert = require('assert');
 const { join } = require('path');
 const { Event } = require('klasa');
 const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util');
@@ -24,7 +25,11 @@ module.exports = class UnknownCmd extends Event {
 		this.missyRegex = new RegExp(`missy|${mention}`, 'gi');
 	}
 
-	run(msg, command) {
+	run(msg, command, prefix, prefixLength) {
+		const text = msg.content.substring(prefixLength).trim().toLowerCase();
+
+		[command] = command.match(/\b.+\b/);
+
 		switch (command) {
 			case 'missy':
 			case `<@${this.client.user.id}>`:
@@ -38,7 +43,14 @@ module.exports = class UnknownCmd extends Event {
 			case 'marbles': return msg.send("They're nice, and all, but I seem to have lost all of mine @_@");
 		}
 
-		if (msg.content.includes('love and support', msg.content.lastIndexOf('love'))) {
+		if (['well done', 'good job', 'good bot', 'good girl'].some(s => text.includes(s))) {
+			return msg.send('Thank you! XD');
+		}
+		if (['not well', 'bad job', 'bad bot', 'bad girl'].some(s => text.includes(s))) {
+			return msg.send(':/');
+		}
+
+		if (text.includes('love and support')) {
 			const imageName = 'love-and-support.jpg';
 			const image = {
 				attachment: join(process.cwd(), 'assets', imageName),
