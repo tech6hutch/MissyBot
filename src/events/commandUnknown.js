@@ -1,5 +1,6 @@
+const { join } = require('path');
 const { Event } = require('klasa');
-const { capitalizeFirstLetter, arrayRandom } = require('../lib/util');
+const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util');
 
 module.exports = class UnknownCmd extends Event {
 
@@ -35,9 +36,18 @@ module.exports = class UnknownCmd extends Event {
 			}
 
 			case 'marbles': return msg.send("They're nice, and all, but I seem to have lost all of mine @_@");
-
-			default: return msg.send(arrayRandom(this.unknownUnknown));
 		}
+
+		if (msg.content.includes('love and support', msg.content.lastIndexOf('love'))) {
+			const imageName = 'love-and-support.jpg';
+			const image = {
+				attachment: join(process.cwd(), 'assets', imageName),
+				name: imageName,
+			};
+			return postImage(msg, image);
+		}
+
+		return msg.send(arrayRandom(this.unknownUnknown));
 	}
 
 	static missiesToWhats(mentionRegex) {
