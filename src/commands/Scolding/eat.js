@@ -1,5 +1,5 @@
 const { Command } = require('klasa');
-const { arrayRandom, naturalPause } = require('../../lib/util');
+const { arrayRandom } = require('../../lib/util');
 
 module.exports = class BreakfastCmd extends Command {
 
@@ -24,14 +24,8 @@ module.exports = class BreakfastCmd extends Command {
 		];
 	}
 
-	async run(msg, [meal = 'something', who = this.client.user]) {
-		if (who.id === this.client.user.id) {
-			// if (msg.author.id === this.client.owner.id) {
-			// 	await msg.channel.send('Aw, boo. Yes sir');
-			// 	await naturalPause();
-			// 	return this.client.commands.get('reboot').run(msg);
-			// }
-
+	async run(msg, [meal, who = this.client.user]) {
+		if (who.id === this.client.user.id || !meal) {
 			const response = arrayRandom(this.selfEat);
 			return typeof response === 'function' ? response(msg) : msg.send(response);
 		}
