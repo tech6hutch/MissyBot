@@ -1,8 +1,8 @@
 const { token } = require('../config');
 
-const { Client } = require('klasa');
+const MissyClient = require('./lib/MissyClient');
 
-new Client({
+new MissyClient({
 	prefix: ['Missy,', 'Missy'],
 	prefixCaseInsensitive: true,
 	commandEditing: true,
