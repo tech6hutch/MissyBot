@@ -3,7 +3,8 @@ const { Inhibitor } = require('klasa');
 class MissyInhib extends Inhibitor {
 
 	async run(msg, cmd) {
-		if (cmd.category === "Missy's Commands" && msg.author.id !== MissyInhib.missyID) throw undefined;
+		if (cmd.subCategory === "Missy's Commands" && msg.author.id !== MissyInhib.missyID) return true;
+		return undefined;
 	}
 
 }
