@@ -1,15 +1,19 @@
-const { Client } = require('klasa');
+const { Client, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
 
 module.exports = class MissyClient extends Client {
 
 	constructor(options = {}) {
-		if (!options.console) {
-			options.console = {
+		options = mergeDefault({
+			prefix: ['Missy,', 'Missy'],
+			prefixCaseInsensitive: true,
+			commandEditing: true,
+			noPrefixDM: true,
+			console: {
 				stdout: new MissyStdoutStream(),
 				stderr: new MissyStderrStream(),
-			};
-		}
+			},
+		}, options);
 		super(options);
 
 		if (!options.missyLogChannel) options.missyLogChannel = '499959509653913600';
