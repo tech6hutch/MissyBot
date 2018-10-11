@@ -1,14 +1,14 @@
 const { Inhibitor } = require('klasa');
 
-class MissyInhib extends Inhibitor {
+class MissyInhibitor extends Inhibitor {
 
 	async run(msg, cmd) {
-		if (cmd.subCategory === "Missy's Commands" && msg.author.id !== MissyInhib.missyID) return true;
+		if (cmd.subCategory === "Missy's Commands" && msg.author.id !== MissyInhibitor.missyID) return true;
 		return undefined;
 	}
 
 }
 
-MissyInhib.missyID = '398127472564240387';
+MissyInhibitor.missyID = '398127472564240387';
 
-module.exports = MissyInhib;
+module.exports = MissyInhibitor;
