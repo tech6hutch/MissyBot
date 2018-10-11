@@ -5,6 +5,7 @@ module.exports = class MissyClient extends Client {
 
 	constructor(options = {}) {
 		options = mergeDefault({
+			// KlasaClientOptions
 			prefix: ['Missy,', 'Missy'],
 			prefixCaseInsensitive: true,
 			commandEditing: true,
@@ -13,11 +14,11 @@ module.exports = class MissyClient extends Client {
 				stdout: new MissyStdoutStream(),
 				stderr: new MissyStderrStream(),
 			},
+			// Custom options
+			missyLogChannel: '499959509653913600',
+			missyErrorChannel: '499959529522331653',
 		}, options);
 		super(options);
-
-		if (!options.missyLogChannel) options.missyLogChannel = '499959509653913600';
-		if (!options.missyErrorChannel) options.missyErrorChannel = '499959529522331653';
 
 		this.ignoredChannels = new Set();
 
