@@ -1,4 +1,3 @@
-const assert = require('assert');
 const { join } = require('path');
 const { Event } = require('klasa');
 const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util');
@@ -25,9 +24,10 @@ module.exports = class UnknownCmd extends Event {
 		this.missyRegex = new RegExp(`missy|${mention}`, 'gi');
 	}
 
-	run(msg, command, prefix, prefixLength) {
-		const text = msg.content.substring(prefixLength).trim().toLowerCase();
+	async run(msg, command, prefix, prefixLength) {
+		if (await this.client.inhibitors.get('ignoreNotYou').run(msg, null, { prefix })) return undefined;
 
+		const text = msg.content.substring(prefixLength).trim().toLowerCase();
 		[command] = command.match(/\b.+\b/);
 
 		switch (command) {

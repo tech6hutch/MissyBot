@@ -14,6 +14,8 @@ class CmdlessMsgEvent extends Event {
 	}
 
 	async run(msg, prefix) {
+		if (await this.client.inhibitors.get('ignoreNotYou').run(msg)) return undefined;
+
 		if (prefix) {
 			const reply = await msg.awaitMsg('Yes? 👂', 30000);
 			return reply ? this.handlePrefixlessCommand(reply) : undefined;
@@ -21,7 +23,7 @@ class CmdlessMsgEvent extends Event {
 
 		if (msg.mentions.has(this.client.user)) {
 			return msg.send([CmdlessMsgEvent.hutch, CmdlessMsgEvent.kru].includes(msg.author.id) ?
-				'Was it Hutch or Kru this time?' :
+				'Was it Hutch or Kru this time? XD' :
 				arrayRandom(this.responses));
 		}
 
