@@ -14,6 +14,7 @@ module.exports = class UnknownCmd extends Event {
 			"I'm a potato!",
 		];
 
+		this.commandTextRegex = /\b[\w-]+\b/;
 		this.mentionRegex = null;
 		this.missyRegex = null;
 	}
@@ -28,7 +29,7 @@ module.exports = class UnknownCmd extends Event {
 		if (await this.client.inhibitors.get('ignoreNotYou').run(msg, null, { prefix })) return undefined;
 
 		const text = msg.content.substring(prefixLength).trim().toLowerCase();
-		[command] = command.match(/\b.+\b/);
+		[command] = command.match(this.commandTextRegex) || [''];
 
 		switch (command) {
 			case 'missy':

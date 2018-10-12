@@ -5,6 +5,7 @@ module.exports = class extends Monitor {
 	constructor(...args) {
 		super(...args, { ignoreOthers: false });
 		this.ignoreEdits = !this.client.options.commandEditing;
+		this.commandTextRegex = /\b[\w-]+\b/;
 		this.prefixes = new Map();
 		this.prefixMention = null;
 		this.mentionOnly = null;
@@ -28,7 +29,7 @@ module.exports = class extends Monitor {
 	parseCommand(message) {
 		const result = this.customPrefix(message) || this.mentionPrefix(message) || this.naturalPrefix(message) || this.prefixLess(message);
 		return result ? {
-			commandText: message.content.slice(result.length).trim().split(' ')[0].toLowerCase(),
+			commandText: (message.content.slice(result.length).match(this.commandTextRegex) || [''])[0].toLowerCase(),
 			prefix: result.regex,
 			prefixLength: result.length
 		} : { commandText: false };
