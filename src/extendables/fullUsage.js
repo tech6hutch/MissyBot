@@ -14,6 +14,7 @@ module.exports = class extends Extendable {
 	fullUsage(message) {
 		let { prefix } = message.guildSettings;
 		if (Array.isArray(prefix)) prefix = message.prefixLength ? message.content.slice(0, message.prefixLength) : prefix[0];
+		if (this.client.monitors.get('commandHandler').mentionOnly.test(prefix)) prefix = `@${this.client.user.username}`;
 		return `${/\.$/i.test(prefix) ? prefix : `${prefix} `}${this.nearlyFullUsage}`;
 	}
 
