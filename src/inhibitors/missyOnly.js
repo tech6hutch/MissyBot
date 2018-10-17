@@ -1,14 +1,21 @@
 const { Inhibitor } = require('klasa');
 
-class MissyInhibitor extends Inhibitor {
+module.exports = class NonMissyInhibitor extends Inhibitor {
 
-	async run(msg, cmd) {
-		if (cmd.subCategory === "Missy's Commands" && msg.author.id !== MissyInhibitor.missyID) return true;
-		return undefined;
+	constructor(...args) {
+		super(...args);
+
+		this.allowedIDs = [];
 	}
 
-}
+	init() {
+		this.allowedIDs.push(this.client.owner.id, this.client.missyID);
+	}
 
-MissyInhibitor.missyID = '398127472564240387';
+	async run(msg, cmd) {
+		return this.allowedIDs.includes(msg.author.id) || cmd.subCategory !== "Missy's Commands" ?
+			undefined :
+			true;
+	}
 
-module.exports = MissyInhibitor;
+};

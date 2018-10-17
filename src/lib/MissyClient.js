@@ -20,15 +20,18 @@ module.exports = class MissyClient extends Client {
 		}, options);
 		super(options);
 
+		this.missyID = '398127472564240387';
+		this.missy = null;
 		this.ignoredChannels = new Set();
 
 		this.once('klasaReady', () => {
-			const { stdout, stderr } = options.console;
+			this.missy = this.users.get(this.missyID);
 
+			// Channel setup for console log and error
+			const { stdout, stderr } = options.console;
 			const logChannel = this.channels.get(options.missyLogChannel);
 			if (logChannel) stdout.setChannel(logChannel);
 			else this.console.error("Couldn't find log Discord channel");
-
 			const errorChannel = this.channels.get(options.missyErrorChannel);
 			if (errorChannel) stderr.setChannel(errorChannel);
 			else this.console.error("Couldn't find error Discord channel");
