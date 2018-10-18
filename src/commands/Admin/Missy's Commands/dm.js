@@ -8,11 +8,20 @@ module.exports = class DMCmd extends Command {
 			usage: '[recipient:user] <text:str> [...]',
 			usageDelim: ' ',
 		});
+
+		this.msgSymbol = Symbol('DM command');
 	}
 
-	run(msg, [recipient = msg.author, ...text]) {
-		recipient.send(text.join(' '));
-		return msg.send('👌 I sent it.');
+	async run(msg, [recipient = msg.author, ...text]) {
+		text = text.join(' ');
+		const prevMsg = msg[this.msgSymbol];
+		const dm = await (prevMsg ?
+			prevMsg.edit(text) :
+			recipient.send(text));
+		msg[this.msgSymbol] = dm;
+		return msg.channel.recipient === recipient ?
+			dm :
+			msg.send(`👌 I ${prevMsg ? 'edited' : 'sent'} it.`);
 	}
 
 };

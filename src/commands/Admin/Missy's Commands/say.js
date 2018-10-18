@@ -8,11 +8,20 @@ module.exports = class SayCmd extends Command {
 			usage: '[channel:channel] <text:str> [...]',
 			usageDelim: ' ',
 		});
+
+		this.msgSymbol = Symbol('say command');
 	}
 
-	run(msg, [channel = msg, ...text]) {
-		const m = channel.send(text.join(' '));
-		return msg === channel ? m : msg.send('👌 I posted it there.');
+	async run(msg, [channel = msg, ...text]) {
+		text = text.join(' ');
+		const prevMsg = msg[this.msgSymbol];
+		const saidMsg = await (prevMsg ?
+			prevMsg.edit(text) :
+			channel.send(text));
+		msg[this.msgSymbol] = saidMsg;
+		return msg === channel ?
+			saidMsg :
+			msg.send(`👌 I ${prevMsg ? 'edited' : 'posted'} it there.`);
 	}
 
 };
