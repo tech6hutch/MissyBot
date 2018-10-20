@@ -36,25 +36,9 @@ module.exports = class extends Command {
 			return toChannel.send(info, { code: 'asciidoc' });
 		}
 
-		const prefixes = ensureArray(this.client.options.prefix);
-		const guildPrefixes = msg.guildSettings.prefix;
-		const guildDisabledAPrefix = prefixes.some(p => !guildPrefixes.includes(p));
-		const noGuildOnlyPrefixes = !guildDisabledAPrefix && guildPrefixes.length === prefixes.length;
 		const help = await this.buildHelp(msg);
 		const categories = Object.keys(help);
-		let guildPrefixList = guildPrefixes;
-		if (!guildDisabledAPrefix) guildPrefixList = guildPrefixList.filter(p => !prefixes.includes(p));
-		guildPrefixList = smartJoin(guildPrefixList.map(p => `\`${p}\``));
-		const helpMessage = noGuildOnlyPrefixes ? [
-			'The prefix is "Missy" (with or without a comma).',
-			'\u200b',
-		] : [
-			'The default prefix is "Missy" (with or without a comma).',
-			guildPrefixList.length === 0 ?
-				'In that server, however, I will only respond to @mentions.' :
-				`In that server, however, you may ${guildDisabledAPrefix ? 'only' : 'also'} use ${guildPrefixList}.`,
-			'\u200b',
-		];
+		const helpMessage = msg.language.get('COMMAND_HELP_PREFIX_NOTE', msg.guildSettings.prefix);
 		for (let cat = 0; cat < categories.length; cat++) {
 			helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');
 			const subCategories = Object.keys(help[categories[cat]]);
