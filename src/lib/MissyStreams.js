@@ -1,11 +1,15 @@
 const { Writable } = require('stream');
 const { StringDecoder } = require('string_decoder');
+const { SEND_CODE_LIMIT } = require('./constants');
 
 class MissyStreams {
 
 	static getFakeChannel() {
 		return {
 			async send() {
+				// noop
+			},
+			sendCode() {
 				// noop
 			},
 		};
@@ -31,7 +35,11 @@ MissyStreams._MissyStream = class _MissyStream extends Writable {
 		(async () => {
 			if (encoding === 'buffer') chunk = this._decoder.write(chunk);
 			this._print(chunk);
-			await this._channel.send(chunk);
+			if (chunk.length > 0) {
+				await this._channel.sendCode('', chunk.length > SEND_CODE_LIMIT ?
+					`${chunk.substring(0, SEND_CODE_LIMIT - 1)}…` :
+					chunk);
+			}
 			callback();
 		})().catch(err => callback(err));
 	}
