@@ -4,7 +4,7 @@ const { Canvas } = require('canvas-constructor');
 const { Command } = require('klasa');
 const { postImage } = require('../../lib/util/util');
 
-module.exports = class MemeCmd extends Command {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {

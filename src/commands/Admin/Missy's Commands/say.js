@@ -1,6 +1,6 @@
 const { Command } = require('klasa');
 
-module.exports = class SayCmd extends Command {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {

@@ -1,6 +1,6 @@
 const { Inhibitor } = require('klasa');
 
-module.exports = class NonMissyInhibitor extends Inhibitor {
+module.exports = class extends Inhibitor {
 
 	constructor(...args) {
 		super(...args);

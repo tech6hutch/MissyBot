@@ -1,7 +1,7 @@
 const { Command } = require('klasa');
 const { arrayRandom } = require('../../lib/util/util');
 
-module.exports = class KickCmd extends Command {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {

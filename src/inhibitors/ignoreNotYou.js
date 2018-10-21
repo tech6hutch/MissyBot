@@ -1,6 +1,6 @@
 const { Inhibitor } = require('klasa');
 
-module.exports = class NotYouInhibitor extends Inhibitor {
+module.exports = class extends Inhibitor {
 
 	async run(msg, _, { prefix = msg.prefix } = {}) {
 		return prefix !== this.client.monitors.get('commandHandler').prefixMention &&

@@ -1,6 +1,6 @@
 const { Monitor } = require('klasa');
 
-module.exports = class MentionMonitor extends Monitor {
+module.exports = class extends Monitor {
 
 	constructor(...args) {
 		super(...args, {

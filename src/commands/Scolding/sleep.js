@@ -1,7 +1,7 @@
 const { Command } = require('klasa');
 const { arrayRandom, naturalPause } = require('../../lib/util/util');
 
-module.exports = class SleepCmd extends Command {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {

@@ -1,7 +1,7 @@
 const { join } = require('path');
 const { Command } = require('klasa');
 
-module.exports = class NoUCmd extends Command {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
