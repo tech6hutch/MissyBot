@@ -1,5 +1,5 @@
 const { Finalizer } = require('klasa');
-const { arrayRandom } = require('../lib/util');
+const { arrayRandom } = require('../lib/util/util');
 
 module.exports = class NotYouFinalizer extends Finalizer {
 

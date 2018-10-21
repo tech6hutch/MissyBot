@@ -1,5 +1,5 @@
 const { Command } = require('klasa');
-const { arrayRandom } = require('../../lib/util');
+const { arrayRandom } = require('../../lib/util/util');
 
 module.exports = class BreakfastCmd extends Command {
 

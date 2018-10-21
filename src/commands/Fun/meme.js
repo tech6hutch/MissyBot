@@ -2,7 +2,7 @@ const { join } = require('path');
 const fsn = require('fs-nextra');
 const { Canvas } = require('canvas-constructor');
 const { Command } = require('klasa');
-const { postImage } = require('../../lib/util');
+const { postImage } = require('../../lib/util/util');
 
 module.exports = class MemeCmd extends Command {
 

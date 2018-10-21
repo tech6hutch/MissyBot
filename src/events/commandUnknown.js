@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { Event } = require('klasa');
-const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util');
+const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util/util');
 
 module.exports = class UnknownCmd extends Event {
 

@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { Command } = require('klasa');
-const { smartJoin, postImage } = require('../../lib/util');
+const { smartJoin, postImage } = require('../../lib/util/util');
 
 module.exports = class BirthdayCmd extends Command {
 

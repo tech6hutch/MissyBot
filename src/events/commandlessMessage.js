@@ -1,5 +1,5 @@
 const { Event } = require('klasa');
-const { arrayRandom } = require('../lib/util');
+const { arrayRandom } = require('../lib/util/util');
 
 class CmdlessMsgEvent extends Event {
 

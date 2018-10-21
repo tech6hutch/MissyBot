@@ -1,5 +1,5 @@
 const { Command, util: { isFunction } } = require('klasa');
-const { scalarOrFirst, ensureArray, smartJoin } = require('../../../lib/util');
+const { scalarOrFirst } = require('../../../lib/util/util');
 
 module.exports = class extends Command {
 

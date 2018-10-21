@@ -1,6 +1,6 @@
 const { Writable } = require('stream');
 const { StringDecoder } = require('string_decoder');
-const { SEND_CODE_LIMIT } = require('./constants');
+const { SEND_CODE_LIMIT } = require('./util/constants');
 
 class MissyStreams {
 

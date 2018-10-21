@@ -1,5 +1,5 @@
 const { Language, util } = require('klasa');
-const { ensureArray, smartJoin } = require('../lib/util');
+const { ensureArray, smartJoin } = require('../lib/util/util');
 
 module.exports = class extends Language {
 
