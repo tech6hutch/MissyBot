@@ -5,7 +5,8 @@ module.exports = class KickCmd extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			aliases: ['kick'],
+			name: 'kick',
+			aliases: ['fakekick'],
 			description: '👢',
 		});
 

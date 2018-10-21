@@ -5,7 +5,8 @@ module.exports = class BanCmd extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			aliases: ['ban'],
+			name: 'ban',
+			aliases: ['fakeban'],
 			description: '👮',
 		});
 
