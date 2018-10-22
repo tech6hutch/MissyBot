@@ -1,5 +1,7 @@
-const { Language, util } = require('klasa');
+const { Language, util, constants: { TIME: { MINUTE } } } = require('klasa');
 const { ensureArray, smartJoin } = require('../lib/util/util');
+
+const DISCORD_EMOJI = '<:discord:503738729463021568>';
 
 module.exports = class extends Language {
 
@@ -136,9 +138,23 @@ module.exports = class extends Language {
 			COMMAND_LOAD_FAIL: 'The file does not exist, or an error occurred while loading your file. Please check your console.',
 			COMMAND_LOAD_ERROR: (type, name, error) => `❌ Failed to load ${type}: ${name}. Reason:${util.codeBlock('js', error)}`,
 			COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
-			COMMAND_PING: 'Ping?',
-			COMMAND_PING_DESCRIPTION: 'Runs a connection test to Discord.',
-			COMMAND_PINGPONG: (diff, ping) => `Pong! (Roundtrip took: ${diff}ms. Heartbeat: ${ping}ms.)`,
+			COMMAND_PING: ping => ({ embed: {
+				fields: [{
+					name: `${DISCORD_EMOJI} Ping:`,
+					value: 'Pinging Discord...',
+				}, {
+					name: '💓 Heartbeat:',
+					value: `${Math.round(MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`,
+				}],
+				footer: {
+					text: "Bots have faster heartbeats than humans, so don't worry if mine is really high!",
+				},
+			} }),
+			COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
+			COMMAND_PINGPONG: (diff, embed) => {
+				embed.fields[0].value = `${diff} ms`;
+				return embed;
+			},
 			COMMAND_INVITE: () => [
 				`To add ${this.client.user.username} to your discord guild:`,
 				this.client.invite,
