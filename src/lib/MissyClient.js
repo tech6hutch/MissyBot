@@ -1,7 +1,11 @@
-const { Client, util: { mergeDefault } } = require('klasa');
+const { KlasaClient, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
 
-module.exports = class MissyClient extends Client {
+KlasaClient.defaultClientSchema.add('restart', folder => folder
+	.add('message', 'messagepromise')
+	.add('timestamp', 'bigint', { min: 0 }));
+
+module.exports = class MissyClient extends KlasaClient {
 
 	constructor(options = {}) {
 		options = mergeDefault({

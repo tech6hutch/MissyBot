@@ -134,6 +134,7 @@ module.exports = class extends Language {
 			COMMAND_RELOAD_DESCRIPTION: 'Reloads a klasa piece, or all pieces of a klasa store.',
 			COMMAND_REBOOT: 'Buyy buyy...',
 			COMMAND_REBOOT_DESCRIPTION: 'Reboots the bot.',
+			COMMAND_REBOOT_SUCCESS: time => `Ah, that was a nice nap. I ${time ? `slept for ⏱ ${time}.` : "don't know how long I slept, though."}`,
 			COMMAND_LOAD: (time, type, name) => `✅ Successfully loaded ${type}: ${name}. (Took: ${time})`,
 			COMMAND_LOAD_FAIL: 'The file does not exist, or an error occurred while loading your file. Please check your console.',
 			COMMAND_LOAD_ERROR: (type, name, error) => `❌ Failed to load ${type}: ${name}. Reason:${util.codeBlock('js', error)}`,

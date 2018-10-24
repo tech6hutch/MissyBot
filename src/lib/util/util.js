@@ -3,6 +3,64 @@ const { util: { sleep } } = require('klasa');
 class Util {
 
 	/**
+	 * Get the last element
+	 * @param {Array<*>|string} indexable The value to get the last element of
+	 * @returns {*}
+	 */
+	static last(indexable) {
+		return indexable[indexable.length - 1];
+	}
+
+	/**
+	 * Get the nth-last element
+	 * @param {Array<*>|string} indexable The value to get the nth-last element of
+	 * @param {number} n The index to get from, reverse one-indexed (last element is at n = 1)
+	 * @returns {*}
+	 */
+	static nthLast(indexable, n) {
+		return indexable[indexable.length - n];
+	}
+
+	/**
+	 * Returns the absolute value of a BigInt (the value without regard to sign)
+	 * @param {BigInt} bigint The BigInt value
+	 * @returns {BigInt} A positive BigInt
+	 */
+	static bigAbs(bigint) {
+		return bigint < 0 ? -bigint : bigint;
+	}
+
+	/**
+	 * Truncate a numeric string, rounding the last digit
+	 * @param {string} numString The numeric string
+	 * @param {number} [digits] Max number of digits; the rest will be rounded off
+	 * @returns {string}
+	 */
+	static truncateWithRound(numString, digits) {
+		// eslint-disable-next-line eqeqeq
+		if (digits == null) return numString;
+		digits++;
+		const strWithExtraDigit = numString.substring(0, digits).padEnd(digits, '0');
+		const lastDigit = Number(Util.nthLast(strWithExtraDigit, 2));
+		const strSansLastDigit = strWithExtraDigit.slice(0, -2);
+		return `${strSansLastDigit}${Number(Util.last(strWithExtraDigit)) >= 5 ? lastDigit + 1 : lastDigit}`;
+	}
+
+	/**
+	 * Divide and round a BigInt to a certain decimal place
+	 * @param {BigInt} bigint The big integer
+	 * @param {number|BigInt} divisor The integer to divide by
+	 * @param {number} [digits] Number of digits of precision
+	 * @returns {string} bigint divided by divisor to digits number of decimals
+	 */
+	static bigDivideToString(bigint, divisor, digits) {
+		divisor = BigInt(divisor);
+		const intPart = bigint / divisor;
+		const decPart = bigint - (intPart * divisor);
+		return `${intPart}.${Util.truncateWithRound(decPart.toString(), digits)}`;
+	}
+
+	/**
 	 * @param {string} string The string to capitalize
 	 * @returns {string}
 	 */
@@ -32,6 +90,24 @@ class Util {
 	 */
 	static arrayRandom(array) {
 		return array[Math.floor(Math.random() * array.length)];
+	}
+
+	/**
+	 * Get a duration formatted in a friendly string
+	 * @param {BigInt} from High precision number to compare from
+	 * @param {BigInt} [to=process.hrtime.bigint()] High precision number to compare to
+	 * @param {Object} options Options
+	 * @param {number} [options.digits=2] Number of digits to show in output
+	 * @returns {string}
+	 */
+	static getFriendlyDuration(from, to = process.hrtime.bigint(), { digits = 2 } = {}) {
+		const time = to - from;
+		const absTime = Util.bigAbs(time);
+		const { PRECISE_TIME } = Util;
+		if (absTime >= PRECISE_TIME.SECOND) return `${Util.bigDivideToString(time, PRECISE_TIME.SECOND, digits)} s`;
+		if (absTime >= PRECISE_TIME.MILLISECOND) return `${Util.bigDivideToString(time, PRECISE_TIME.MILLISECOND, digits)} ms`;
+		if (absTime >= PRECISE_TIME.MICROSECOND) return `${Util.bigDivideToString(time, PRECISE_TIME.MICROSECOND, digits)} μs`;
+		return `${time.toString()} ns`;
 	}
 
 	/**
@@ -132,5 +208,11 @@ class Util {
 	}
 
 }
+
+Util.PRECISE_TIME = {
+	MICROSECOND: 1000,
+	MILLISECOND: 1000 ** 2,
+	SECOND: 1000 ** 3,
+};
 
 module.exports = Util;
