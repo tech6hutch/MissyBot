@@ -1,7 +1,13 @@
 {
   "extends": "klasa",
+  "globals": {
+    "BigInt": false
+  },
   "rules": {
     "comma-dangle": ["error", "only-multiline"],
-    "id-length": ["error", {"min": 1}]
+    "id-length": ["error", {"min": 1}],
+    "new-cap": ["error", {
+      "capIsNewExceptions": ["BigInt"]
+    }]
   }
 }
