@@ -20,6 +20,7 @@ module.exports = class extends Command {
 		this.selfSleep = [
 			"But I'm a robot, I don't need to sleep ;-;",
 			"You can't tell me to sleep!",
+			['Nooooooo', "It's not bedtime yet!"],
 			msg => this.client.commands.get('no-u').run(msg, []),
 		];
 	}
