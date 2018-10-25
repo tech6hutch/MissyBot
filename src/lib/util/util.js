@@ -170,7 +170,7 @@ class Util {
 	 * @param {Object} options Extra options
 	 * @param {string} [options.loadingText=Just a moment.] Text to send before the image
 	 * @param {string} [options.imageText=] Text to send with the image message
-	 * @returns {Promise<KlasaMessage>}
+	 * @returns {Promise<KlasaMessage>} The image message
 	 */
 	static async postImage(channel, image, {
 		loadingText = 'Just a moment.',
@@ -192,7 +192,7 @@ class Util {
 	 * @param {string} [options.loadingText=Just a moment.] Text to send before the image
 	 * @param {string} [options.imageText=] Text to send with the image message
 	 * @param {string} [options.doneText=Sent the image 👌] Text to send to hereChan after the image sends
-	 * @returns {Promise<[KlasaMessage, KlasaMessage]>}
+	 * @returns {Promise<[KlasaMessage, KlasaMessage]>} A confirmation message in hereChan and the image message in toChan
 	 */
 	static async postImageSomewhere(hereChan, toChan, image, {
 		loadingText = 'Just a moment.',
