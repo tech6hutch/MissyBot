@@ -167,7 +167,7 @@ class Util {
 	/**
 	 * @param {TextChannel} channel The channel to post in
 	 * @param {FileOptions} image The image to post (see: https://discord.js.org/#/docs/main/master/typedef/FileOptions)
-	 * @param {Object} options Extra options
+	 * @param {Object} [options] Extra options
 	 * @param {string} [options.loadingText=Just a moment.] Text to send before the image
 	 * @param {string} [options.imageText=] Text to send with the image message
 	 * @returns {Promise<KlasaMessage>} The image message
@@ -188,7 +188,7 @@ class Util {
 	 * @param {TextChannel} hereChan The channel the command originated in
 	 * @param {TextChannel} toChan The channel to post in
 	 * @param {FileOptions} image The image to post (see: https://discord.js.org/#/docs/main/master/typedef/FileOptions)
-	 * @param {Object} options Extra options
+	 * @param {Object} [options] Extra options
 	 * @param {string} [options.loadingText=Just a moment.] Text to send before the image
 	 * @param {string} [options.imageText=] Text to send with the image message
 	 * @param {string} [options.doneText=Sent the image 👌] Text to send to hereChan after the image sends
