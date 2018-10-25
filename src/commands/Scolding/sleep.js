@@ -1,28 +1,17 @@
-const { Command } = require('klasa');
-const { arrayRandom, naturalPause } = require('../../lib/util/util');
+const { util: { isFunction } } = require('klasa');
+const RandomResponseCommand = require('../../lib/base/RandomResponseCommand');
+const { naturalPause } = require('../../lib/util/util');
 
-module.exports = class extends Command {
+module.exports = class extends RandomResponseCommand {
 
 	constructor(...args) {
 		super(...args, {
 			aliases: ['bedtime'],
 			description: 'Tell someone to get their butt to bed!',
 			usage: '[who:mention]',
+			// Custom
+			defaultTerm: 'COMMAND_SLEEP',
 		});
-
-		this.sleep = [
-			'Go to sleep, @user!',
-			"@user, make sure you're getting enough sleep, little one!",
-			"@user, @author says it's bedtime.",
-			'@user, get your butt to sleep, little one.',
-		];
-
-		this.selfSleep = [
-			"But I'm a robot, I don't need to sleep ;-;",
-			"You can't tell me to sleep!",
-			['Nooooooo', "It's not bedtime yet!"],
-			msg => this.client.commands.get('no-u').run(msg, []),
-		];
 	}
 
 	async run(msg, [who = this.client.user]) {
@@ -33,13 +22,11 @@ module.exports = class extends Command {
 				return this.client.commands.get('reboot').run(msg);
 			}
 
-			const response = arrayRandom(this.selfSleep);
-			return typeof response === 'function' ? response(msg) : msg.send(response);
+			const response = this.getResponse(msg.language, 'COMMAND_SLEEP_SELF');
+			return isFunction(response) ? response(msg) : msg.send(response);
 		}
 
-		return msg.send(arrayRandom(this.sleep)
-			.replace('@user', who.toString())
-			.replace('@author', msg.author.toString()));
+		return this.sendResponse(msg, undefined, who, msg.author);
 	}
 
 };

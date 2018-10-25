@@ -241,6 +241,18 @@ module.exports = class extends Language {
 					''
 			],
 			COMMAND_STATS_DESCRIPTION: 'Provides some details about the bot and stats.',
+			COMMAND_SLEEP: (user, author) => [
+				`Go to sleep, ${user}!`,
+				`${user}, make sure you're getting enough sleep, little one!`,
+				`${user}, ${author} says it's bedtime.`,
+				`${user}, get your butt to sleep, little one.`,
+			],
+			COMMAND_SLEEP_SELF: [
+				"But I'm a robot, I don't need to sleep ;-;",
+				"You can't tell me to sleep!",
+				['Nooooooo', "It's not bedtime yet!"],
+				msg => this.client.commands.get('no-u').run(msg, []),
+			],
 			MESSAGE_PROMPT_TIMEOUT: 'The prompt has timed out.'
 		};
 	}
