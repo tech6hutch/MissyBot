@@ -1,44 +1,33 @@
-const { join } = require('path');
-const { Command } = require('klasa');
-const { arrayRandom, postImage, postImageSomewhere } = require('../../lib/util/util');
+const RandomImageCommand = require('../../lib/base/RandomImageCommand');
+const { ImageCollection } = RandomImageCommand;
+const { postImage, postImageSomewhere } = require('../../lib/util/util');
 
-module.exports = class extends Command {
+module.exports = class extends RandomImageCommand {
 
 	constructor(...args) {
 		super(...args, {
 			description: 'Nice try. 😝',
 			usage: '[image-name:str]',
+			// Custom
+			images: [
+				'send-nudes.png',
+				'lewd-potato.png',
+				'succubus.png',
+				'lust.png',
+			],
 		});
 
-		const sfwImageName = 'nice-try.png';
-		this.sfwImage = {
-			attachment: join(process.cwd(), 'assets', sfwImageName),
-			name: sfwImageName,
-		};
-		this.nsfwImageNames = [
-			'send-nudes.png',
-			'lewd-potato.png',
-			'succubus.png',
-			'lust.png',
-		];
-		this.nsfwImages = this.nsfwImageNames.reduce(
-			(images, filename) => {
-				images[filename] = {
-					attachment: join(process.cwd(), 'assets', filename),
-					name: filename,
-				};
-				return images;
-			},
-			{}
-		);
+		this.sfwImage = ImageCollection.makeDJSFileOption('nice-try.png');
+		this.postImageOptions = { loadingText: '<.<\n>.>' };
 	}
 
-	async run(msg, [imageName = arrayRandom(this.nsfwImageNames)]) {
+	async run(msg, [imageName = this.getName()]) {
 		if (msg.channel.nsfw) {
-			await this.postNsfwImage(msg, imageName);
+			return this.postNsfwImage(msg, imageName);
 		} else {
-			await this.postSfwImage(msg);
-			if (Math.random() < 0.05) msg.channel.send('(Psst, try this command in a NSFW channel for a surprise! 🤐)');
+			const m = await this.postSfwImage(msg);
+			if (Math.random() < 0.05) return msg.channel.sendLocale('COMMAND_LEWD_NSFW_HINT');
+			return m;
 		}
 	}
 
@@ -49,19 +38,11 @@ module.exports = class extends Command {
 		return postImageSomewhere(hereChan, toChan, this.sfwImage);
 	}
 
-	postNsfwImage(channel, imageName) {
-		return this._postNsfwImage(true, channel, null, imageName);
+	postNsfwImage(channel, imageName = this.getName()) {
+		return this.sendTo(channel, [imageName], this.postImageOptions);
 	}
-	postNsfwImageSomewhere(hereChan, toChan, imageName) {
-		return this._postNsfwImage(false, hereChan, toChan, imageName);
-	}
-	_postNsfwImage(postHere, hereChan, toChan, imageName) {
-		const image = this.nsfwImages[imageName] ||
-			this.nsfwImages[this.nsfwImageNames.find(name => name.startsWith(imageName))];
-		if (!image) return hereChan.send("That image doesn't exist");
-		return postHere ?
-			postImage(hereChan, image, { loadingText: '<.<\n>.>' }) :
-			postImageSomewhere(hereChan, toChan, image, { loadingText: '<.<\n>.>' });
+	postNsfwImageSomewhere(hereChan, toChan, imageName = this.getName()) {
+		return this.sendFromTo(hereChan, toChan, [imageName], this.postImageOptions);
 	}
 
 };

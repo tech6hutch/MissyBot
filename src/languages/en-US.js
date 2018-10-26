@@ -253,6 +253,7 @@ module.exports = class extends Language {
 				['Nooooooo', "It's not bedtime yet!"],
 				msg => this.client.commands.get('no-u').run(msg, []),
 			],
+			COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
 			MESSAGE_PROMPT_TIMEOUT: 'The prompt has timed out.'
 		};
 	}
