@@ -1,11 +1,33 @@
-const { Extendable } = require('klasa');
 const { Message } = require('discord.js');
+const { Extendable } = require('klasa');
+const { arrayRandom } = require('../lib/util/util');
 
 module.exports = class extends Extendable {
 
 	constructor(...args) {
 		super(...args, { appliesTo: [Message] });
 	}
+
+	// Sending responses
+
+	/**
+	 * Sends a message that will be editable via command editing (if nothing is attached)
+	 * @param {string} key The Language key to send
+	 * @param {Array<*>} [localeArgs] The language arguments to pass
+	 * @param {Array<*>} [localeResponseArgs] The language response arguments to pass
+	 * @param {external:MessageOptions} [options] The D.JS message options plus Language arguments
+	 * @returns {Promise<KlasaMessage|KlasaMessage[]>}
+	 */
+	sendRandom(key, localeArgs = [], localeResponseArgs = [], options = {}) {
+		if (!Array.isArray(localeResponseArgs)) {
+			if (!Array.isArray(localeArgs)) [options, localeArgs] = [localeArgs, []];
+			else [options, localeResponseArgs] = [localeResponseArgs, []];
+		}
+		const response = arrayRandom(this.language.get(key, ...localeArgs));
+		return this.sendMessage(typeof response === 'function' ? response(...localeResponseArgs) : response, options);
+	}
+
+	// Awaiting responses
 
 	async ask(content, options) {
 		const message = await this.sendMessage(content, options);

@@ -1,16 +1,13 @@
-const { util: { isFunction } } = require('klasa');
-const RandomResponseCommand = require('../../lib/base/RandomResponseCommand');
+const { Command } = require('klasa');
 const { naturalPause } = require('../../lib/util/util');
 
-module.exports = class extends RandomResponseCommand {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
 			aliases: ['bedtime'],
 			description: 'Tell someone to get their butt to bed!',
 			usage: '[who:mention]',
-			// Custom
-			defaultTerm: 'COMMAND_SLEEP',
 		});
 	}
 
@@ -22,11 +19,10 @@ module.exports = class extends RandomResponseCommand {
 				return this.client.commands.get('reboot').run(msg);
 			}
 
-			const response = this.getResponse(msg.language, 'COMMAND_SLEEP_SELF');
-			return isFunction(response) ? response(msg) : msg.send(response);
+			return msg.sendRandom('COMMAND_SLEEP_SELF', [], [msg]);
 		}
 
-		return this.sendResponse(msg, undefined, who, msg.author);
+		return msg.sendRandom('COMMAND_SLEEP', [who, msg.author]);
 	}
 
 };
