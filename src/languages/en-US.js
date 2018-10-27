@@ -265,6 +265,16 @@ module.exports = class extends Language {
 				msg => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
 				msg => this.client.commands.get('no-u').run(msg, []),
 			],
+			COMMAND_FAKEBAN: [
+				'Please give them another chance ;-;',
+				"Won't you give them another chance? For me?",
+				'Awww, are you going to ban them?',
+			],
+			COMMAND_FAKEKICK: [
+				'Aw, do we have to?',
+				'Have you tried asking them nicely?',
+				"I bet they'll behave from now on. Right?",
+			],
 			MESSAGE_PROMPT_TIMEOUT: 'The prompt has timed out.'
 		};
 	}
