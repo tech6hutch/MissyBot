@@ -1,5 +1,5 @@
 const RandomImageCommand = require('../../lib/base/RandomImageCommand');
-const { ImageCollection } = RandomImageCommand;
+const { FileCollection } = RandomImageCommand;
 const { postImage, postImageSomewhere } = require('../../lib/util/util');
 
 module.exports = class extends RandomImageCommand {
@@ -17,8 +17,13 @@ module.exports = class extends RandomImageCommand {
 			],
 		});
 
-		this.sfwImage = ImageCollection.makeDJSFileOption('nice-try.png');
+		this.sfwImage = null;
+		this.sfwImageLoaded = FileCollection.makeDJSFileOption('nice-try.png');
 		this.postImageOptions = { loadingText: '<.<\n>.>' };
+	}
+
+	async init() {
+		this.sfwImage = await this.sfwImageLoaded;
 	}
 
 	async run(msg, [imageName = this.getName()]) {
