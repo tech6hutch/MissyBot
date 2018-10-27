@@ -1,6 +1,5 @@
 const { TextChannel, DMChannel, GroupDMChannel, User } = require('discord.js');
-const { Extendable } = require('klasa');
-const { arrayRandom } = require('../lib/util/util');
+const { Extendable, util: { isThenable } } = require('klasa');
 
 module.exports = class extends Extendable {
 
@@ -14,8 +13,9 @@ module.exports = class extends Extendable {
 			else [options, responseArgs] = [responseArgs, []];
 		}
 		const language = this.guild ? this.guild.language : this.client.languages.default;
-		const response = arrayRandom(language.get(key, ...args));
-		return this.send({ content: typeof response === 'function' ? response(...responseArgs) : response, ...options });
+		const response = language.getRandom(key, args, responseArgs);
+		if (isThenable(response)) return response;
+		return this.send({ content: response, ...options });
 	}
 
 };

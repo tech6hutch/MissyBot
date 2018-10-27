@@ -19,7 +19,7 @@ module.exports = class extends Command {
 				return this.client.commands.get('reboot').run(msg);
 			}
 
-			return msg.sendRandom('COMMAND_SLEEP_SELF', [], [msg]);
+			return msg.sendRandom('COMMAND_SLEEP_SELF', [who, msg.author], [msg]);
 		}
 
 		return msg.sendRandom('COMMAND_SLEEP', [who, msg.author]);

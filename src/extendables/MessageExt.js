@@ -1,6 +1,5 @@
 const { Message } = require('discord.js');
-const { Extendable } = require('klasa');
-const { arrayRandom } = require('../lib/util/util');
+const { Extendable, util: { isThenable } } = require('klasa');
 
 module.exports = class extends Extendable {
 
@@ -23,8 +22,9 @@ module.exports = class extends Extendable {
 			if (!Array.isArray(localeArgs)) [options, localeArgs] = [localeArgs, []];
 			else [options, localeResponseArgs] = [localeResponseArgs, []];
 		}
-		const response = arrayRandom(this.language.get(key, ...localeArgs));
-		return this.sendMessage(typeof response === 'function' ? response(...localeResponseArgs) : response, options);
+		const response = this.language.getRandom(key, localeArgs, localeResponseArgs);
+		if (isThenable(response)) return response;
+		return this.sendMessage(response, options);
 	}
 
 	// Awaiting responses

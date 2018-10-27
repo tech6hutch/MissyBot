@@ -254,6 +254,17 @@ module.exports = class extends Language {
 				msg => this.client.commands.get('no-u').run(msg, []),
 			],
 			COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
+			COMMAND_EAT: (something, user, author) => [
+				`Eat ${something}, ${user}!`,
+				`${user}, make sure you're eating enough, little one!`,
+				`${user}, ${author} says to eat ${something}.`,
+				`${user}, eat ${something}, little one.`,
+			],
+			COMMAND_EAT_SELF: [
+				"But I'm a robot, I don't need to eat ;-;",
+				msg => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
+				msg => this.client.commands.get('no-u').run(msg, []),
+			],
 			MESSAGE_PROMPT_TIMEOUT: 'The prompt has timed out.'
 		};
 	}
