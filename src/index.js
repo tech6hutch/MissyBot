@@ -2,4 +2,7 @@ const { token } = require('../config');
 
 const MissyClient = require('./lib/MissyClient');
 
-new MissyClient().login(token);
+const client = new MissyClient();
+client.login(token);
+
+module.exports = client;
