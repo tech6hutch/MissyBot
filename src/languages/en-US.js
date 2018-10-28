@@ -167,26 +167,15 @@ module.exports = class extends Language {
 				'Please file an issue at <https://github.com/dirigeants/klasa> if you find any bugs.'
 			],
 			COMMAND_INVITE_DESCRIPTION: 'Displays the join guild link of the bot.',
-			COMMAND_INFO: [
-				"Klasa is a 'plug-and-play' framework built on top of the Discord.js library.",
-				'Most of the code is modularized, which allows developers to edit Klasa to suit their needs.',
+			COMMAND_INFO: () => [
+				"Hi! I'm MissyBot!",
 				'',
-				'Some features of Klasa include:',
-				'• 🐇💨 Fast loading times with ES2017 support (`async`/`await`)',
-				'• 🎚🎛 Per-client/guild/user settings that can be extended with your own fields',
-				'• 💬 Customizable command system with automated parameter resolving and the ability to load/reload commands on-the-fly',
-				'• 👀 "Monitors", which can watch messages and edits (for swear filters, spam protection, etc.)',
-				'• ⛔ "Inhibitors", which can prevent commands from running based on any condition you wish to apply (for permissions, blacklists, etc.)',
-				'• 🗄 "Providers", which simplify usage of any database of your choosing',
-				'• ✅ "Finalizers", which run after successful commands (for logging, collecting stats, cleaning up responses, etc.)',
-				'• ➕ "Extendables", which passively add methods, getters/setters, or static properties to existing Discord.js or Klasa classes',
-				'• 🌐 "Languages", which allow you to localize your bot\'s responses',
-				'• ⏲ "Tasks", which can be scheduled to run in the future, optionally repeating',
+				// eslint-disable-next-line max-len
+				`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, ${this.client.missy.tag}. My creator is ${this.client.owner.tag}, he's great! I have a variety of fun commands and responses.`,
 				'',
-				'We hope to be a 100% customizable framework that can cater to all audiences. We do frequent updates and bugfixes when available.',
-				"If you're interested in us, check us out at https://klasa.js.org"
+				'For a list of my commands: `Missy, help`',
 			],
-			COMMAND_INFO_DESCRIPTION: 'Provides some information about this bot.',
+			COMMAND_INFO_DESCRIPTION: 'Provides some information about me. 🙂',
 			COMMAND_HELP_DESCRIPTION: 'Display help for a command.',
 			COMMAND_HELP_NO_EXTENDED: 'No extended help available.',
 			COMMAND_HELP_DM: '📥 | No problem! I sent you help about my commands.',
