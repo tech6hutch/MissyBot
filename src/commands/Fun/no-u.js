@@ -1,32 +1,35 @@
-const { join } = require('path');
-const { Command } = require('klasa');
+const RandomImageCommand = require('../../lib/base/RandomImageCommand');
+const { postImage } = require('../../lib/util/util');
 
-module.exports = class extends Command {
+module.exports = class extends RandomImageCommand {
 
 	constructor(...args) {
 		super(...args, {
+			name: 'no u',
 			aliases: ['no'],
 			description: 'no u 🔀',
-			usage: '[infinity:str]',
+			usage: '<u> [infinity]',
+			usageDelim: ' ',
+			extendedHelp: [
+				"I'm sorry for the cluttered usage.",
+				'Examples:',
+				'Missy, no u',
+				'Missy, no u infinity',
+			].join('\n'),
+			// Custom
+			images: [
+				'no-u.png',
+				'no-u-infinity.png',
+			],
 		});
 
-		this.images = [
-			'no-u.png',
-			'no-u-infinity.png',
-		].map(filename => ({
-			attachment: join(process.cwd(), 'assets', filename),
-			name: filename,
-		}));
+		this.postImageOptions = { loadingText: 'Rebutting your argument...' };
 	}
 
-	async run(msg, [infinity]) {
-		// Get rid of the "u" in "no u infinity" because I don't want to clutter the usage
-		if (infinity) infinity = infinity.replace(/^u\s*/, '');
-		const loadingMsg = await msg.send('Rebutting your argument...');
-		await msg.channel.send({
-			files: [this.images[infinity ? 1 : 0]],
-		});
-		loadingMsg.delete();
+	async run(msg, [, infinity]) {
+		return postImage(msg,
+			this.images.get(`no-u${infinity ? '-infinity' : ''}.png`),
+			this.postImageOptions);
 	}
 
 };
