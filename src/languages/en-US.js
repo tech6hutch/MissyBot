@@ -251,7 +251,7 @@ module.exports = class extends Language {
 				"But I'm a robot, I don't need to sleep ;-;",
 				"You can't tell me to sleep!",
 				['Nooooooo', "It's not bedtime yet!"],
-				msg => this.client.commands.get('no-u').run(msg, []),
+				msg => this.client.commands.get('no u').run(msg, []),
 			],
 			COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
 			COMMAND_EAT: (something, user, author) => [
