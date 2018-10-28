@@ -12,30 +12,27 @@ module.exports = class extends Command {
 	}
 
 	async run(msg) {
-		const rebootMsg = await msg.sendLocale('COMMAND_REBOOT');
-		await Promise.all([
-			this.client.settings.update({ restart: {
-				message: rebootMsg,
-				timestamp: process.hrtime.bigint(),
-			} }).then(result => result.errors.forEach(err => this.client.emit('error', err))),
-			Promise.all(this.client.providers.map(provider => provider.shutdown())),
-		]);
-		process.exit();
+		await this.shutdown(this.client.settings.update({ restart: {
+			message: await msg.sendLocale('COMMAND_REBOOT'),
+			timestamp: process.hrtime.bigint(),
+		} }).then(result => result.errors.forEach(err => this.client.emit('error', err))));
 	}
 
 	async init() {
-		const [message, timestamp] = await Promise.all(
-			['message', 'timestamp']
-				.map(key => this.client.settings.fuckingResolve(`restart.${key}`))
-		).catch(() => [null, null]);
+		// "message" needs to be awaited
+		const [message, timestamp] = await Promise.all(['message', 'timestamp']
+			.map(key => this.client.settings.fuckingResolve(`restart.${key}`)));
+		await this.client.settings.reset(['message', 'timestamp']
+			.map(key => `restart.${key}`));
 
-		await this.client.settings.reset(['message', 'timestamp'].map(key => `restart.${key}`));
+		if (message) message.sendLocale('COMMAND_REBOOT_SUCCESS', [timestamp && getFriendlyDuration(timestamp)]);
+		else this.client.emit('info', 'No restart channel');
+	}
 
-		if (message) {
-			message.sendLocale('COMMAND_REBOOT_SUCCESS', [timestamp ? getFriendlyDuration(timestamp) : null]);
-		} else {
-			this.client.emit('warn', 'No restart channel');
-		}
+	async shutdown(waitForThis) {
+		await Promise.all(this.client.providers.map(provider => provider.shutdown()));
+		if (waitForThis) await waitForThis;
+		process.exit();
 	}
 
 };

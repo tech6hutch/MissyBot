@@ -14,7 +14,7 @@ module.exports = class extends Extendable {
 	 * @returns {Promise<*>} The resolved setting, or undefined if not found
 	 * @this {Settings}
 	 */
-	async fuckingResolve(path, guild, language = guild ? guild.language : this.client.languages.default) {
+	fuckingResolve(path, guild, language = guild ? guild.language : this.client.languages.default) {
 		const route = typeof path === 'string' ? path.split('.') : path;
 		const piece = this.gateway.schema.get(route);
 		if (!piece) throw undefined;
@@ -23,10 +23,9 @@ module.exports = class extends Extendable {
 		for (const key of route) objOrData = objOrData[key];
 
 		try {
-			return await piece.serializer.deserialize(objOrData, piece, language, guild);
-		} catch (e) {
-			this.client.emit('error', e);
-			throw undefined;
+			return piece.serializer.deserialize(objOrData, piece, language, guild);
+		} catch (_) {
+			return undefined;
 		}
 	}
 
