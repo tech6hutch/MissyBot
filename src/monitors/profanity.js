@@ -17,7 +17,7 @@ module.exports = class extends Monitor {
 			...this.words.map(w => w + (last(w) === 'e' ? 'd' : 'ed')),
 			// "crapped"
 			...this.words.map(w => `${w}${last(w)}ed`),
-		].join('|')}\\b)`, 'i');
+		].join('|')})\\b`, 'i');
 	}
 
 	async run(msg) {
