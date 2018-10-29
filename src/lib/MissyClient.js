@@ -5,6 +5,8 @@ KlasaClient.defaultClientSchema.add('restart', folder => folder
 	.add('message', 'messagepromise')
 	.add('timestamp', 'bigint', { min: 0 }));
 
+KlasaClient.defaultUserSchema.add('profanity', 'integer', { min: 0, default: 0 });
+
 module.exports = class MissyClient extends KlasaClient {
 
 	constructor(options = {}) {
