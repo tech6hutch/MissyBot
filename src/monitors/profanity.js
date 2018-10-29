@@ -14,7 +14,7 @@ module.exports = class extends Monitor {
 			// "crapping"
 			...this.words.map(w => `${w}${last(w)}ing`),
 			// "damned"
-			...this.words.map(w => `${w}ed`),
+			...this.words.map(w => w + (last(w) === 'e' ? 'd' : 'ed')),
 			// "crapped"
 			...this.words.map(w => `${w}${last(w)}ed`),
 		].join('|')}\\b)`, 'i');
