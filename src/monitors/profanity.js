@@ -7,7 +7,7 @@ module.exports = class extends Monitor {
 		super(...args, { ignoreOthers: false });
 
 		this.words = ['shit', 'fuck', 'damn', 'bitch', 'crap', 'piss', 'dick', 'darn', 'cock', 'pussy', 'asshole', 'fag', 'bastard', 'slut', 'douche'];
-		this.regex = new RegExp([
+		this.regex = new RegExp(`\b(?:${[
 			...this.words,
 			// "pissing"
 			...this.words.map(w => `${w}ing`),
@@ -15,7 +15,7 @@ module.exports = class extends Monitor {
 			...this.words.map(w => `${w}${last(w)}ing`),
 			// "damned"
 			...this.words.map(w => `${w}ed`),
-		].join('|'), 'i');
+		].join('|')}\b)`, 'i');
 	}
 
 	async run(msg) {
