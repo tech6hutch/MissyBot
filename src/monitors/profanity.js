@@ -15,7 +15,7 @@ module.exports = class extends Monitor {
 			...this.words.map(w => `${w}${last(w)}ing`),
 			// "damned"
 			...this.words.map(w => `${w}ed`),
-		], 'i');
+		].join('|'), 'i');
 	}
 
 	async run(msg) {
