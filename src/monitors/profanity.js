@@ -19,7 +19,7 @@ module.exports = class extends Monitor {
 	}
 
 	async run(msg) {
-		const swears = msg.content.split(this.regex).length;
+		const swears = msg.content.split(this.regex).length - 1;
 		if (swears) msg.author.settings.update('profanity', msg.author.settings.profanity + swears);
 	}
 
