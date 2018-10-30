@@ -20,7 +20,6 @@ module.exports = class extends Monitor {
 				assert(!isNaN(keyValues[word]));
 			}
 		}
-		this.client.console.log(obj);
 		if (Object.keys(keyValues).length) msg.author.settings.update(obj);
 	}
 
