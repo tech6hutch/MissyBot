@@ -5,6 +5,8 @@ const profanity = require('../../lib/profanity');
 
 const firstLetterOrPart = /^(?:([a-z])+-|([a-z]))/;
 const capitalize = str => str.replace(firstLetterOrPart, chars => chars.toUpperCase());
+const substringCount = regex => str => (str.value.match(regex) || []).length;
+const countNewlines = substringCount(/\n/g);
 
 module.exports = class extends Command {
 
@@ -30,8 +32,9 @@ module.exports = class extends Command {
 				catWords
 					.map(word => `${capitalize(profanity.censors.get(word))}: ${userProfanity[word]}`)
 					.join('\n'),
-				false);
+				true);
 		}
+		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
 		// for (const [word, counter] of Object.entries(userProfanity)) {
 		// 	embed.addField(`${word[0]}-word`, counter, true);
 		// }
