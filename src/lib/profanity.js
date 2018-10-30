@@ -72,6 +72,10 @@ module.exports = new class extends Map {
 		this.words = [...this.regexes.keys()];
 	}
 
+	get(key) {
+		super.get(key.toLowerCase());
+	}
+
 }();
 ({ exports } = module);
 
