@@ -62,7 +62,7 @@ module.exports = new class extends Map {
 				`(${word})${
 					wordEnds ? `(?:${wordEnds.join('|')})?` : ''
 				}`,
-				...similarWords,
+				...similarWords.map(simWord => `(${simWord})`),
 			].map(w => `\\b${w}\\b`).join('|');
 			this.regexes.set(word, { regexStr, regex: new RegExp(regexStr, 'gi') });
 		}
