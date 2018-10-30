@@ -8,12 +8,12 @@ const esErEnds = [...esEnds, 'ers?'];
  * @type {Object<string, ([string, string[]?, string[]?])[]>}
  */
 const profanityToAssemble = {
-	excrement: [
+	Excrement: [
 		['shit', ['s', 't?ers?', 't?ing', 't?ed'], ['shat', 'shite']],
 		['piss', esErEnds],
 		['crap', ['s', 'p?ers?', 'p?ing', 'p?ed']],
 	],
-	bodyParts: [
+	'Body Parts': [
 		['cunt', sEnds],
 		['cock', sEnds],
 		['dick', sEnds],
@@ -24,19 +24,19 @@ const profanityToAssemble = {
 		['ass', esEnds],
 		['arse', esEnds],
 	],
-	insults: [
+	Insults: [
 		['bitch', esEnds],
 		['fag', ['s', 'g?ing', 'ged'], ['faggot', 'faggots']],
 		['bastard', ['s']],
 		['slut', ['s']],
 		['douche', ['s'], ['douching', 'douched']],
 	],
-	sexual: [
+	Sexual: [
 		['fuck', sErEnds],
 		['bugger', sEnds],
 		['wank', sErEnds],
 	],
-	religious: [
+	Religious: [
 		['goddamn', ['ed'], ['gdi']],
 		['hell'],
 		['bloody'],
