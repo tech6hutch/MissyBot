@@ -59,7 +59,7 @@ const profanityToAssemble = {
 			name: 'fag',
 			suffixes: ['s', 'g?ing', 'ged'],
 			aliases: ['faggot', 'faggots'],
-			censored: 'gay f-word 🏳‍🌈',
+			censored: 'gay f-word 🏳️‍🌈',
 		},
 		{ name: 'bastard', suffixes: ['s'] },
 		{
