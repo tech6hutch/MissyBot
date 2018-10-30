@@ -1,9 +1,5 @@
 const assert = require('assert');
 
-const profanityRegexes = new Map();
-module.exports = { regexes: profanityRegexes };
-({ exports } = module);
-
 const sEnds = ['s', 'ing', 'ed'];
 const sErEnds = [...sEnds, 'ers?'];
 const esEnds = ['es', 'ing', 'ed'];
@@ -51,21 +47,33 @@ for (const array of profanityToAssemble) {
 	assert([1, 2, 3].includes(array.length));
 }
 
-for (const [word, wordEnds, similarWords = []] of profanityToAssemble) {
-	const regexStr = [
-		`(${word})${
-			wordEnds ? `(?:${wordEnds.join('|')})?` : ''
-		}`,
-		...similarWords,
-	].map(w => `\\b${w}\\b`).join('|');
-	profanityRegexes.set(word, { regexStr, regex: new RegExp(regexStr, 'gi') });
-}
+module.exports = new class extends Map {
 
-exports.regex = new RegExp([...profanityRegexes.values()].map(obj => obj.regexStr).join('|'), 'gi');
+	constructor() {
+		super();
 
-/**
- * @type {string[]}
- */
-exports.words = [...profanityRegexes.keys()];
+		this.regexes = new Map();
+
+		for (const [word, wordEnds, similarWords = []] of profanityToAssemble) {
+			this.set(word, word);
+			for (const simWord of similarWords) this.set(simWord, word);
+
+			const regexStr = [
+				`(${word})${
+					wordEnds ? `(?:${wordEnds.join('|')})?` : ''
+				}`,
+				...similarWords,
+			].map(w => `\\b${w}\\b`).join('|');
+			this.regexes.set(word, { regexStr, regex: new RegExp(regexStr, 'gi') });
+		}
+
+		this.regex = new RegExp([...this.regexes.values()].map(obj => obj.regexStr).join('|'), 'gi');
+
+		this.words = [...this.regexes.keys()];
+	}
+
+}();
+({ exports } = module);
+
 assert(Array.isArray(exports.words));
 assert(exports.words.every(word => typeof word === 'string' && word.length));

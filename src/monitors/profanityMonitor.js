@@ -15,9 +15,10 @@ module.exports = class extends Monitor {
 		while ((swears = profanity.regex.exec(msg.content)) !== null) {
 			for (const [i, word] of swears.entries()) {
 				if (!(i && word)) continue;
-				assert(profanity.words.includes(word), `Unknown word: ${word}`);
-				keyValues[word] = (keyValues[word] || msg.author.settings.profanity[word]) + 1;
-				assert(!isNaN(keyValues[word]));
+				const unAliasedWord = profanity.get(unAliasedWord);
+				assert(profanity.words.includes(unAliasedWord), `Unknown word: ${unAliasedWord}`);
+				keyValues[unAliasedWord] = (keyValues[unAliasedWord] || msg.author.settings.profanity[unAliasedWord]) + 1;
+				assert(!isNaN(keyValues[unAliasedWord]));
 			}
 		}
 		if (Object.keys(keyValues).length) msg.author.settings.update(obj);
