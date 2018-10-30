@@ -5,13 +5,12 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			aliases: ['myswears'],
 			description: '🗣 👀',
 			extendedHelp: [
 				'I see you swearing 👀',
 				'',
 				"Don't worry, tho, I like swearing. I just have too much self control to do it myself 😛",
-			],
+			].join('\n'),
 		});
 	}
 
