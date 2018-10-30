@@ -23,21 +23,19 @@ module.exports = class extends Command {
 
 	run(msg) {
 		const { profanity: userProfanity } = msg.author.settings;
+		const { uncensored } = msg.flags;
 		const embed = new MessageEmbed();
 		assert(Object.keys(userProfanity).length ===
 			[...profanity.categories.values()].reduce((total, { length }) => total + length, 0));
 		for (const [category, catWords] of profanity.categories) {
 			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
 			embed.addField(category,
-				catWords
-					.map(word => `${capitalize(profanity.censors.get(word))}: ${userProfanity[word]}`)
-					.join('\n'),
+				catWords.map(word =>
+					`${capitalize(uncensored ? word : profanity.censors.get(word))}: ${userProfanity[word]}`
+				).join('\n'),
 				true);
 		}
 		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
-		// for (const [word, counter] of Object.entries(userProfanity)) {
-		// 	embed.addField(`${word[0]}-word`, counter, true);
-		// }
 		return msg.sendEmbed(embed);
 	}
 
