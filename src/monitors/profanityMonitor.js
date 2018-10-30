@@ -9,7 +9,8 @@ module.exports = class extends Monitor {
 	}
 
 	async run(msg) {
-		const keyValues = {};
+		const obj = { profanity: {} };
+		const keyValues = obj.profanity;
 		let swears;
 		while ((swears = profanity.regex.exec(msg.content)) !== null) {
 			for (const [i, word] of swears.entries()) {
@@ -19,8 +20,8 @@ module.exports = class extends Monitor {
 				assert(!isNaN(keyValues[word]));
 			}
 		}
-		this.client.console.log(keyValues);
-		if (Object.keys(keyValues).length) msg.author.settings.update(keyValues);
+		this.client.console.log(obj);
+		if (Object.keys(keyValues).length) msg.author.settings.update(obj);
 	}
 
 };
