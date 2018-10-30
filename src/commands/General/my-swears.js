@@ -23,7 +23,14 @@ module.exports = class extends Command {
 
 	run(msg) {
 		const { profanity: userProfanity } = msg.author.settings;
-		const { uncensored } = msg.flags;
+		let { uncensored } = msg.flags;
+
+		let content;
+		if (uncensored && !msg.channel.nsfw) {
+			uncensored = false;
+			content = 'You can only view the uncensored version in a NSFW channel!';
+		}
+
 		const embed = new MessageEmbed();
 		assert(Object.keys(userProfanity).length ===
 			[...profanity.categories.values()].reduce((total, { length }) => total + length, 0));
@@ -36,7 +43,8 @@ module.exports = class extends Command {
 				true);
 		}
 		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
-		return msg.sendEmbed(embed);
+
+		return msg.sendEmbed(embed, content);
 	}
 
 };
