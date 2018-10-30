@@ -3,6 +3,9 @@ const { MessageEmbed } = require('discord.js');
 const { Command } = require('klasa');
 const profanity = require('../../lib/profanity');
 
+const firstLetterOrPart = /^(?:([a-z])+-|([a-z]))/;
+const capitalize = str => str.replace(firstLetterOrPart, chars => chars.toUpperCase());
+
 module.exports = class extends Command {
 
 	constructor(...args) {
@@ -25,7 +28,7 @@ module.exports = class extends Command {
 			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
 			embed.addField(category,
 				catWords
-					.map(word => `${word[0].toUpperCase()}-word: ${userProfanity[word]}`)
+					.map(word => `${capitalize(profanity.censors.get(word))}: ${userProfanity[word]}`)
 					.join('\n'),
 				true);
 		}

@@ -5,51 +5,111 @@ const sErEnds = [...sEnds, 'ers?'];
 const esEnds = ['es', 'ing', 'ed'];
 const esErEnds = [...esEnds, 'ers?'];
 /**
- * @type {Object<string, ([string, string[]?, string[]?])[]>}
+ * @type {Object<string, ({ name: string, wordEnds?: string[], aliases?: string[], censored?: string })[]>}
  */
 const profanityToAssemble = {
-	Excrement: [
-		['shit', ['s', 't?ers?', 't?ing', 't?ed'], ['shat', 'shite']],
-		['piss', esErEnds],
-		['crap', ['s', 'p?ers?', 'p?ing', 'p?ed']],
+	'Excrement 💩': [
+		{
+			name: 'shit',
+			wordEnds: ['s', 't?ers?', 't?ing', 't?ed'],
+			aliases: ['shat', 'shite'],
+		},
+		{ name: 'piss', wordEnds: esErEnds },
+		{ name: 'crap', wordEnds: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
 	],
-	'Body Parts': [
-		['cunt', sEnds],
-		['cock', sEnds],
-		['dick', sEnds],
-		['pussy', sEnds, ['pussies', 'pussied']],
-		['bollock', ['s']],
-		['asshole', ['s']],
-		['arsehole', ['s']],
-		['ass', esEnds],
-		['arse', esEnds],
+	'Body Parts 👤': [
+		{ name: 'cunt', wordEnds: sEnds },
+		{
+			name: 'cock',
+			wordEnds: sEnds,
+			censored: 'male c-word',
+		},
+		{ name: 'dick', wordEnds: sEnds },
+		{
+			name: 'pussy',
+			wordEnds: sEnds,
+			aliases: ['pussies', 'pussied'],
+		},
+		{
+			name: 'bollock',
+			wordEnds: ['s'],
+			censored: 'b-word (🥜)',
+		},
+		{ name: 'ass', wordEnds: esEnds },
+		{
+			name: 'arse',
+			wordEnds: esEnds,
+			censored: 'lesser a-word',
+		},
+		{
+			name: 'asshole',
+			wordEnds: ['s'],
+			censored: 'a-hole',
+		},
+		{
+			name: 'arsehole',
+			wordEnds: ['s'],
+			censored: 'lesser a-hole',
+		},
 	],
-	Insults: [
-		['bitch', esEnds],
-		['fag', ['s', 'g?ing', 'ged'], ['faggot', 'faggots']],
-		['bastard', ['s']],
-		['slut', ['s']],
-		['douche', ['s'], ['douching', 'douched']],
+	'Insults 🙊': [
+		{ name: 'bitch', wordEnds: esEnds },
+		{
+			name: 'fag',
+			wordEnds: ['s', 'g?ing', 'ged'],
+			aliases: ['faggot', 'faggots'],
+			censored: 'gay f-word 🏳‍🌈',
+		},
+		{ name: 'bastard', wordEnds: ['s'] },
+		{
+			name: 'slut',
+			wordEnds: ['s'],
+			censored: 'promiscuous s-word 🤐',
+		},
+		{
+			name: 'douche',
+			wordEnds: ['s'],
+			aliases: ['douching', 'douched'],
+			censored: 'd-word (⬆💦)',
+		},
 	],
-	Sexual: [
-		['fuck', sErEnds],
-		['bugger', sEnds],
-		['wank', sErEnds],
+	'Sexual 🔞': [
+		{ name: 'fuck', wordEnds: sErEnds },
+		{
+			name: 'bugger',
+			wordEnds: sEnds,
+			censored: 'b-word (🔞⛔🏞)',
+		},
+		{
+			name: 'wank',
+			wordEnds: sErEnds,
+			censored: 'w-word (↕🍆)',
+		},
 	],
-	Religious: [
-		['goddamn', ['ed'], ['gdi']],
-		['hell'],
-		['bloody'],
-		['damn', sEnds],
-		['darn', ['ed']],
+	'Religious 😇': [
+		{
+			name: 'goddamn',
+			wordEnds: ['ed'],
+			aliases: ['gdi'],
+			censored: 'gd-word',
+		},
+		{ name: 'hell' },
+		{ name: 'bloody', censored: 'b-word (🅰🅱🆎🅾)' },
+		{ name: 'damn', wordEnds: sEnds },
+		{
+			name: 'darn',
+			wordEnds: ['ed'],
+			censored: 'lesser d-word',
+		},
 	],
 };
-for (const array of Object.values(profanityToAssemble).reduce((arrays, arr) => arrays.concat(arr))) {
-	assert(typeof array[0] === 'string' && array[0].length);
-	// eslint-disable-next-line eqeqeq
-	assert((Array.isArray(array[1]) && array[1].length) || array[1] == null);
-	assert(typeof array[2] === 'undefined' || Array.isArray(array[2]));
-	assert([1, 2, 3].includes(array.length));
+for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => arrays.concat(catArr))) {
+	const { name, wordEnds, aliases, censored } = obj;
+	assert(typeof name === 'string' && name.length);
+	assert((Array.isArray(wordEnds) && wordEnds.length) || wordEnds === undefined);
+	assert((Array.isArray(aliases) && aliases.length) || aliases === undefined);
+	assert((typeof censored === 'string' && censored.length) || censored === undefined);
+	assert((len => len >= 1 && len <= 4)(Object.keys(obj).length));
 }
 
 module.exports = new class extends Map {
@@ -59,20 +119,22 @@ module.exports = new class extends Map {
 
 		this.regexes = new Map();
 		this.categories = new Map();
+		this.censors = new Map();
 
-		for (const [category, wordArrays] of Object.entries(profanityToAssemble)) {
+		for (const [category, wordObjects] of Object.entries(profanityToAssemble)) {
 			const catArray = [];
 			this.categories.set(category, catArray);
-			for (const [word, wordEnds, similarWords = []] of wordArrays) {
+			for (const { word, wordEnds, aliases = [], censored = `${word[0]}-word` } of wordObjects) {
 				catArray.push(word);
 				this.set(word, word);
-				for (const simWord of similarWords) this.set(simWord, word);
+				for (const alias of aliases) this.set(alias, word);
+				this.censors.set(word, censored);
 
 				const regexStr = [
 					`(${word})${
 						wordEnds ? `(?:${wordEnds.join('|')})?` : ''
 					}`,
-					...similarWords.map(simWord => `(${simWord})`),
+					...aliases.map(alias => `(${alias})`),
 				].map(w => `\\b${w}\\b`).join('|');
 				this.regexes.set(word, { regexStr, regex: new RegExp(regexStr, 'gi') });
 			}
