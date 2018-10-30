@@ -103,6 +103,50 @@ const profanityToAssemble = {
 			censored: 'lesser d-word',
 		},
 	],
+	'Racial Slurs 🏁': [
+		{
+			name: 'nigger',
+			suffixes: ['s'],
+			censored: 'n-word (👩🏿👨🏿)',
+		},
+		{
+			name: 'nigga',
+			suffixes: ['s'],
+			censored: 'lesser n-word (👩🏿👨🏿)',
+		},
+		{
+			name: 'cracker',
+			suffixes: ['s'],
+			censored: 'c-word (👩🏻👨🏻)',
+		},
+		{
+			name: 'cracka',
+			suffixes: ['s'],
+			censored: 'lesser c-word (👩🏻👨🏻)',
+		},
+		{
+			name: 'wetback',
+			suffixes: ['s'],
+			censored: 'Mexicans who must have been swimming recently',
+		},
+		{
+			name: 'negro',
+			suffixes: ['es', 's'],
+			aliases: ['negress', 'negresses', 'negra', 'negras'],
+			censored: 'Spanish n-word',
+		},
+		{
+			name: 'mulatto',
+			suffixes: ['es', 's'],
+			aliases: ['mulato', 'mulatos', 'mulata', 'mulatas'],
+			censored: 'vanilla and chocolate! 😋 (👩🏿+👩🏻)',
+		},
+		{
+			name: 'oriental',
+			suffixes: ['s'],
+			censored: 'people from the Orient 🌏',
+		},
+	],
 };
 for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => arrays.concat(catArr))) {
 	const { name, wordEnds, aliases, censored } = obj;
