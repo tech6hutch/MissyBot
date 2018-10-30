@@ -1,3 +1,5 @@
+require('./preload');
+
 const { KlasaClient, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
 const profanity = require('./profanity');
