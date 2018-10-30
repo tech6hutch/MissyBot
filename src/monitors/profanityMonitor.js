@@ -14,7 +14,6 @@ module.exports = class extends Monitor {
 		while ((swears = profanity.regex.exec(msg.content)) !== null) {
 			for (const [i, word] of swears.entries()) {
 				if (!(i && word)) continue;
-				this.client.console.log(word);
 				assert(profanity.words.includes(word));
 				keyValues[word] = (keyValues[word] || msg.author.settings.profanity[word]) + 1;
 				assert(!isNaN(keyValues[word]));
