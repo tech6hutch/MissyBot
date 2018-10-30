@@ -1,9 +1,10 @@
 const assert = require('assert');
 
-const sEnds = ['s', 'ing', 'ed'];
-const sErEnds = [...sEnds, 'ers?'];
-const esEnds = ['es', 'ing', 'ed'];
-const esErEnds = [...esEnds, 'ers?'];
+// For brevity, since so many of these words can have the same suffixes
+const sSuffixes = ['s', 'ing', 'ed'];
+const sErSuffixes = [...sSuffixes, 'ers?'];
+const esSuffixes = ['es', 'ing', 'ed'];
+const esErSuffixes = [...esSuffixes, 'ers?'];
 /**
  * @type {Object<string, ({ name: string, suffixes?: string[], aliases?: string[], censored?: string })[]>}
  */
@@ -14,20 +15,20 @@ const profanityToAssemble = {
 			suffixes: ['s', 't?ers?', 't?ing', 't?ed'],
 			aliases: ['shat', 'shite'],
 		},
-		{ name: 'piss', suffixes: esErEnds },
+		{ name: 'piss', suffixes: esErSuffixes },
 		{ name: 'crap', suffixes: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
 	],
 	'Body Parts 👤': [
-		{ name: 'cunt', suffixes: sEnds },
+		{ name: 'cunt', suffixes: sSuffixes },
 		{
 			name: 'cock',
-			suffixes: sEnds,
+			suffixes: sSuffixes,
 			censored: 'male c-word',
 		},
-		{ name: 'dick', suffixes: sEnds },
+		{ name: 'dick', suffixes: sSuffixes },
 		{
 			name: 'pussy',
-			suffixes: sEnds,
+			suffixes: sSuffixes,
 			aliases: ['pussies', 'pussied'],
 		},
 		{
@@ -35,10 +36,10 @@ const profanityToAssemble = {
 			suffixes: ['s'],
 			censored: 'b-word (🥜)',
 		},
-		{ name: 'ass', suffixes: esEnds },
+		{ name: 'ass', suffixes: esSuffixes },
 		{
 			name: 'arse',
-			suffixes: esEnds,
+			suffixes: esSuffixes,
 			censored: 'lesser a-word',
 		},
 		{
@@ -53,7 +54,7 @@ const profanityToAssemble = {
 		},
 	],
 	'Insults 🙊': [
-		{ name: 'bitch', suffixes: esEnds },
+		{ name: 'bitch', suffixes: esSuffixes },
 		{
 			name: 'fag',
 			suffixes: ['s', 'g?ing', 'ged'],
@@ -74,15 +75,15 @@ const profanityToAssemble = {
 		},
 	],
 	'Sexual 🔞': [
-		{ name: 'fuck', suffixes: sErEnds },
+		{ name: 'fuck', suffixes: sErSuffixes },
 		{
 			name: 'bugger',
-			suffixes: sEnds,
+			suffixes: sSuffixes,
 			censored: 'b-word (🔞⛔🏞)',
 		},
 		{
 			name: 'wank',
-			suffixes: sErEnds,
+			suffixes: sErSuffixes,
 			censored: 'w-word (↕🍆)',
 		},
 	],
@@ -95,7 +96,7 @@ const profanityToAssemble = {
 		},
 		{ name: 'hell' },
 		{ name: 'bloody', censored: 'b-word (🅰🅱🆎🅾)' },
-		{ name: 'damn', suffixes: sEnds },
+		{ name: 'damn', suffixes: sSuffixes },
 		{
 			name: 'darn',
 			suffixes: ['ed'],
