@@ -5,100 +5,100 @@ const sErEnds = [...sEnds, 'ers?'];
 const esEnds = ['es', 'ing', 'ed'];
 const esErEnds = [...esEnds, 'ers?'];
 /**
- * @type {Object<string, ({ name: string, wordEnds?: string[], aliases?: string[], censored?: string })[]>}
+ * @type {Object<string, ({ name: string, suffixes?: string[], aliases?: string[], censored?: string })[]>}
  */
 const profanityToAssemble = {
 	'Excrement 💩': [
 		{
 			name: 'shit',
-			wordEnds: ['s', 't?ers?', 't?ing', 't?ed'],
+			suffixes: ['s', 't?ers?', 't?ing', 't?ed'],
 			aliases: ['shat', 'shite'],
 		},
-		{ name: 'piss', wordEnds: esErEnds },
-		{ name: 'crap', wordEnds: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
+		{ name: 'piss', suffixes: esErEnds },
+		{ name: 'crap', suffixes: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
 	],
 	'Body Parts 👤': [
-		{ name: 'cunt', wordEnds: sEnds },
+		{ name: 'cunt', suffixes: sEnds },
 		{
 			name: 'cock',
-			wordEnds: sEnds,
+			suffixes: sEnds,
 			censored: 'male c-word',
 		},
-		{ name: 'dick', wordEnds: sEnds },
+		{ name: 'dick', suffixes: sEnds },
 		{
 			name: 'pussy',
-			wordEnds: sEnds,
+			suffixes: sEnds,
 			aliases: ['pussies', 'pussied'],
 		},
 		{
 			name: 'bollock',
-			wordEnds: ['s'],
+			suffixes: ['s'],
 			censored: 'b-word (🥜)',
 		},
-		{ name: 'ass', wordEnds: esEnds },
+		{ name: 'ass', suffixes: esEnds },
 		{
 			name: 'arse',
-			wordEnds: esEnds,
+			suffixes: esEnds,
 			censored: 'lesser a-word',
 		},
 		{
 			name: 'asshole',
-			wordEnds: ['s'],
+			suffixes: ['s'],
 			censored: 'a-hole',
 		},
 		{
 			name: 'arsehole',
-			wordEnds: ['s'],
+			suffixes: ['s'],
 			censored: 'lesser a-hole',
 		},
 	],
 	'Insults 🙊': [
-		{ name: 'bitch', wordEnds: esEnds },
+		{ name: 'bitch', suffixes: esEnds },
 		{
 			name: 'fag',
-			wordEnds: ['s', 'g?ing', 'ged'],
+			suffixes: ['s', 'g?ing', 'ged'],
 			aliases: ['faggot', 'faggots'],
 			censored: 'gay f-word 🏳‍🌈',
 		},
-		{ name: 'bastard', wordEnds: ['s'] },
+		{ name: 'bastard', suffixes: ['s'] },
 		{
 			name: 'slut',
-			wordEnds: ['s'],
+			suffixes: ['s'],
 			censored: 'promiscuous s-word 🤐',
 		},
 		{
 			name: 'douche',
-			wordEnds: ['s'],
+			suffixes: ['s'],
 			aliases: ['douching', 'douched'],
 			censored: 'd-word (⬆💦)',
 		},
 	],
 	'Sexual 🔞': [
-		{ name: 'fuck', wordEnds: sErEnds },
+		{ name: 'fuck', suffixes: sErEnds },
 		{
 			name: 'bugger',
-			wordEnds: sEnds,
+			suffixes: sEnds,
 			censored: 'b-word (🔞⛔🏞)',
 		},
 		{
 			name: 'wank',
-			wordEnds: sErEnds,
+			suffixes: sErEnds,
 			censored: 'w-word (↕🍆)',
 		},
 	],
 	'Religious 😇': [
 		{
 			name: 'goddamn',
-			wordEnds: ['ed'],
+			suffixes: ['ed'],
 			aliases: ['gdi'],
 			censored: 'gd-word',
 		},
 		{ name: 'hell' },
 		{ name: 'bloody', censored: 'b-word (🅰🅱🆎🅾)' },
-		{ name: 'damn', wordEnds: sEnds },
+		{ name: 'damn', suffixes: sEnds },
 		{
 			name: 'darn',
-			wordEnds: ['ed'],
+			suffixes: ['ed'],
 			censored: 'lesser d-word',
 		},
 	],
@@ -122,23 +122,21 @@ module.exports = new class extends Map {
 		this.censors = new Map();
 
 		for (const [category, wordObjArray] of Object.entries(profanityToAssemble)) {
-			assert(typeof category === 'string');
-			assert(Array.isArray(wordObjArray) && wordObjArray.length);
 			const catArray = [];
 			this.categories.set(category, catArray);
-			for (const { word, wordEnds, aliases = [], censored = `${word[0]}-word` } of wordObjArray) {
-				catArray.push(word);
-				this.set(word, word);
-				for (const alias of aliases) this.set(alias, word);
-				this.censors.set(word, censored);
+			for (const { name, suffixes, aliases = [], censored = `${name[0]}-word` } of wordObjArray) {
+				catArray.push(name);
+				this.set(name, name);
+				for (const alias of aliases) this.set(alias, name);
+				this.censors.set(name, censored);
 
 				const regexStr = [
-					`(${word})${
-						wordEnds ? `(?:${wordEnds.join('|')})?` : ''
+					`(${name})${
+						suffixes ? `(?:${suffixes.join('|')})?` : ''
 					}`,
 					...aliases.map(alias => `(${alias})`),
 				].map(w => `\\b${w}\\b`).join('|');
-				this.regexes.set(word, { regexStr, regex: new RegExp(regexStr, 'gi') });
+				this.regexes.set(name, { regexStr, regex: new RegExp(regexStr, 'gi') });
 			}
 		}
 
