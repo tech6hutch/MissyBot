@@ -1,15 +1,17 @@
 const { KlasaClient, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
+const profanity = require('./profanity');
 
 KlasaClient.defaultClientSchema.add('restart', folder => folder
 	.add('message', 'messagepromise')
 	.add('timestamp', 'bigint', { min: 0 }));
 
-KlasaClient.defaultUserSchema.add('profanity', 'integer', {
-	min: 0,
-	default: 0,
-	configurable: false,
-});
+KlasaClient.defaultUserSchema.add('profanity', folder =>
+	profanity.words.forEach(word => folder.add(word, 'integer', {
+		min: 0,
+		default: 0,
+		configurable: false,
+	})));
 
 module.exports = class MissyClient extends KlasaClient {
 
