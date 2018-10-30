@@ -30,7 +30,7 @@ module.exports = class extends Command {
 				catWords
 					.map(word => `${capitalize(profanity.censors.get(word))}: ${userProfanity[word]}`)
 					.join('\n'),
-				true);
+				false);
 		}
 		// for (const [word, counter] of Object.entries(userProfanity)) {
 		// 	embed.addField(`${word[0]}-word`, counter, true);
