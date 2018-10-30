@@ -48,7 +48,7 @@ for (const array of profanityToAssemble) {
 	// eslint-disable-next-line eqeqeq
 	assert((Array.isArray(array[1]) && array[1].length) || array[1] == null);
 	assert(typeof array[2] === 'undefined' || Array.isArray(array[2]));
-	assert([2, 3].includes(array.length));
+	assert([1, 2, 3].includes(array.length));
 }
 
 for (const [word, wordEnds, similarWords = []] of profanityToAssemble) {
