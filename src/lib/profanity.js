@@ -121,10 +121,12 @@ module.exports = new class extends Map {
 		this.categories = new Map();
 		this.censors = new Map();
 
-		for (const [category, wordObjects] of Object.entries(profanityToAssemble)) {
+		for (const [category, wordObjArray] of Object.entries(profanityToAssemble)) {
+			assert(typeof category === 'string');
+			assert(Array.isArray(wordObjArray) && wordObjArray.length);
 			const catArray = [];
 			this.categories.set(category, catArray);
-			for (const { word, wordEnds, aliases = [], censored = `${word[0]}-word` } of wordObjects) {
+			for (const { word, wordEnds, aliases = [], censored = `${word[0]}-word` } of wordObjArray) {
 				catArray.push(word);
 				this.set(word, word);
 				for (const alias of aliases) this.set(alias, word);
