@@ -73,7 +73,7 @@ module.exports = new class extends Map {
 	}
 
 	get(key) {
-		super.get(key.toLowerCase());
+		return super.get(key.toLowerCase());
 	}
 
 }();
