@@ -95,6 +95,12 @@ const profanityToAssemble = {
 			censored: 'gd-word',
 		},
 		{ name: 'hell' },
+		{
+			name: 'heck',
+			suffixes: ['ing'],
+			aliases: ['hecc', 'heccing'],
+			censored: 'lesser h-word',
+		},
 		{ name: 'bloody', censored: 'b-word (🅰🅱🆎🅾)' },
 		{ name: 'damn', suffixes: sSuffixes },
 		{
@@ -140,6 +146,26 @@ const profanityToAssemble = {
 			suffixes: ['es', 's'],
 			aliases: ['mulato', 'mulatos', 'mulata', 'mulatas'],
 			censored: 'vanilla and chocolate! 😋 (👩🏿+👩🏻)',
+		},
+		{
+			name: 'spic',
+			suffixes: ['s'],
+			censored: 'spick-and-span!',
+		},
+		{
+			name: 'kike',
+			suffixes: ['s', 'd'],
+			censored: 'k-word (✡)',
+		},
+		{
+			name: 'chink',
+			suffixes: ['s'],
+			censored: 'c-word (🇨🇳)',
+		},
+		{
+			name: 'chinaman',
+			aliases: ['chinamen'],
+			censored: 'c-word (🇨🇳👨🏻)',
 		},
 		{
 			name: 'oriental',
