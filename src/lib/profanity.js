@@ -183,7 +183,7 @@ for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => 
 	assert((len => len >= 1 && len <= 4)(Object.keys(obj).length));
 }
 
-module.exports = new class extends Map {
+class Profanity extends Map {
 
 	constructor() {
 		super();
@@ -214,14 +214,14 @@ module.exports = new class extends Map {
 		this.regex = new RegExp([...this.regexes.values()].map(obj => obj.regexStr).join('|'), 'gi');
 
 		this.words = [...this.regexes.keys()];
+
+		assert(Array.isArray(this.words) && this.words.every(word => typeof word === 'string' && word.length));
 	}
 
 	get(key) {
 		return super.get(key.toLowerCase());
 	}
 
-}();
-({ exports } = module);
+}
 
-assert(Array.isArray(exports.words));
-assert(exports.words.every(word => typeof word === 'string' && word.length));
+module.exports = new Profanity();
