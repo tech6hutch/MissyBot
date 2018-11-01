@@ -1,19 +1,9 @@
 require('./preload');
 
-const { KlasaClient, util: { mergeDefault } } = require('klasa');
+const { KlasaClient, Schema, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
+// const ObjectStore = require('./base/ObjectStore');
 const profanity = require('./profanity');
-
-KlasaClient.defaultClientSchema.add('restart', folder => folder
-	.add('message', 'messagepromise')
-	.add('timestamp', 'bigint', { min: 0 }));
-
-KlasaClient.defaultUserSchema.add('profanity', folder =>
-	profanity.words.forEach(word => folder.add(word, 'integer', {
-		min: 0,
-		default: 0,
-		configurable: false,
-	})));
 
 module.exports = class MissyClient extends KlasaClient {
 
@@ -24,6 +14,33 @@ module.exports = class MissyClient extends KlasaClient {
 			prefixCaseInsensitive: true,
 			commandEditing: true,
 			noPrefixDM: true,
+			// pieceDefaults: {
+			// 	objects: { enabled: true },
+			// },
+			gateways: {
+				clientStorage: {
+					schema: new Schema()
+						// Default
+						.add('userBlacklist', 'user', { array: true, configurable: true })
+						.add('guildBlacklist', 'guild', { array: true, configurable: true })
+						.add('schedules', 'any', { array: true, configurable: false })
+						// Custom
+						.add('restart', folder => folder
+							.add('message', 'messagepromise')
+							.add('timestamp', 'bigint', { min: 0 })),
+				},
+				users: {
+					schema: new Schema()
+						// No defaults
+						// Custom
+						.add('profanity', folder => profanity.words.forEach(word => folder
+							.add(word, 'integer', {
+								min: 0,
+								default: 0,
+								configurable: false,
+							}))),
+				},
+			},
 			console: {
 				stdout: new MissyStdoutStream(),
 				stderr: new MissyStderrStream(),
@@ -37,6 +54,9 @@ module.exports = class MissyClient extends KlasaClient {
 		this.missyID = '398127472564240387';
 		this.missy = null;
 		this.ignoredChannels = new Set();
+
+		// this.objects = new ObjectStore(this);
+		// this.registerStore(this.objects);
 
 		this.once('klasaReady', () => {
 			this.missy = this.users.get(this.missyID);
