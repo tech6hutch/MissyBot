@@ -15,62 +15,25 @@ module.exports = class extends Command {
 		super(...args, {
 			usage: `[list|all|category:str]`,
 			description: '🗣 👀',
-			extendedHelp: [
-				'I see you swearing 👀',
-				'',
-				"Don't worry, tho, I like swearing. I just have too much self control to do it myself 😛",
-			].join('\n'),
+			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
 		});
+
+		this.emojiRegex = /\p{Emoji_Presentation}/u;
 	}
 
 	async run(msg, [category = 'list']) {
 		if (category === 'list' || category === 'all') return this[category](msg);
 
-		// TODO: smartly find the closest category to what the user typed
-		let leastDistance = Infinity;
-		let closestCategory;
-		for (const cat of profanity.categories.keys()) {
-			const distance = strDistance(cat);
-			if (distance < leastDistance) {
-				leastDistance = distance;
-				closestCategory = cat;
-			}
-		}
-
-		this.show(msg, closestCategory);
+		return this.show(msg, this.resolveCategoryFuzzily(category));
 	}
 
 	list(msg) {
 		return msg.sendEmbed(new MessageEmbed()
-			.addField('Categories:', [...profanity.categories.keys()].join('\n')));
+			.addField('Categories:', profanity.categories.join('\n')));
 	}
 
 	all(msg) {
-		const { profanity: userProfanity } = msg.author.settings;
-		let { uncensored } = msg.flags;
-
-		let content;
-		if (uncensored && !msg.channel.nsfw) {
-			if (msg.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
-				content = "The uncensored version is normally restricted to NSFW channels, but since you're a mod I'll assume you know what you're doing.";
-			} else {
-				uncensored = false;
-				content = 'You can only view the uncensored version in a NSFW channel!';
-			}
-		}
-
-		const embed = new MessageEmbed();
-		assert(Object.keys(userProfanity).length ===
-			[...profanity.categories.values()].reduce((total, { length }) => total + length, 0));
-		for (const [category, catWords] of profanity.categories) {
-			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
-			embed.addField(category, catWords.map(word =>
-				`${capitalize(uncensored ? word : profanity.censors.get(word))}: ${userProfanity[word]}`
-			).join('\n'));
-		}
-		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
-
-		return msg.sendEmbed(embed, content);
+		return this.show(msg, undefined);
 	}
 
 	show(msg, category) {
@@ -80,21 +43,50 @@ module.exports = class extends Command {
 		let content;
 		if (uncensored && !msg.channel.nsfw) {
 			if (msg.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
-				content = "The uncensored version is normally restricted to NSFW channels, but since you're a mod I'll assume you know what you're doing.";
+				content = msg.language.get('COMMAND_MYSWEARS_MOD_UNCENSORED');
 			} else {
 				uncensored = false;
-				content = 'You can only view the uncensored version in a NSFW channel!';
+				content = msg.language.get('COMMAND_MYSWEARS_NO_UNCENSORED');
 			}
 		}
 
 		const embed = new MessageEmbed();
-		const catWords = profanity.categories.get(this.category);
-		assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
-		embed.addField(category, catWords.map(word =>
-			`${capitalize(uncensored ? word : profanity.censors.get(word))}: ${userProfanity[word]}`
-		).join('\n'));
+		assert(Object.keys(userProfanity).length ===
+			profanity.byCategory.reduce((total, { length }) => total + length, 0));
+		for (const [cat, catWords] of category ? [[category, profanity.byCategory.get(category)]] : profanity.byCategory) {
+			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
+			embed.addField(cat, catWords.map(word =>
+				`${capitalize(uncensored ? word : profanity.censors.get(word))}: ${userProfanity[word]}`
+			).join('\n'));
+		}
+		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
 
 		return msg.sendEmbed(embed, content);
+	}
+
+	resolveCategoryFuzzily(fuzzyCat) {
+		{
+			// Fuzzy search doesn't work well with single-chars, like emojis
+			const emojiResult = this.emojiRegex.exec(fuzzyCat);
+			if (emojiResult) {
+				const [emoji] = emojiResult;
+				for (const cat of profanity.categories) {
+					if (cat.includes(emoji)) return cat;
+				}
+			}
+		}
+
+		fuzzyCat = fuzzyCat.toLowerCase();
+		let leastDistance = Infinity;
+		let closestCategory;
+		for (const cat of profanity.categories) {
+			const distance = strDistance(fuzzyCat, cat.toLowerCase());
+			if (distance < leastDistance) {
+				leastDistance = distance;
+				closestCategory = cat;
+			}
+		}
+		return closestCategory;
 	}
 
 };
