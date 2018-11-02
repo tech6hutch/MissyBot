@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { Collection } = require('discord.js');
 
 // For brevity, since so many of these words can have the same suffixes
 const sSuffixes = ['s', 'ing', 'ed'];
@@ -150,7 +151,7 @@ const profanityToAssemble = {
 		{
 			name: 'spic',
 			suffixes: ['s'],
-			censored: 'spick-and-span!',
+			censored: 'spick and span!',
 		},
 		{
 			name: 'kike',
@@ -183,18 +184,18 @@ for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => 
 	assert((len => len >= 1 && len <= 4)(Object.keys(obj).length));
 }
 
-class Profanity extends Map {
+class Profanity extends Collection {
 
 	constructor() {
 		super();
 
-		this.regexes = new Map();
-		this.categories = new Map();
-		this.censors = new Map();
+		this.regexes = new Collection();
+		this.byCategory = new Collection();
+		this.censors = new Collection();
 
 		for (const [category, wordObjArray] of Object.entries(profanityToAssemble)) {
 			const catArray = [];
-			this.categories.set(category, catArray);
+			this.byCategory.set(category, catArray);
 			for (const { name, suffixes, aliases = [], censored = `${name[0]}-word` } of wordObjArray) {
 				catArray.push(name);
 				this.set(name, name);
@@ -211,11 +212,21 @@ class Profanity extends Map {
 			}
 		}
 
-		this.regex = new RegExp([...this.regexes.values()].map(obj => obj.regexStr).join('|'), 'gi');
-
-		this.words = [...this.regexes.keys()];
+		this.regex = this._makeRegex();
 
 		assert(Array.isArray(this.words) && this.words.every(word => typeof word === 'string' && word.length));
+	}
+
+	get words() {
+		return this.regexes.keyArray();
+	}
+
+	get categories() {
+		return this.byCategory.keyArray();
+	}
+
+	_makeRegex() {
+		return new RegExp(this.regexes.map(obj => obj.regexStr).join('|'), 'gi');
 	}
 
 	get(key) {
