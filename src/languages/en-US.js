@@ -235,6 +235,7 @@ module.exports = class extends Language {
 				`${user}, make sure you're getting enough sleep, little one!`,
 				`${user}, ${author} says it's bedtime.`,
 				`${user}, get your butt to sleep, little one.`,
+				`Please sleep buttercup ${user}`,
 			],
 			COMMAND_SLEEP_SELF: [
 				"But I'm a robot, I don't need to sleep ;-;",
