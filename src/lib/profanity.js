@@ -69,7 +69,7 @@ const profanityToAssemble = {
 		{
 			name: 'bastard',
 			suffixes: ['s'],
-			censored: '👶🏻 without 💒',
+			censored: '👶🏽 without 💒',
 		},
 		{
 			name: 'slut',
