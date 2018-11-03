@@ -10,50 +10,6 @@ const esErSuffixes = [...esSuffixes, 'ers?'];
  * @type {Object<string, ({ name: string, suffixes?: string[], aliases?: string[], censored?: string })[]>}
  */
 const profanityToAssemble = {
-	'Excrement 💩': [
-		{
-			name: 'shit',
-			suffixes: ['s', 't?ers?', 't?ing', 't?ed'],
-			aliases: ['shat', 'shite'],
-		},
-		{ name: 'piss', suffixes: esErSuffixes },
-		{ name: 'crap', suffixes: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
-	],
-	'Body Parts 👤': [
-		{ name: 'cunt', suffixes: sSuffixes },
-		{
-			name: 'cock',
-			suffixes: sSuffixes,
-			censored: 'male c-word',
-		},
-		{ name: 'dick', suffixes: sSuffixes },
-		{
-			name: 'pussy',
-			suffixes: sSuffixes,
-			aliases: ['pussies', 'pussied'],
-		},
-		{
-			name: 'bollock',
-			suffixes: ['s'],
-			censored: 'b-word (🥜)',
-		},
-		{ name: 'ass', suffixes: esSuffixes },
-		{
-			name: 'arse',
-			suffixes: esSuffixes,
-			censored: 'lesser a-word',
-		},
-		{
-			name: 'asshole',
-			suffixes: ['s'],
-			censored: 'a-hole',
-		},
-		{
-			name: 'arsehole',
-			suffixes: ['s'],
-			censored: 'lesser a-hole',
-		},
-	],
 	'Insults 🙊': [
 		{
 			name: 'bitch',
@@ -181,6 +137,50 @@ const profanityToAssemble = {
 			suffixes: ['s'],
 			censored: 'people from the Orient 🌏',
 		},
+	],
+	'Body Parts 👤': [
+		{ name: 'cunt', suffixes: sSuffixes },
+		{
+			name: 'cock',
+			suffixes: sSuffixes,
+			censored: 'male c-word',
+		},
+		{ name: 'dick', suffixes: sSuffixes },
+		{
+			name: 'pussy',
+			suffixes: sSuffixes,
+			aliases: ['pussies', 'pussied'],
+		},
+		{
+			name: 'bollock',
+			suffixes: ['s'],
+			censored: 'b-word (🥜)',
+		},
+		{ name: 'ass', suffixes: esSuffixes },
+		{
+			name: 'arse',
+			suffixes: esSuffixes,
+			censored: 'lesser a-word',
+		},
+		{
+			name: 'asshole',
+			suffixes: ['s'],
+			censored: 'a-hole',
+		},
+		{
+			name: 'arsehole',
+			suffixes: ['s'],
+			censored: 'lesser a-hole',
+		},
+	],
+	'Excrement 💩': [
+		{
+			name: 'shit',
+			suffixes: ['s', 't?ers?', 't?ing', 't?ed'],
+			aliases: ['shat', 'shite'],
+		},
+		{ name: 'piss', suffixes: esErSuffixes },
+		{ name: 'crap', suffixes: ['s', 'p?ers?', 'p?ing', 'p?ed'] },
 	],
 };
 for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => arrays.concat(catArr))) {
