@@ -42,6 +42,11 @@ const profanityToAssemble = {
 	'Sexual 🔞': [
 		{ name: 'fuck', suffixes: sErSuffixes },
 		{
+			name: 'motherfuck',
+			suffixes: sErSuffixes,
+			censored: 'mf-word',
+		},
+		{
 			name: 'bugger',
 			suffixes: sSuffixes,
 			censored: 'b-word (🔞⛔🏞)',
@@ -150,6 +155,12 @@ const profanityToAssemble = {
 			name: 'pussy',
 			suffixes: sSuffixes,
 			aliases: ['pussies', 'pussied'],
+			censored: '🐱',
+		},
+		{
+			name: 'minge',
+			suffixes: ['s'],
+			censored: 'British 🐱',
 		},
 		{
 			name: 'bollock',
