@@ -1,13 +1,84 @@
 const assert = require('assert');
 const strDistance = require('js-levenshtein');
 const { MessageEmbed, Permissions } = require('discord.js');
-const { Command } = require('klasa');
+const { Command, ReactionHandler } = require('klasa');
 const profanity = require('../../lib/profanity');
 
-const firstLetterOrPart = /^(?:([a-z])+-|([a-z]))/;
-const capitalize = str => str.replace(firstLetterOrPart, chars => chars.toUpperCase());
-const substringCount = regex => str => (str.value.match(regex) || []).length;
-const countNewlines = substringCount(/\n/g);
+const emojiRegex = /\p{Emoji_Presentation}/u;
+const capitalize = (firstLetterOrPart =>
+	str => str.replace(firstLetterOrPart, chars => chars.toUpperCase())
+)(/^(?:([a-z])+-|([a-z]))/);
+
+class ProfanityDisplay {
+
+	constructor({ user, censor, content = '', template = new MessageEmbed() }) {
+		// To make sure I don't derp and mutate the template
+		Object.freeze(template);
+		for (const key of Object.keys(template)) {
+			if (typeof template[key] === 'object') Object.freeze(template[key]);
+		}
+
+		this.user = user;
+		this.content = content;
+
+		const { profanity: userProfanity } = user.settings;
+
+		this.infoPage = new MessageEmbed(template)
+			.setTitle('Your Swears')
+			.setDescription('Use the reactions to view a particular category.');
+		for (const [cat, catWords] of profanity.byCategory) {
+			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
+			this.infoPage.addField(cat, [
+				`Words: ${catWords.length}`,
+				`Your swears: ${catWords.reduce((sum, word) => sum + userProfanity[word], 0)}`,
+			].join('\n'), true);
+		}
+
+		this.pages = profanity.byCategory.reduce((pages, catWords, cat) => {
+			pages[cat] = new MessageEmbed(template)
+				.setTitle(cat)
+				.setDescription(catWords.map(word =>
+					`${capitalize(censor ? profanity.censors.get(word) : word)}: ${userProfanity[word]}`
+				).join('\n'));
+			return pages;
+		}, {});
+
+		this.emojis = profanity.byCategory.reduce((emojis, _, cat) => {
+			const emoji = emojiRegex.exec(cat);
+			emojis[cat] = emoji ? emoji[0] : '❓';
+			return emojis;
+		}, {
+			info: 'ℹ',
+			stop: '⏹',
+		});
+	}
+
+	async run(msg) {
+		const emojis = Object.values(this.emojis);
+		return new ProfanityReactionHandler(
+			await (msg.editable ? msg.edit('', { embed: this.infoPage }) : msg.channel.send(this.infoPage)),
+			(reaction, user) => emojis.includes(reaction.emoji.name) && user === this.user,
+			{},
+			this,
+			emojis
+		);
+	}
+
+}
+
+class ProfanityReactionHandler extends ReactionHandler {
+
+	constructor(message, filter, options, display, emojis) {
+		super(message, filter, options, display, emojis);
+
+		for (const cat of profanity.categories) {
+			this[cat] = () => {
+				this.message.edit(this.display.pages[cat]);
+			};
+		}
+	}
+
+}
 
 module.exports = class extends Command {
 
@@ -17,19 +88,24 @@ module.exports = class extends Command {
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
 		});
-
-		this.emojiRegex = /\p{Emoji_Presentation}/u;
 	}
 
 	async run(msg, [category = 'list']) {
 		if (category === 'list' || category === 'all') return this[category](msg);
 
-		return this.show(msg, this.resolveCategoryFuzzily(category));
+		return this.show(msg, this.constructor.resolveCategoryFuzzily(category));
 	}
 
-	list(msg) {
-		return msg.sendEmbed(new MessageEmbed()
-			.addField('Categories:', profanity.categories.join('\n')));
+	async list(msg) {
+		const display = new ProfanityDisplay({
+			user: msg.author,
+			...this.constructor.determineCensorshipAndContent(msg),
+			template: new MessageEmbed()
+				.setColor(0xFFFFFF)
+				.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.avatarURL()),
+		});
+
+		return display.run(await msg.send('Loading swears...'));
 	}
 
 	all(msg) {
@@ -38,6 +114,22 @@ module.exports = class extends Command {
 
 	show(msg, category) {
 		const { profanity: userProfanity } = msg.author.settings;
+		const { censor, content } = this.constructor.determineCensorshipAndContent(msg);
+
+		const embed = new MessageEmbed();
+		assert(Object.keys(userProfanity).length ===
+			profanity.byCategory.reduce((total, { length }) => total + length, 0));
+		for (const [cat, catWords] of category ? [[category, profanity.byCategory.get(category)]] : profanity.byCategory) {
+			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
+			embed.addField(cat, catWords.map(word =>
+				`${capitalize(censor ? profanity.censors.get(word) : word)}: ${userProfanity[word]}`
+			).join('\n'));
+		}
+
+		return msg.sendEmbed(embed, content);
+	}
+
+	static determineCensorshipAndContent(msg) {
 		let { uncensored } = msg.flags;
 
 		let content;
@@ -50,29 +142,16 @@ module.exports = class extends Command {
 			}
 		}
 
-		const embed = new MessageEmbed();
-		assert(Object.keys(userProfanity).length ===
-			profanity.byCategory.reduce((total, { length }) => total + length, 0));
-		for (const [cat, catWords] of category ? [[category, profanity.byCategory.get(category)]] : profanity.byCategory) {
-			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
-			embed.addField(cat, catWords.map(word =>
-				`${capitalize(uncensored ? word : profanity.censors.get(word))}: ${userProfanity[word]}`
-			).join('\n'));
-		}
-		embed.fields.sort((a, b) => countNewlines(a) - countNewlines(b));
-
-		return msg.sendEmbed(embed, content);
+		return { censor: !uncensored, content };
 	}
 
-	resolveCategoryFuzzily(fuzzyCat) {
-		{
-			// Fuzzy search doesn't work well with single-chars, like emojis
-			const emojiResult = this.emojiRegex.exec(fuzzyCat);
-			if (emojiResult) {
-				const [emoji] = emojiResult;
-				for (const cat of profanity.categories) {
-					if (cat.includes(emoji)) return cat;
-				}
+	static resolveCategoryFuzzily(fuzzyCat) {
+		// Fuzzy search doesn't work well with single-chars, like emojis, which are unique enough to select by.
+		const emojiResult = emojiRegex.exec(fuzzyCat);
+		if (emojiResult) {
+			const [emoji] = emojiResult;
+			for (const cat of profanity.categories) {
+				if (cat.includes(emoji)) return cat;
 			}
 		}
 
@@ -86,6 +165,7 @@ module.exports = class extends Command {
 				closestCategory = cat;
 			}
 		}
+
 		return closestCategory;
 	}
 
