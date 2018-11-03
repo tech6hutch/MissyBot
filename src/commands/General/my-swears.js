@@ -1,7 +1,8 @@
 const assert = require('assert');
 const strDistance = require('js-levenshtein');
 const { MessageEmbed, Permissions } = require('discord.js');
-const { Command, ReactionHandler } = require('klasa');
+const { Command } = require('klasa');
+const ReactionHandler = require('../../lib/util/ReactionHandler');
 const profanity = require('../../lib/profanity');
 
 const emojiRegex = /\p{Emoji_Presentation}/u;
@@ -23,17 +24,6 @@ class ProfanityDisplay {
 
 		const { profanity: userProfanity } = user.settings;
 
-		this.infoPage = new MessageEmbed(template)
-			.setTitle('Your Swears')
-			.setDescription('Use the reactions to view a particular category.');
-		for (const [cat, catWords] of profanity.byCategory) {
-			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
-			this.infoPage.addField(cat, [
-				`Words: ${catWords.length}`,
-				`Your swears: ${catWords.reduce((sum, word) => sum + userProfanity[word], 0)}`,
-			].join('\n'), true);
-		}
-
 		this.pages = profanity.byCategory.reduce((pages, catWords, cat) => {
 			pages[cat] = new MessageEmbed(template)
 				.setTitle(cat)
@@ -41,7 +31,29 @@ class ProfanityDisplay {
 					`${capitalize(censor ? profanity.censors.get(word) : word)}: ${userProfanity[word]}`
 				).join('\n'));
 			return pages;
-		}, {});
+		}, {
+			info: profanity.byCategory.reduce(
+				(infoPage, catWords, cat) => infoPage
+					.addField(cat, [
+						`Words: ${catWords.length}`,
+						`Your swears: ${catWords.reduce((sum, word) => sum + userProfanity[word], 0)}`,
+					].join('\n'), true),
+				new MessageEmbed(template)
+					.setTitle('Your Swears')
+					.setDescription('Use the reactions to view a particular category.')
+					.addField('Total', [
+						`Words: ${profanity.byCategory.reduce((sum, catWords) => sum + catWords.length, 0)}`,
+						`Your swears: ${profanity.byCategory.reduce(
+							(totalSum, catWords) =>
+								catWords.reduce(
+									(sum, word) => sum + userProfanity[word],
+									totalSum
+								),
+							0
+						)}`,
+					].join('\n'))
+			),
+		});
 
 		this.emojis = profanity.byCategory.reduce((emojis, _, cat) => {
 			const emoji = emojiRegex.exec(cat);
@@ -56,11 +68,10 @@ class ProfanityDisplay {
 	async run(msg) {
 		const emojis = Object.values(this.emojis);
 		return new ProfanityReactionHandler(
-			await (msg.editable ? msg.edit('', { embed: this.infoPage }) : msg.channel.send(this.infoPage)),
+			await msg.send('', { embed: this.pages.info }),
 			(reaction, user) => emojis.includes(reaction.emoji.name) && user === this.user,
-			{},
-			this,
-			emojis
+			{ time: 60000 },
+			this
 		);
 	}
 
