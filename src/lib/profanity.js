@@ -55,14 +55,22 @@ const profanityToAssemble = {
 		},
 	],
 	'Insults 🙊': [
-		{ name: 'bitch', suffixes: esSuffixes },
+		{
+			name: 'bitch',
+			suffixes: esSuffixes,
+			censored: 'b-word (🐶)',
+		},
 		{
 			name: 'fag',
 			suffixes: ['s', 'g?ing', 'ged'],
 			aliases: ['faggot', 'faggots'],
 			censored: 'gay f-word 🏳️‍🌈',
 		},
-		{ name: 'bastard', suffixes: ['s'] },
+		{
+			name: 'bastard',
+			suffixes: ['s'],
+			censored: '👶🏻 without 💒',
+		},
 		{
 			name: 'slut',
 			suffixes: ['s'],
