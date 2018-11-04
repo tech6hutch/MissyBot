@@ -157,6 +157,7 @@ module.exports = class extends Language {
 			COMMAND_LOAD_ERROR: (type, name, error) => `❌ Failed to load ${type}: ${name}. Reason:${util.codeBlock('js', error)}`,
 			COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
 			COMMAND_PING: ping => ({ embed: {
+				color: this.client.COLORS.BLUE,
 				fields: [{
 					name: `${DISCORD_EMOJI} Ping:`,
 					value: 'Pinging Discord...',
