@@ -2,6 +2,7 @@ const assert = require('assert');
 const strDistance = require('js-levenshtein');
 const { MessageEmbed, Permissions } = require('discord.js');
 const { Command } = require('klasa');
+const IconifiedDisplay = require('../../lib/util/IconifiedDisplay');
 const ReactionHandler = require('../../lib/util/ReactionHandler');
 const profanity = require('../../lib/profanity');
 
@@ -10,88 +11,99 @@ const capitalize = (firstLetterOrPart =>
 	str => str.replace(firstLetterOrPart, chars => chars.toUpperCase())
 )(/^(?:([a-z])+-|([a-z]))/);
 
-class ProfanityDisplay {
+class ProfanityDisplay extends IconifiedDisplay {
 
-	constructor({ user, censor, content = '', template = new MessageEmbed() }) {
-		// To make sure I don't derp and mutate the template
+	constructor(msg) {
+		const { profanity: userProfanity } = msg.author.settings;
+		const { censor, content = '' } = MySwearsCmd.determineCensorshipAndContent(msg);
+		const template = new MessageEmbed()
+			.setColor(msg.client.COLORS[censor ? 'WHITE' : 'BLACK'])
+			.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.avatarURL());
+
+		// To make sure I don't derp and mutate the template BEFORE super() gets called
 		Object.freeze(template);
 		for (const key of Object.keys(template)) {
 			if (typeof template[key] === 'object') Object.freeze(template[key]);
 		}
 
-		this.user = user;
-		this.content = content;
+		super({
+			template,
+			user: msg.author,
+			msgContent: content,
 
-		const { profanity: userProfanity } = user.settings;
-
-		this.pages = profanity.byCategory.reduce((pages, catWords, cat) => {
-			pages[cat] = new MessageEmbed(template)
-				.setTitle(cat)
-				.setDescription(catWords.map(word =>
-					`${capitalize(censor ? profanity.censors.get(word) : word)}: ${userProfanity[word]}`
-				).join('\n'));
-			return pages;
-		}, {
-			info: profanity.byCategory.reduce(
-				(infoPage, catWords, cat) => infoPage
-					.addField(cat, [
-						`Words: ${catWords.length}`,
-						`Your swears: ${catWords.reduce((sum, word) => sum + userProfanity[word], 0)}`,
-					].join('\n'), true),
-				new MessageEmbed(template)
+			infoPage: (() => {
+				const infoPage = new MessageEmbed(template)
 					.setTitle('Your Swears')
-					.setDescription('Use the reactions to view a particular category.')
-					.addField('Total', [
-						`Words: ${profanity.byCategory.reduce((sum, catWords) => sum + catWords.length, 0)}`,
-						`Your swears: ${profanity.byCategory.reduce(
-							(totalSum, catWords) =>
-								catWords.reduce(
-									(sum, word) => sum + userProfanity[word],
-									totalSum
-								),
-							0
-						)}`,
-					].join('\n'))
-			),
-		});
+					.setDescription('Use the reactions to view a particular category.');
 
-		this.emojis = profanity.byCategory.reduce((emojis, _, cat) => {
-			const emoji = emojiRegex.exec(cat);
-			emojis[cat] = emoji ? emoji[0] : '❓';
-			return emojis;
-		}, {
-			info: 'ℹ',
-			stop: '⏹',
+				let totalWords = 0;
+				let totalSwears = 0;
+
+				for (const [cat, catWords] of profanity.byCategory) {
+					const numWords = catWords.length;
+					const numSwears = catWords.reduce((sum, word) => sum + userProfanity[word], 0);
+					infoPage.addField(cat, [
+						`Words: ${numWords}`,
+						`Your swears: ${numSwears}`,
+					].join('\n'), true);
+					totalWords += numWords;
+					totalSwears += numSwears;
+				}
+
+				infoPage.addField('Total', [
+					`Words: ${totalWords}`,
+					`Your swears: ${totalSwears}`,
+				].join('\n'));
+
+				// Move "Total" field to the beginning
+				infoPage.fields.unshift(infoPage.fields.pop());
+
+				return infoPage;
+			})(),
+
+			pages: profanity.byCategory.reduce((pages, catWords, cat) => {
+				pages[cat] = new MessageEmbed(template)
+					.setTitle(cat)
+					.setDescription(catWords.map(word =>
+						`${capitalize(censor ? profanity.censors.get(word) : word)}: ${userProfanity[word]}`
+					).join('\n'));
+				return pages;
+			}, {}),
+
+			emojis: profanity.byCategory.reduce((emojis, _, cat) => {
+				const emoji = emojiRegex.exec(cat);
+				emojis[cat] = emoji ? emoji[0] : '❓';
+				return emojis;
+			}, {})
 		});
 	}
 
-	async run(msg) {
-		const emojis = Object.values(this.emojis);
-		return new ProfanityReactionHandler(
-			await msg.send('', { embed: this.pages.info }),
-			(reaction, user) => emojis.includes(reaction.emoji.name) && user === this.user,
-			{ time: 60000 },
-			this
-		);
+	run(msg) {
+		return super.run(msg, {
+			time: 60000,
+			spamLimit: {
+				warn: 3,
+				stop: 5,
+			},
+		});
 	}
 
 }
 
 class ProfanityReactionHandler extends ReactionHandler {
 
-	constructor(message, filter, options, display, emojis) {
-		super(message, filter, options, display, emojis);
-
+	constructor(...args) {
+		super(...args);
 		for (const cat of profanity.categories) {
-			this[cat] = () => {
-				this.message.edit(this.display.pages[cat]);
-			};
+			this[cat] = () => this.message.edit(this.display.pages[cat]);
 		}
 	}
 
 }
 
-module.exports = class extends Command {
+ProfanityDisplay.ReactionHandler = ProfanityReactionHandler;
+
+class MySwearsCmd extends Command {
 
 	constructor(...args) {
 		super(...args, {
@@ -108,15 +120,11 @@ module.exports = class extends Command {
 	}
 
 	async list(msg) {
-		const display = new ProfanityDisplay({
-			user: msg.author,
-			...this.constructor.determineCensorshipAndContent(msg),
-			template: new MessageEmbed()
-				.setColor(0xFFFFFF)
-				.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.avatarURL()),
-		});
+		const display = new ProfanityDisplay(msg);
 
-		return display.run(await msg.send('Loading swears...'));
+		const reactionHandler = await display.run(await msg.send('Loading swears...'));
+		assert(reactionHandler instanceof ProfanityReactionHandler);
+		return reactionHandler;
 	}
 
 	all(msg) {
@@ -180,4 +188,6 @@ module.exports = class extends Command {
 		return closestCategory;
 	}
 
-};
+}
+
+module.exports = MySwearsCmd;

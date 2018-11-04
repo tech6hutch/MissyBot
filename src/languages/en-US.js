@@ -90,6 +90,9 @@ module.exports = class extends Language {
 			RESOLVER_MINMAX_MAX: (name, max, suffix) => `${name} must be less than ${max}${suffix}.`,
 
 			REACTIONHANDLER_PROMPT: 'Which page would you like to jump to?',
+			// I added this one:
+			REACTIONHANDLER_SPAM_WARN: "Please slow down, I can't keep up @_@",
+			REACTIONHANDLER_SPAM_STOP: 'Stop >_<',
 			COMMANDMESSAGE_MISSING: 'Missing one or more required arguments after end of input.',
 			COMMANDMESSAGE_MISSING_REQUIRED: (name) => `You're missing the "${name}" parameter.`,
 			COMMANDMESSAGE_MISSING_OPTIONALS: (possibles) => `Missing a required option: (${possibles})`,

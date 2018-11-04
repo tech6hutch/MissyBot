@@ -1,6 +1,7 @@
 // Based on Klasa's, but modified to be more generic. Original is: Copyright (c) 2017-2018 dirigeants. All rights reserved. MIT license.
 
 const { ReactionCollector } = require('discord.js');
+const { util: { sleep } } = require('klasa');
 
 /**
  * My ReactionHandler, for handling reaction input for rich embed displays/menus
@@ -21,6 +22,7 @@ class ReactionHandler extends ReactionCollector {
 	 * @property {number} [maxEmojis] The maximum number of emojis to collect
 	 * @property {number} [maxUsers] The maximum number of users to react
 	 * @property {number} [time] The maximum amount of time before this RichMenu should expire
+	 * @property {{warn: number, stop: number}} [spamLimit=Infinity] The number of page changes to be pending before warning or stopping
 	 */
 
 	/**
@@ -58,6 +60,18 @@ class ReactionHandler extends ReactionCollector {
 		 */
 		this.reactionsDone = false;
 
+		/**
+		 * Used to ignore reactions when users spam them
+		 * @type {Array<object>}
+		 */
+		this.collectionQueue = [];
+
+		/**
+		 * The number of page changes to be pending before warning or stopping
+		 * @type {{warn: number, stop: number}}
+		 */
+		this.spamLimit = options.spamLimit || { warn: Infinity, stop: Infinity };
+
 		if (emojis.length) this._queueEmojiReactions(emojis.slice());
 		else return this.stop();
 
@@ -76,8 +90,40 @@ class ReactionHandler extends ReactionCollector {
 	 * @returns {void}
 	 */
 	onCollect(reaction, user) {
-		reaction.users.remove(user);
-		this[this.methodMap.get(reaction.emoji.name)](user);
+		const { collectionQueue: collQ } = this;
+
+		if (collQ.length >= this.spamLimit.warn && reaction.emoji.name !== '⏹') {
+			if (collQ.length >= this.spamLimit.stop) {
+				this.message.channel.sendLocale('REACTIONHANDLER_SPAM_STOP');
+				this.stop();
+				return;
+			}
+
+			const reactionPromise = reaction.users.remove(user);
+			if (collQ.length === this.spamLimit.warn) {
+				this.message.channel.sendLocale('REACTIONHANDLER_SPAM_WARN');
+			}
+			const obj = { reactionPromise };
+			Promise.all([reactionPromise, sleep(2000)])
+				.then(() => {
+					const index = collQ.findIndex(queued => queued === obj);
+					if (index > -1) collQ.splice(index, 1);
+					else this.client.console.error('I guess this was already removed?');
+				});
+			collQ.push(obj);
+			return;
+		}
+
+		const reactionPromise = reaction.users.remove(user);
+		const methodPromise = Promise.resolve(this[this.methodMap.get(reaction.emoji.name)](user));
+		const obj = { reactionPromise, methodPromise };
+		Promise.all([reactionPromise, methodPromise, sleep(1000)])
+			.then(() => {
+				const index = collQ.findIndex(queued => queued === obj);
+				if (index > -1) collQ.splice(index, 1);
+				else this.client.console.error('I guess this was already removed?');
+			});
+		collQ.push(obj);
 	}
 
 	/**
@@ -90,10 +136,10 @@ class ReactionHandler extends ReactionCollector {
 
 	/**
 	 * The action to take when the "info" emoji is reacted
-	 * @returns {void}
+	 * @returns {Promise<KlasaMessage>}
 	 */
 	info() {
-		this.message.edit(this.display.pages.info);
+		return this.message.edit(this.display.pages.info);
 	}
 
 	/**
