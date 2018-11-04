@@ -56,6 +56,11 @@ module.exports = class MissyClient extends KlasaClient {
 
 		super(options);
 
+		this.COLORS = {
+			WHITE: 0xFFFFFF,
+			BLACK: 0x000000,
+			BLUE: 0x0000FF,
+		};
 		this.missyID = '398127472564240387';
 		this.missy = null;
 		this.ignoredChannels = new Set();
