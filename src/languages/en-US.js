@@ -156,8 +156,7 @@ module.exports = class extends Language {
 			COMMAND_LOAD_FAIL: 'The file does not exist, or an error occurred while loading your file. Please check your console.',
 			COMMAND_LOAD_ERROR: (type, name, error) => `❌ Failed to load ${type}: ${name}. Reason:${util.codeBlock('js', error)}`,
 			COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
-			COMMAND_PING: ping => ({ embed: {
-				color: this.client.COLORS.BLUE,
+			COMMAND_PING: ping => ({
 				fields: [{
 					name: `${DISCORD_EMOJI} Ping:`,
 					value: 'Pinging Discord...',
@@ -168,7 +167,7 @@ module.exports = class extends Language {
 				footer: {
 					text: "Bots have faster heartbeats than humans, so don't worry if mine is really high!",
 				},
-			} }),
+			}),
 			COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
 			COMMAND_PINGPONG: (diff, embed) => {
 				embed.fields[0].value = `${diff} ms`;
