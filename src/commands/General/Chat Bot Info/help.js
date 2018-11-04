@@ -38,11 +38,15 @@ module.exports = class extends Command {
 
 		const help = await this.buildHelp(msg);
 		const categories = Object.keys(help);
-		const helpMessage = msg.language.get('COMMAND_HELP_PREFIX_NOTE', msg.guildSettings.prefix);
+		const helpMessage = [
+			...msg.language.get('COMMAND_HELP_PREFIX_NOTE', msg.guildSettings.prefix),
+		];
 		for (let cat = 0; cat < categories.length; cat++) {
 			helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');
 			const subCategories = Object.keys(help[categories[cat]]);
-			for (let subCat = 0; subCat < subCategories.length; subCat++) helpMessage.push(`= ${subCategories[subCat]} =`, `${help[categories[cat]][subCategories[subCat]].join('\n')}\n`);
+			for (let subCat = 0; subCat < subCategories.length; subCat++) {
+				helpMessage.push(`= ${subCategories[subCat]} =`, `${help[categories[cat]][subCategories[subCat]].join('\n')}\n`);
+			}
 			helpMessage.push('```', '\u200b');
 		}
 

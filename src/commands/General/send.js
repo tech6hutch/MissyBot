@@ -7,7 +7,7 @@ module.exports = class extends Command {
 			description: 'Ask me to send something.',
 			usage: '<what:str> [to] [whom:mention]',
 			usageDelim: ' ',
-			extendedHelp: "If you don't mention anyone, I'll just send it here.",
+			extendedHelp: "If you don't mention anyone, I'll just send it here, or to you.",
 		});
 
 		this.customizeResponse('what', "You didn't tell me what to send!");
@@ -19,9 +19,9 @@ module.exports = class extends Command {
 		switch (what) {
 			case 'help': {
 				const helpCmd = this.client.commands.get('help');
-				return msg === whom ?
+				return local ?
 					helpCmd.sendHelp(msg) :
-					helpCmd.sendHelp(msg, null, undefined, {
+					helpCmd.sendHelp(msg, null, whom, {
 						doneText: '📥 | I sent them help about my commands.',
 						failText: '❌ | I couldn\'t DM them :/',
 					});
