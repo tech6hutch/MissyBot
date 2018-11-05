@@ -14,7 +14,7 @@ module.exports = class extends Extendable {
 	 * @param {*[]} elArgs Any arguments to pass to the random result
 	 * @returns {string|Function}
 	 */
-	getRandom(term, args, elArgs) {
+	getRandom(term, args = [], elArgs = []) {
 		const value = arrayRandom(this.get(term, ...args));
 		return typeof value === 'function' ? value(...elArgs) : value;
 	}
