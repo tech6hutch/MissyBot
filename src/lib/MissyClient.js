@@ -62,14 +62,13 @@ module.exports = class MissyClient extends KlasaClient {
 			BLUE: 0x0000FF,
 		};
 		this.missyID = '398127472564240387';
-		this.missy = null;
 		this.ignoredChannels = new Set();
 
 		// this.objects = new ObjectStore(this);
 		// this.registerStore(this.objects);
 
-		this.once('klasaReady', () => {
-			this.missy = this.users.get(this.missyID);
+		this.once('ready', () => {
+			this.users.fetch(this.missyID);
 
 			// Channel setup for console log and error
 			const { stdout, stderr } = options.console;
@@ -80,6 +79,10 @@ module.exports = class MissyClient extends KlasaClient {
 			if (errorChannel) stderr.setChannel(errorChannel);
 			else this.console.error("Couldn't find error Discord channel");
 		});
+	}
+
+	get missy() {
+		return this.users.get(this.missyID);
 	}
 
 };
