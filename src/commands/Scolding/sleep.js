@@ -6,7 +6,7 @@ module.exports = class extends Command {
 	constructor(...args) {
 		super(...args, {
 			aliases: ['bedtime'],
-			description: 'Tell someone to get their butt to bed!',
+			description: lang => lang.get('COMMAND_SLEEP_DESCRIPTION'),
 			usage: '[who:mention]',
 		});
 	}

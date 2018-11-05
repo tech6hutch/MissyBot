@@ -252,6 +252,7 @@ module.exports = class extends Language {
 
 			// Custom commands
 			COMMAND_PREFIX_DESCRIPTION: 'See the prefixes you can use on this server.',
+			COMMAND_SLEEP_DESCRIPTION: 'Tell someone to get their butt to bed!',
 			COMMAND_SLEEP: (user, author) => [
 				`Go to sleep, ${user}!`,
 				`${user}, make sure you're getting enough sleep, little one!`,
