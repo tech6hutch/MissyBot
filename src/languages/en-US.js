@@ -266,6 +266,7 @@ module.exports = class extends Language {
 				msg => this.client.commands.get('no u').run(msg, []),
 			],
 			COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
+			COMMAND_EAT_DESCRIPTION: 'Tell someone to eat.',
 			COMMAND_EAT: (something, user, author) => [
 				`Eat ${something}, ${user}!`,
 				`${user}, make sure you're eating enough, little one!`,

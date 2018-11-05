@@ -4,7 +4,7 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			description: 'Tell someone to eat.',
+			description: lang => lang.get('COMMAND_EAT_DESCRIPTION'),
 			usage: '[breakfast|lunch|dinner|supper|snack|something] [who:mention]',
 			usageDelim: ' ',
 		});
