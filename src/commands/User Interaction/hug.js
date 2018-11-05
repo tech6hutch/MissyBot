@@ -4,7 +4,7 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			description: 'Need a hug? 🙂',
+			description: lang => lang.get('COMMAND_HUG_DESCRIPTION'),
 		});
 	}
 
