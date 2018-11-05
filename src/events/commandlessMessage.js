@@ -5,7 +5,7 @@ class CmdlessMsgEvent extends Event {
 	constructor(...args) {
 		super(...args);
 
-		this.hutch = this.client.owner.id;
+		this.hutch = '224236171838881792';
 		this.kru = '168161111210852352';
 	}
 
