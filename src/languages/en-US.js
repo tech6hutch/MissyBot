@@ -299,6 +299,12 @@ module.exports = class extends Language {
 			COMMAND_SEND_POTATO: 'Sent them a potato 👌',
 			COMMAND_SEND_MARBLES: 'I seem to have lost all of mine @_@',
 			COMMAND_SEND_UNKNOWN: "I don't know how to send that >_<",
+			COMMAND_NOU_EXTENDEDHELP: examples => [
+				"I'm sorry for the cluttered usage.",
+				'Examples:',
+				...examples,
+			],
+			COMMAND_NOU_LOADING_TEXT: 'Rebutting your argument...',
 		};
 	}
 

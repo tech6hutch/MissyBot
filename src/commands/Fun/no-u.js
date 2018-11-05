@@ -10,26 +10,26 @@ module.exports = class extends RandomImageCommand {
 			description: 'no u 🔀',
 			usage: '<u> [infinity]',
 			usageDelim: ' ',
-			extendedHelp: [
-				"I'm sorry for the cluttered usage.",
-				'Examples:',
+			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
 				'Missy, no u',
 				'Missy, no u infinity',
-			].join('\n'),
+			]).join('\n'),
 			// Custom
 			images: [
 				'no-u.png',
 				'no-u-infinity.png',
 			],
 		});
-
-		this.postImageOptions = { loadingText: 'Rebutting your argument...' };
 	}
 
 	async run(msg, [, infinity]) {
-		return postImage(msg,
+		return postImage(
+			msg,
 			this.images.get(`no-u${infinity ? '-infinity' : ''}.png`),
-			this.postImageOptions);
+			{
+				loadingText: msg.language.get('COMMAND_NOU_LOADING_TEXT'),
+			}
+		);
 	}
 
 };
