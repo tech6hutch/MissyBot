@@ -1,30 +1,26 @@
 const { Event } = require('klasa');
-const { arrayRandom } = require('../lib/util/util');
 
 class CmdlessMsgEvent extends Event {
 
 	constructor(...args) {
 		super(...args);
 
-		this.responses = [
-			'Did someone mention me?',
-			'You called?',
-			'Yay! Mentions!',
-		];
+		this.hutch = this.client.owner.id;
+		this.kru = '168161111210852352';
 	}
 
 	async run(msg, prefix) {
 		if (await this.client.inhibitors.get('ignoreNotYou').run(msg)) return undefined;
 
 		if (prefix) {
-			const reply = await msg.awaitMsg('Yes? 👂', 30000);
+			const reply = await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
 			return reply ? this.handlePrefixlessCommand(reply) : undefined;
 		}
 
 		if (msg.mentions.has(this.client.user)) {
-			return msg.send([CmdlessMsgEvent.hutch, CmdlessMsgEvent.kru].includes(msg.author.id) ?
-				'Was it Hutch or Kru this time? XD' :
-				arrayRandom(this.responses));
+			return msg.send([this.hutch, this.kru].includes(msg.author.id) ?
+				msg.language.get('EVENT_COMMANDLESS_MESSAGE_MENTION_HUTCH_KRU') :
+				msg.language.getRandom('EVENT_COMMANDLESS_MESSAGE_MENTION'));
 		}
 
 		return undefined;
@@ -49,8 +45,5 @@ class CmdlessMsgEvent extends Event {
 	}
 
 }
-
-CmdlessMsgEvent.hutch = '224236171838881792';
-CmdlessMsgEvent.kru = '168161111210852352';
 
 module.exports = CmdlessMsgEvent;

@@ -97,13 +97,24 @@ module.exports = class extends Language {
 			COMMANDMESSAGE_MISSING_REQUIRED: (name) => `You're missing the "${name}" parameter.`,
 			COMMANDMESSAGE_MISSING_OPTIONALS: (possibles) => `Missing a required option: (${possibles})`,
 			COMMANDMESSAGE_NOMATCH: (possibles) => `Your option didn't match any of the possibilities: (${possibles})`,
-			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | You have **${time}** seconds to respond to this prompt with a valid argument. Type **"ABORT"** to abort this prompt.`, // eslint-disable-line max-len
-			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** is a repeating argument | You have **${time}** seconds to respond to this prompt with additional valid arguments. Type **"CANCEL"** to cancel this prompt.`, // eslint-disable-line max-len
-			MONITOR_COMMAND_HANDLER_ABORTED: 'Aborted',
 
 			MESSAGE_PROMPT_TIMEOUT: 'The prompt has timed out.',
 
 			// Pieces
+
+			// Custom events
+			EVENT_COMMANDLESS_MESSAGE_LISTEN: 'Yes? 👂',
+			EVENT_COMMANDLESS_MESSAGE_MENTION: [
+				'Did someone mention me?',
+				'You called?',
+				'Yay! Mentions!',
+			],
+			EVENT_COMMANDLESS_MESSAGE_MENTION_HUTCH_KRU: 'Was it Hutch or Kru this time? XD',
+
+			// Monitors
+			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | You have **${time}** seconds to respond to this prompt with a valid argument. Type **"ABORT"** to abort this prompt.`, // eslint-disable-line max-len
+			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** is a repeating argument | You have **${time}** seconds to respond to this prompt with additional valid arguments. Type **"CANCEL"** to cancel this prompt.`, // eslint-disable-line max-len
+			MONITOR_COMMAND_HANDLER_ABORTED: 'Aborted',
 
 			// Inhibitors
 			INHIBITOR_COOLDOWN: (remaining) => `You have just used this command. You can use this command again in ${remaining} second${remaining === 1 ? '' : 's'}.`,
