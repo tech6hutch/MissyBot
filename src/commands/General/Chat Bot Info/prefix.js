@@ -7,7 +7,7 @@ module.exports = class extends Command {
 			aliases: ['prefixes'],
 			runIn: ['text'],
 			guarded: true,
-			description: 'See the prefixes you can use on this server.',
+			description: lang => lang.get('COMMAND_PREFIX_DESCRIPTION'),
 		});
 	}
 

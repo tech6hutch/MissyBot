@@ -251,6 +251,7 @@ module.exports = class extends Language {
 			COMMAND_STATS_DESCRIPTION: 'Provides some details about the bot and stats.',
 
 			// Custom commands
+			COMMAND_PREFIX_DESCRIPTION: 'See the prefixes you can use on this server.',
 			COMMAND_SLEEP: (user, author) => [
 				`Go to sleep, ${user}!`,
 				`${user}, make sure you're getting enough sleep, little one!`,
