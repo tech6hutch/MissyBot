@@ -197,6 +197,8 @@ module.exports = class extends Language {
 			COMMAND_HELP_NO_EXTENDED: 'No extended help available.',
 			COMMAND_HELP_DM: '📥 | No problem! I sent you help about my commands.',
 			COMMAND_HELP_NODM: '❌ | I couldn\'t DM you :/ If you enable DMs from me, I can send you command help.',
+			COMMAND_HELP_OTHER_DM: '📥 | I sent them help about my commands.',
+			COMMAND_HELP_OTHER_NODM: '❌ | I couldn\'t DM them :/',
 			COMMAND_HELP_PREFIX_NOTE: guildPrefixes => {
 				const { noGuildOnlyPrefixes, guildDisabledAPrefix, guildPrefixList } = this.analyzeGuildPrefixes(guildPrefixes);
 
@@ -291,6 +293,12 @@ module.exports = class extends Language {
 			].join('\n'),
 			COMMAND_MYSWEARS_NO_UNCENSORED: 'You can only view the uncensored version in a NSFW channel!',
 			COMMAND_MYSWEARS_MOD_UNCENSORED: "The uncensored version is normally restricted to NSFW channels, but since you're a mod I'll assume you know what you're doing.",
+			COMMAND_SEND_DESCRIPTION: 'Ask me to send something.',
+			COMMAND_SEND_EXTENDEDHELP: "If you don't mention anyone, I'll just send it here, or to you.",
+			COMMAND_SEND_MISSING_WHAT: "You didn't tell me what to send!",
+			COMMAND_SEND_POTATO: 'Sent them a potato 👌',
+			COMMAND_SEND_MARBLES: 'I seem to have lost all of mine @_@',
+			COMMAND_SEND_UNKNOWN: "I don't know how to send that >_<",
 		};
 	}
 

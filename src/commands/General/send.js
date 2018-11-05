@@ -4,13 +4,13 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			description: 'Ask me to send something.',
+			description: lang => lang.get('COMMAND_SEND_DESCRIPTION'),
 			usage: '<what:str> [to] [whom:mention]',
 			usageDelim: ' ',
-			extendedHelp: "If you don't mention anyone, I'll just send it here, or to you.",
+			extendedHelp: lang => lang.get('COMMAND_SEND_EXTENDEDHELP'),
 		});
 
-		this.customizeResponse('what', "You didn't tell me what to send!");
+		this.customizeResponse('what', msg => msg.sendLocale('COMMAND_SEND_MISSING_WHAT'));
 	}
 
 	async run(msg, [what, , whom = msg]) {
@@ -22,8 +22,8 @@ module.exports = class extends Command {
 				return local ?
 					helpCmd.sendHelp(msg) :
 					helpCmd.sendHelp(msg, null, whom, {
-						doneText: '📥 | I sent them help about my commands.',
-						failText: '❌ | I couldn\'t DM them :/',
+						doneText: msg.language.get('COMMAND_HELP_OTHER_DM'),
+						failText: msg.language.get('COMMAND_HELP_OTHER_NODM'),
 					});
 			}
 
@@ -35,13 +35,12 @@ module.exports = class extends Command {
 
 			case 'potato': {
 				const potatoP = this.client.commands.get('potato').run(whom);
-				return local ? potatoP : msg.send('Sent them a potato 👌');
+				return local ? potatoP : msg.sendLocale('COMMAND_SEND_POTATO');
 			}
 
-			case 'marbles': return msg.send('I seem to have lost all of mine @_@');
+			case 'marbles': return msg.sendLocale('COMMAND_SEND_MARBLES');
 
-			default:
-				return msg.send("I don't know how to send that >_<");
+			default: return msg.sendLocale('COMMAND_SEND_UNKNOWN');
 		}
 	}
 
