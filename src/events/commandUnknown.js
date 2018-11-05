@@ -1,18 +1,11 @@
 const { join } = require('path');
 const { Event } = require('klasa');
-const { capitalizeFirstLetter, arrayRandom, postImage } = require('../lib/util/util');
+const { capitalizeFirstLetter, postImage } = require('../lib/util/util');
 
 module.exports = class UnknownCmd extends Event {
 
 	constructor(...args) {
 		super(...args);
-
-		this.unknownUnknown = [
-			"I don't know what that means, sorry @_@",
-			"I'm so confused @_@",
-			"I'm too dumb, sorry XD",
-			"I'm a potato!",
-		];
 
 		this.commandTextRegex = /\b[\w-]+\b/;
 		this.mentionRegex = null;
@@ -41,7 +34,7 @@ module.exports = class UnknownCmd extends Event {
 				return msg.send(`${whats}?`);
 			}
 
-			case 'marbles': return msg.send("They're nice, and all, but I seem to have lost all of mine @_@");
+			case 'marbles': return msg.sendLocale('EVENT_COMMAND_UNKNOWN_MARBLES');
 		}
 
 		if (['well done', 'good job', 'good bot', 'good girl'].some(s => text.includes(s))) {
@@ -62,7 +55,7 @@ module.exports = class UnknownCmd extends Event {
 
 		if (text === 'not you') return this.client.finalizers.get('notYou').ignoreChannel(msg);
 
-		return msg.send(arrayRandom(this.unknownUnknown));
+		return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
 	}
 
 	static missiesToWhats(mentionRegex) {

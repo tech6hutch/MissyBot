@@ -110,6 +110,13 @@ module.exports = class extends Language {
 				'Yay! Mentions!',
 			],
 			EVENT_COMMANDLESS_MESSAGE_MENTION_HUTCH_KRU: 'Was it Hutch or Kru this time? XD',
+			EVENT_COMMAND_UNKNOWN_UNKNOWN: [
+				"I don't know what that means, sorry @_@",
+				"I'm so confused @_@",
+				"I'm too dumb, sorry XD",
+				"I'm a potato!",
+			],
+			EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 			// Monitors
 			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | You have **${time}** seconds to respond to this prompt with a valid argument. Type **"ABORT"** to abort this prompt.`, // eslint-disable-line max-len
