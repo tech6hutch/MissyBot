@@ -52,6 +52,16 @@ module.exports = class extends Language {
 				}.`;
 			},
 
+			PLAYING_ACTIVITY: [
+				['with myself 🎮'],
+				['with potatoes! 🥔'],
+				['with myself (why is this so funny? 🤔)'],
+				['for your command 💂', { type: 'WATCHING' }],
+				["with myself (seriously, guys, what's so funny? @_@)"],
+				['EDM 💃🏽', { type: 'LISTENING' }],
+				['rock music 🤘', { type: 'LISTENING' }],
+			],
+
 			// SettingsGateway, resolver, and prompts
 
 			SETTING_GATEWAY_EXPECTS_GUILD: 'The parameter <Guild> expects either a Guild or a Guild Object.',
