@@ -1,12 +1,12 @@
 const { join } = require('path');
 const { Command } = require('klasa');
-const { smartJoin, postImage } = require('../../lib/util/util');
+const { postImage } = require('../../lib/util/util');
 
 module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			description: 'Wish someone (or multiple people) a happy birthday 🎂',
+			description: lang => lang.get('COMMAND_BIRTHDAY_DESCRIPTION'),
 			usage: '[birthdayPerson:mention] [...]',
 			usageDelim: ' ',
 		});
@@ -20,9 +20,10 @@ module.exports = class extends Command {
 
 	async run(msg, birthdayPeople) {
 		return postImage(msg, this.birthdayImage, {
-			imageText: birthdayPeople.length > 0 ?
-				`Happy birthday, ${smartJoin(birthdayPeople)}!` :
-				'Happy birthday!',
+			imageText: msg.language.get(
+				birthdayPeople.length > 0 ? 'COMMAND_BIRTHDAY_MENTIONS' : 'COMMAND_BIRTHDAY',
+				birthdayPeople
+			),
 		});
 	}
 

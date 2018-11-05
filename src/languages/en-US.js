@@ -289,6 +289,9 @@ module.exports = class extends Language {
 				'Have you tried asking them nicely?',
 				"I bet they'll behave from now on. Right?",
 			],
+			COMMAND_BIRTHDAY_DESCRIPTION: 'Wish someone (or multiple people) a happy birthday 🎂',
+			COMMAND_BIRTHDAY: 'Happy birthday!',
+			COMMAND_BIRTHDAY_MENTIONS: users => `Happy birthday, ${smartJoin(users)}!`,
 			COMMAND_MYSWEARS_EXTENDEDHELP: [
 				'I see you swearing 👀',
 				'',
