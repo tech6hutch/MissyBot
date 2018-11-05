@@ -18,7 +18,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 		const { censor, content = '' } = MySwearsCmd.determineCensorshipAndContent(msg);
 		const template = new MessageEmbed()
 			.setColor(msg.client.COLORS[censor ? 'WHITE' : 'BLACK'])
-			.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.avatarURL());
+			.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.displayAvatarURL());
 
 		// To make sure I don't derp and mutate the template BEFORE super() gets called
 		Object.freeze(template);
