@@ -7,7 +7,7 @@ module.exports = class extends Task {
 		await this.client.user.setActivity(...this.client.languages.default.getRandom('PLAYING_ACTIVITY'));
 
 		const scheduledTask = await this.scheduleRandomly();
-		this.client.console.log('Changed activity. Next change will occur at:', scheduledTask.time);
+		this.client.console.log(`Changed activity. Next change will occur at ${scheduledTask.time}`);
 	}
 
 	scheduleRandomly() {
