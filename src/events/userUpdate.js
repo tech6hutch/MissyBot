@@ -11,7 +11,7 @@ module.exports = class extends Event {
 	}
 
 	copyUserAvatar(user) {
-		return this.client.user.setAvatar(user.displayAvatarURL({ size: 2048 }));
+		return this.client.user.setAvatar(user.displayAvatarURL({ size: 2048, format: 'png' }));
 	}
 
 };
