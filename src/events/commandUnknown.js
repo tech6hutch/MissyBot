@@ -53,6 +53,8 @@ module.exports = class UnknownCmd extends Event {
 			return postImage(msg, image);
 		}
 
+		if (text.startsWith('is a')) return msg.send("I'M A POTATO");
+
 		if (text === 'not you') return this.client.finalizers.get('notYou').ignoreChannel(msg);
 
 		return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
