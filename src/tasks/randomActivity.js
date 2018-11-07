@@ -1,19 +1,36 @@
-const { Task, constants: { TIME: { MINUTE } } } = require('klasa');
+const { Task, Duration, constants: { TIME: { MINUTE } } } = require('klasa');
 const { randomBetween } = require('../lib/util/util');
 
 module.exports = class extends Task {
 
-	async run() {
-		await this.client.user.setActivity(...this.client.languages.default.getRandom('PLAYING_ACTIVITY'));
-
-		const scheduledTask = await this.scheduleRandomly();
-		this.client.console.log(`Changed activity. Next change will occur at ${scheduledTask.time}`);
+	constructor(...args) {
+		super(...args);
+		this.timeout = null;
 	}
 
-	scheduleRandomly() {
-		return this.client.schedule.create(this.name, Date.now() + (MINUTE * randomBetween(15, 120)), {
-			catchUp: false,
-		});
+	async run() {
+		this._clearTimeout();
+		const { type, name } = (await this.setRandomActivity()).activity;
+		this.client.console.log(`Changed activity to ${
+			type} ${name
+		}. Next change will occur ${
+			Duration.toNow(Date.now() + this.scheduleNext(), true)
+		}.`);
+	}
+
+	setRandomActivity() {
+		return this.client.user.setActivity(...this.client.languages.default.getRandom('PLAYING_ACTIVITY'));
+	}
+
+	scheduleNext(delay = MINUTE * randomBetween(15, 120)) {
+		this._clearTimeout();
+		this.timeout = this.client.setTimeout(() => this.run(), delay);
+		return delay;
+	}
+
+	_clearTimeout() {
+		if (this.timeout) clearTimeout(this.timeout);
+		this.timeout = null;
 	}
 
 };
