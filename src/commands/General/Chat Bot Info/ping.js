@@ -13,7 +13,7 @@ module.exports = class extends Command {
 	async run(msg) {
 		const botAvatar = this.client.user.displayAvatarURL();
 		const pingMsg = await msg.sendEmbed(
-			new MessageEmbed(msg.language.get('COMMAND_PING', this.client.ping))
+			new MessageEmbed(msg.language.get('COMMAND_PING', this.client.ws.ping))
 				.setColor(this.client.COLORS.BLUE)
 				.setThumbnail(botAvatar)
 		);
