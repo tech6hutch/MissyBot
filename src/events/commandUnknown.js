@@ -41,6 +41,8 @@ module.exports = class UnknownCmd extends Event {
 			return msg.sendLoading(() => this.client.assets.get('love-and-support').uploadTo(msg));
 		}
 
+		if (text.includes('fetish')) return msg.send("I don't have any fetishes @_@");
+
 		if (text.startsWith('is a')) return msg.send("I'M A POTATO");
 
 		if (text === 'not you') return this.client.finalizers.get('notYou').ignoreChannel(msg);
