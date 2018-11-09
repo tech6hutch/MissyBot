@@ -11,6 +11,8 @@ module.exports = class extends Command {
 			// So any additional input is allowed
 			usageDelim: ' ',
 		});
+
+		this.customizeResponse('milk', 'Wnat some milk with that?');
 	}
 
 	async run(msg, [milk]) {
