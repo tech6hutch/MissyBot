@@ -8,6 +8,8 @@ module.exports = class extends Command {
 			promptTime: 30000,
 			description: '',
 			usage: '<milk:boolean>',
+			// So any additional input is allowed
+			usageDelim: ' ',
 		});
 	}
 
