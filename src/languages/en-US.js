@@ -129,9 +129,9 @@ module.exports = class extends Language {
 			EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 			// Monitors
-			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | You have **${time}** seconds to respond to this prompt with a valid argument. Type **"ABORT"** to abort this prompt.`, // eslint-disable-line max-len
-			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** is a repeating argument | You have **${time}** seconds to respond to this prompt with additional valid arguments. Type **"CANCEL"** to cancel this prompt.`, // eslint-disable-line max-len
-			MONITOR_COMMAND_HANDLER_ABORTED: 'Aborted',
+			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | Or type **"ABORT"** to cancel. (Auto-cancels after **${time}** seconds.)`,
+			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** can be repeated | Or type **"CANCEL"** to cancel. (Auto-cancels after **${time}** seconds.)`,
+			MONITOR_COMMAND_HANDLER_ABORTED: 'Canceled 👌🏽',
 
 			// Inhibitors
 			INHIBITOR_COOLDOWN: (remaining) => `You have just used this command. You can use this command again in ${remaining} second${remaining === 1 ? '' : 's'}.`,
