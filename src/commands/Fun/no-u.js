@@ -8,7 +8,7 @@ module.exports = class extends Command {
 			name: 'no u',
 			aliases: ['no'],
 			description: 'no u 🔀',
-			usage: '<u> [infinity]',
+			usage: '<u|you> [infinity]',
 			usageDelim: ' ',
 			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
 				'Missy, no u',
