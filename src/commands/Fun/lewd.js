@@ -15,6 +15,7 @@ module.exports = class extends RandomImageCommand {
 				'lewd-potato',
 				'succubus',
 				'lust',
+				'potato-butt',
 			],
 		});
 		this.sfwImage = 'nice-try';
