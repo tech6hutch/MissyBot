@@ -12,7 +12,7 @@ module.exports = class extends Command {
 			usageDelim: ' ',
 		});
 
-		this.customizeResponse('milk', 'Wnat some milk with that?');
+		this.customizeResponse('milk', 'Want some milk with that?');
 	}
 
 	async run(msg, [milk]) {
