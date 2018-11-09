@@ -5,17 +5,19 @@ module.exports = class extends Task {
 
 	constructor(...args) {
 		super(...args);
+		this.nextTimestamp = Infinity;
+		this.nextAt = null;
 		this.timeout = null;
 	}
 
+	nextIn(showIn) {
+		return Duration.toNow(this.nextTimestamp, showIn);
+	}
+
 	async run() {
-		this._clearTimeout();
-		const { type, name } = (await this.setRandomActivity()).activity;
-		this.client.console.log(`Changed activity to ${
-			type} ${name
-		}. Next change will occur ${
-			Duration.toNow(Date.now() + this.scheduleNext(), true)
-		}.`);
+		this.scheduleNext();
+		const { activity: { type, name } } = await this.setRandomActivity();
+		this.client.console.log(`Changed activity to ${type} ${name}. Next change will occur ${this.nextIn(true)}.`);
 	}
 
 	setRandomActivity() {
@@ -24,13 +26,30 @@ module.exports = class extends Task {
 
 	scheduleNext(delay = MINUTE * randomBetween(15, 120)) {
 		this._clearTimeout();
-		this.timeout = this.client.setTimeout(() => this.run(), delay);
-		return delay;
+		this.nextTimestamp = Date.now() + delay;
+		this.nextAt = new Date(this.nextTimestamp);
+		this.timeout = this.client.setTimeout(() => this.run(), this.nextTimestamp - Date.now());
 	}
 
 	_clearTimeout() {
 		if (this.timeout) clearTimeout(this.timeout);
+		this.nextTimestamp = Infinity;
+		this.nextAt = null;
 		this.timeout = null;
+	}
+
+	reload() {
+		return super.reload().finally(() => this._clearTimeout());
+	}
+
+	unload() {
+		this._clearTimeout();
+		return super.unload();
+	}
+
+	disable() {
+		this._clearTimeout();
+		return super.disable();
 	}
 
 };
