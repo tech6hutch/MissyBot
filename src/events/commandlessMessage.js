@@ -5,8 +5,12 @@ class CmdlessMsgEvent extends Event {
 	constructor(...args) {
 		super(...args);
 
-		this.hutch = '224236171838881792';
-		this.kru = '168161111210852352';
+		this.memePingers = [
+			// Hutch
+			'224236171838881792',
+			// Kru
+			'168161111210852352',
+		];
 	}
 
 	async run(msg, prefix) {
@@ -18,8 +22,8 @@ class CmdlessMsgEvent extends Event {
 		}
 
 		if (msg.mentions.has(this.client.user)) {
-			return msg.send([this.hutch, this.kru].includes(msg.author.id) ?
-				msg.language.get('EVENT_COMMANDLESS_MESSAGE_MENTION_HUTCH_KRU') :
+			return msg.send(this.memePingers.includes(msg.author.id) ?
+				msg.language.get('EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS') :
 				msg.language.getRandom('EVENT_COMMANDLESS_MESSAGE_MENTION'));
 		}
 

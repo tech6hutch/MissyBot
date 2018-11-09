@@ -119,7 +119,7 @@ module.exports = class extends Language {
 				'You called?',
 				'Yay! Mentions!',
 			],
-			EVENT_COMMANDLESS_MESSAGE_MENTION_HUTCH_KRU: 'Was it Hutch or Kru this time? XD',
+			EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS: 'Was it Hutch or Kru this time? XD',
 			EVENT_COMMAND_UNKNOWN_UNKNOWN: [
 				"I don't know what that means, sorry @_@",
 				"I'm so confused @_@",
