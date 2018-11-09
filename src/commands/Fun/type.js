@@ -6,7 +6,7 @@ module.exports = class extends Command {
 	constructor(...args) {
 		super(...args, {
 			description: lang => lang.get('COMMAND_TYPE_DESCRIPTION'),
-			usage: '<as> <name:...str>',
+			usage: '<as> <name:...str{,32}>',
 			usageDelim: ' ',
 			extendedHelp: lang => lang.get('COMMAND_TYPE_EXTENDEDHELP',
 				'Missy, type as FBI'),

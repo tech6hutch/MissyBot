@@ -5,7 +5,7 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			description: 'Post a random potato emoji!',
+			description: lang => lang.get('COMMAND_POTATO_DESCRIPTION'),
 		});
 
 		this.potatoEmojis = ['🥔', '🍠'];

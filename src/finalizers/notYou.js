@@ -1,5 +1,4 @@
 const { Finalizer } = require('klasa');
-const { arrayRandom } = require('../lib/util/util');
 
 module.exports = class extends Finalizer {
 
@@ -12,11 +11,6 @@ module.exports = class extends Finalizer {
 		this.watchedChannels = new Map();
 
 		this.regex = /not you(,? ?missy)?/i;
-		this.responses = [
-			'Oh, sorry! Ping me when you want me.',
-			"Alright, I'll go play somewhere else until @'d",
-			'Understood 👍 To get my attention, @mention me',
-		];
 	}
 
 	async run(msg) {
@@ -41,7 +35,7 @@ module.exports = class extends Finalizer {
 
 	ignoreChannel(msg) {
 		this.client.ignoredChannels.add(msg.channel.id);
-		return msg.channel.send(arrayRandom(this.responses));
+		return msg.channel.sendRandom('FINALIZER_NOTYOU');
 	}
 
 };

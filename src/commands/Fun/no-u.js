@@ -1,7 +1,7 @@
-const RandomImageCommand = require('../../lib/base/RandomImageCommand');
-const { postImage } = require('../../lib/util/util');
+const assert = require('assert');
+const { Command } = require('klasa');
 
-module.exports = class extends RandomImageCommand {
+module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
@@ -14,22 +14,19 @@ module.exports = class extends RandomImageCommand {
 				'Missy, no u',
 				'Missy, no u infinity',
 			]).join('\n'),
-			// Custom
-			images: [
-				'no-u.png',
-				'no-u-infinity.png',
-			],
 		});
 	}
 
 	async run(msg, [, infinity]) {
-		return postImage(
-			msg,
-			this.images.get(`no-u${infinity ? '-infinity' : ''}.png`),
-			{
-				loadingText: msg.language.get('COMMAND_NOU_LOADING_TEXT'),
-			}
+		return msg.sendLoading(
+			() => this.client.assets.get(`no-u${infinity ? '-infinity' : ''}`).uploadTo(msg),
+			{ loadingText: msg.language.get('COMMAND_NOU_LOADING_TEXT') }
 		);
+	}
+
+	init() {
+		assert(this.client.assets.has('no-u'));
+		assert(this.client.assets.has('no-u-infinity'));
 	}
 
 };

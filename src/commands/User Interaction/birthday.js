@@ -1,6 +1,4 @@
-const { join } = require('path');
 const { Command } = require('klasa');
-const { postImage } = require('../../lib/util/util');
 
 module.exports = class extends Command {
 
@@ -10,21 +8,19 @@ module.exports = class extends Command {
 			usage: '[birthdayPerson:mention] [...]',
 			usageDelim: ' ',
 		});
-
-		const imageName = 'happy-birthday.png';
-		this.birthdayImage = {
-			attachment: join(process.cwd(), 'assets', imageName),
-			name: imageName,
-		};
 	}
 
 	async run(msg, birthdayPeople) {
-		return postImage(msg, this.birthdayImage, {
-			imageText: msg.language.get(
+		return msg.sendLoading(() => this.client.assets.get('happy-birthday').uploadTo(msg, {}, {
+			caption: msg.language.get(
 				birthdayPeople.length > 0 ? 'COMMAND_BIRTHDAY_MENTIONS' : 'COMMAND_BIRTHDAY',
 				birthdayPeople
 			),
-		});
+		}));
+	}
+
+	init() {
+		require('assert')(this.client.assets.has('happy-birthday'));
 	}
 
 };

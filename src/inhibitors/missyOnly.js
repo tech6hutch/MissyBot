@@ -3,7 +3,9 @@ const { Inhibitor } = require('klasa');
 module.exports = class extends Inhibitor {
 
 	constructor(...args) {
-		super(...args);
+		super(...args, {
+			enabled: false,
+		});
 
 		this.allowedIDs = [];
 	}

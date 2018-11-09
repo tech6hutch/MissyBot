@@ -143,6 +143,13 @@ module.exports = class extends Language {
 			INHIBITOR_RUNIN: (types) => `This command is only available in ${types} channels.`,
 			INHIBITOR_RUNIN_NONE: (name) => `The ${name} command is not configured to run in any channel.`,
 
+			// Custom finalizers
+			FINALIZER_NOTYOU: [
+				'Oh, sorry! Ping me when you want me.',
+				"Alright, I'll go play somewhere else until @'d",
+				'Understood 👍 To get my attention, @mention me',
+			],
+
 			// Core commands
 			COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and guilds from the bot.',
 			COMMAND_BLACKLIST_SUCCESS: (usersAdded, usersRemoved, guildsAdded, guildsRemoved) => [
@@ -294,6 +301,8 @@ module.exports = class extends Language {
 				['Nooooooo', "It's not bedtime yet!"],
 				msg => this.client.commands.get('no u').run(msg, []),
 			],
+			COMMAND_LEWD_DESCRIPTION: 'Nice try. 😝',
+			COMMAND_LEWD_LOADING_TEXT: '<.<\n>.>',
 			COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
 			COMMAND_EAT_DESCRIPTION: 'Tell someone to eat.',
 			COMMAND_EAT: (something, user, author) => [
@@ -305,7 +314,7 @@ module.exports = class extends Language {
 			COMMAND_EAT_SELF: [
 				"But I'm a robot, I don't need to eat ;-;",
 				msg => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
-				msg => this.client.commands.get('no-u').run(msg, []),
+				msg => this.client.commands.get('no u').run(msg, []),
 			],
 			COMMAND_FAKEBAN: [
 				'Please give them another chance ;-;',
@@ -343,6 +352,12 @@ module.exports = class extends Language {
 				...examples,
 			],
 			COMMAND_NOU_LOADING_TEXT: 'Rebutting your argument...',
+			COMMAND_POTATO_DESCRIPTION: 'Post a random potato emoji!',
+			COMMAND_MEME_DESCRIPTION: "It seems I've made a meme!",
+
+			// Custom misc.
+			LOADING_TEXT: 'Just a moment.',
+			SENT_IMAGE: 'Sent the image 👌',
 		};
 	}
 

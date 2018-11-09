@@ -165,6 +165,15 @@ class Util {
 	// Discord.js stuff
 
 	/**
+	 * Resolve a Language object from a given value
+	 * @param {*} obj The object to resolve a Language from
+	 * @returns {Language}
+	 */
+	static resolveLang(obj) {
+		return obj.language || (obj.guild && obj.guild.language) || obj.client.languages.default;
+	}
+
+	/**
 	 * @param {TextChannel} channel The channel to post in
 	 * @param {FileOptions} image The image to post (see: https://discord.js.org/#/docs/main/master/typedef/FileOptions)
 	 * @param {Object} [options] Extra options

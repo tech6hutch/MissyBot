@@ -1,6 +1,5 @@
-const { join } = require('path');
 const { Event } = require('klasa');
-const { capitalizeFirstLetter, postImage } = require('../lib/util/util');
+const { capitalizeFirstLetter } = require('../lib/util/util');
 
 module.exports = class UnknownCmd extends Event {
 
@@ -10,12 +9,6 @@ module.exports = class UnknownCmd extends Event {
 		this.commandTextRegex = /\b[\w-]+\b/;
 		this.mentionRegex = null;
 		this.missyRegex = null;
-	}
-
-	init() {
-		const mention = `<@!?${this.client.user.id}>`;
-		this.mentionRegex = new RegExp(mention);
-		this.missyRegex = new RegExp(`missy|${mention}`, 'gi');
 	}
 
 	async run(msg, command, prefix, prefixLength) {
@@ -45,12 +38,7 @@ module.exports = class UnknownCmd extends Event {
 		}
 
 		if (text.includes('love and support')) {
-			const imageName = 'love-and-support.jpg';
-			const image = {
-				attachment: join(process.cwd(), 'assets', imageName),
-				name: imageName,
-			};
-			return postImage(msg, image);
+			return msg.sendLoading(() => this.client.assets.get('love-and-support').uploadTo(msg));
 		}
 
 		if (text.startsWith('is a')) return msg.send("I'M A POTATO");
@@ -58,6 +46,13 @@ module.exports = class UnknownCmd extends Event {
 		if (text === 'not you') return this.client.finalizers.get('notYou').ignoreChannel(msg);
 
 		return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
+	}
+
+	init() {
+		require('assert')(this.client.assets.has('love-and-support'));
+		const mention = `<@!?${this.client.user.id}>`;
+		this.mentionRegex = new RegExp(mention);
+		this.missyRegex = new RegExp(`missy|${mention}`, 'gi');
 	}
 
 	static missiesToWhats(mentionRegex) {

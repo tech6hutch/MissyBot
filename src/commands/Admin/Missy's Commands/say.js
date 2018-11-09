@@ -5,6 +5,7 @@ module.exports = class extends Command {
 	constructor(...args) {
 		super(...args, {
 			description: 'Tell me to say something.',
+			permissionLevel: 8,
 			usage: '[channel:channel] <text:str> [...]',
 			usageDelim: ' ',
 		});
