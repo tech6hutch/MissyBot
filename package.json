@@ -12,9 +12,9 @@
   "dependencies": {
     "canvas": "^1.6.12",
     "canvas-constructor": "^1.1.2",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#master",
     "js-levenshtein": "^1.1.4",
-    "klasa": "github:dirigeants/klasa"
+    "klasa": "github:dirigeants/klasa#master"
   },
   "devDependencies": {
     "eslint": "^5.6.1",
