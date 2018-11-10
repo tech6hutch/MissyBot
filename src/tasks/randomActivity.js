@@ -14,10 +14,10 @@ module.exports = class extends Task {
 		return Duration.toNow(this.nextTimestamp, showIn);
 	}
 
-	async run() {
+	async run(logNext = false) {
 		this.scheduleNext();
 		const { activity: { type, name } } = await this.setRandomActivity();
-		this.client.console.log(`Changed activity to ${type} ${name}. Next change will occur ${this.nextIn(true)}.`);
+		if (logNext) this.client.console.log(`Changed activity to ${type} ${name}. Next change will occur ${this.nextIn(true)}.`);
 	}
 
 	setRandomActivity() {

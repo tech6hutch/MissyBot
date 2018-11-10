@@ -8,7 +8,7 @@ module.exports = class extends Event {
 
 	async run() {
 		const randomActivity = this.client.tasks.get('randomActivity');
-		if (randomActivity) await randomActivity.run();
+		if (randomActivity) await randomActivity.run(true);
 	}
 
 };
