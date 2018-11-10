@@ -18,8 +18,8 @@ module.exports = class extends Finalizer {
 
 		const notYouPromise = msg.channel.awaitMessages(
 			m => {
-				const match = this.regex.exec(m.content);
-				return match && match[0].length + 3 >= m.content.length;
+				const match = this.regex.exec(m.content.replace(/<[@!&#a-z\d:_-]+>/gi, ''));
+				return match && match[0].length + 5 >= m.content.length;
 			},
 			{ max: 1, time: 10000, errors: ['time'] }
 		);
