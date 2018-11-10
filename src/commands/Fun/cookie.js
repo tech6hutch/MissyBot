@@ -6,7 +6,14 @@ module.exports = class extends Command {
 		super(...args, {
 			promptLimit: 3,
 			description: lang => lang.get('COMMAND_COOKIE_DESCRIPTION'),
-			usage: '<milk:yesno>',
+			usage: '<milk:yesno> [for:user]',
+			usageDelim: ' for ',
+			extendedHelp: [
+				'Examples:',
+				'Missy, cookie -> Want some milk with that? -> yes',
+				'Missy, cookie with milk',
+				'Missy, cookie no milk for @Missy',
+			].join('\n'),
 		});
 
 		this
@@ -23,8 +30,8 @@ module.exports = class extends Command {
 			});
 	}
 
-	async run(msg, [milk]) {
-		return msg.send(milk ? '🍪🥛' : '🍪');
+	async run(msg, [milk, forUser]) {
+		return msg.send(`${forUser ? `${forUser} ` : ''}${milk ? '🍪🥛' : '🍪'}`);
 	}
 
 };
