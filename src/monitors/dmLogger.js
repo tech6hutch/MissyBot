@@ -22,7 +22,7 @@ module.exports = class extends Monitor {
 	}
 
 	init() {
-		this.logChannel = this.client.channels.get('502235589752520715');
+		this.logChannel = this.client.channels.get('502235589752520715') || { send: () => null };
 	}
 
 };
