@@ -5,8 +5,7 @@ module.exports = class extends Command {
 	constructor(...args) {
 		super(...args, {
 			promptLimit: 3,
-			promptTime: 30000,
-			description: '',
+			description: lang => lang.get('COMMAND_COOKIE_DESCRIPTION'),
 			usage: '<milk:yesno>',
 		});
 

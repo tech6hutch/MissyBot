@@ -354,6 +354,7 @@ module.exports = class extends Language {
 			COMMAND_NOU_LOADING_TEXT: 'Rebutting your argument...',
 			COMMAND_POTATO_DESCRIPTION: 'Post a random potato emoji!',
 			COMMAND_MEME_DESCRIPTION: "It seems I've made a meme!",
+			COMMAND_COOKIE_DESCRIPTION: 'I have a lot of cookies. 😋 Want one?',
 
 			// Custom misc.
 			LOADING_TEXT: 'Just a moment.',
