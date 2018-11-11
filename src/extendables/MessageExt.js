@@ -77,8 +77,11 @@ module.exports = class extends Extendable {
 
 	async ask(content, options) {
 		const message = await this.sendMessage(content, options);
-		if (this.channel.permissionsFor(this.guild.me).has('ADD_REACTIONS')) return awaitReaction(this, message);
-		return awaitMessage(this);
+		return (
+			this.channel.permissionsFor(this.guild.me).has('ADD_REACTIONS') ?
+				awaitReaction(this, message) :
+				awaitMessage(this)
+		).then(() => true, () => false);
 	}
 
 	async awaitReply(question, time = 60000, embed) {
