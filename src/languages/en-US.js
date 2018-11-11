@@ -216,7 +216,7 @@ module.exports = class extends Language {
 					'I know not all permissions are right for every guild, so don\'t be afraid to uncheck any of the boxes.',
 					'If you try to use a command that requires more permissions than the bot is granted, it will let you know.'
 				].join(' ')),
-				'Please file an issue at <https://github.com/dirigeants/klasa> if you find any bugs.'
+				'Please file an issue at <https://github.com/tech6hutch/MissyBot> if you find any bugs.'
 			],
 			COMMAND_INVITE_DESCRIPTION: 'Displays the join guild link of the bot.',
 			COMMAND_INFO: () => [
