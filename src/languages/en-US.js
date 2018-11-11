@@ -81,7 +81,7 @@ module.exports = class extends Language {
 			RESOLVER_INVALID_DURATION: (name) => `${name} must be a valid duration string.`,
 			RESOLVER_INVALID_EMOJI: (name) => `${name} must be a custom emoji tag or valid emoji id.`,
 			RESOLVER_INVALID_FLOAT: (name) => `${name} must be a valid number.`,
-			RESOLVER_INVALID_GUILD: (name) => `${name} must be a valid guild id.`,
+			RESOLVER_INVALID_GUILD: (name) => `${name} must be a valid server id.`,
 			RESOLVER_INVALID_INT: (name) => `${name} must be an integer.`,
 			RESOLVER_INVALID_LITERAL: (name) => `Your option did not match the only possibility: ${name}`,
 			RESOLVER_INVALID_MEMBER: (name) => `${name} must be a mention or valid user id.`,
@@ -139,7 +139,7 @@ module.exports = class extends Language {
 			INHIBITOR_MISSING_BOT_PERMS: (missing) => `Insufficient permissions, missing: **${missing}**`,
 			INHIBITOR_NSFW: 'You may not use NSFW commands in this channel.',
 			INHIBITOR_PERMISSIONS: 'You do not have permission to use this command.',
-			INHIBITOR_REQUIRED_SETTINGS: (settings) => `The guild is missing the **${settings.join(', ')}** guild setting${settings.length !== 1 ? 's' : ''} and thus the command cannot run.`,
+			INHIBITOR_REQUIRED_SETTINGS: (settings) => `The server is missing the **${settings.join(', ')}** server setting${settings.length !== 1 ? 's' : ''} and thus the command cannot run.`,
 			INHIBITOR_RUNIN: (types) => `This command is only available in ${types} channels.`,
 			INHIBITOR_RUNIN_NONE: (name) => `The ${name} command is not configured to run in any channel.`,
 
@@ -151,12 +151,12 @@ module.exports = class extends Language {
 			],
 
 			// Core commands
-			COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and guilds from the bot.',
+			COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and servers from the bot.',
 			COMMAND_BLACKLIST_SUCCESS: (usersAdded, usersRemoved, guildsAdded, guildsRemoved) => [
 				usersAdded.length ? `**Users Added**\n${util.codeBlock('', usersAdded.join(', '))}` : '',
 				usersRemoved.length ? `**Users Removed**\n${util.codeBlock('', usersRemoved.join(', '))}` : '',
-				guildsAdded.length ? `**Guilds Added**\n${util.codeBlock('', guildsAdded.join(', '))}` : '',
-				guildsRemoved.length ? `**Guilds Removed**\n${util.codeBlock('', guildsRemoved.join(', '))}` : ''
+				guildsAdded.length ? `**Servers Added**\n${util.codeBlock('', guildsAdded.join(', '))}` : '',
+				guildsRemoved.length ? `**Servers Removed**\n${util.codeBlock('', guildsRemoved.join(', '))}` : ''
 			].filter(val => val !== '').join('\n'),
 			COMMAND_EVAL_DESCRIPTION: 'Evaluates arbitrary Javascript. Reserved for bot owner.',
 			COMMAND_EVAL_EXTENDEDHELP: [
@@ -209,16 +209,16 @@ module.exports = class extends Language {
 				return embed;
 			},
 			COMMAND_INVITE: () => [
-				`To add ${this.client.user.username} to your discord guild:`,
+				`To add ${this.client.user.username} to your Discord server:`,
 				this.client.invite,
 				util.codeBlock('', [
 					'The above link is generated requesting the minimum permissions required to use every command currently.',
-					'I know not all permissions are right for every guild, so don\'t be afraid to uncheck any of the boxes.',
+					'I know not all permissions are right for every server, so don\'t be afraid to uncheck any of the boxes.',
 					'If you try to use a command that requires more permissions than the bot is granted, it will let you know.'
 				].join(' ')),
 				'Please file an issue at <https://github.com/tech6hutch/MissyBot> if you find any bugs.'
 			],
-			COMMAND_INVITE_DESCRIPTION: 'Displays the join guild link of the bot.',
+			COMMAND_INVITE_DESCRIPTION: 'Displays the join server link of the bot.',
 			COMMAND_INFO: () => [
 				"Hi! I'm MissyBot!",
 				'',
@@ -264,8 +264,8 @@ module.exports = class extends Language {
 			COMMAND_CONF_GET: (key, value) => `The value for the key **${key}** is: \`${value}\``,
 			COMMAND_CONF_RESET: (key, response) => `The key **${key}** has been reset to: \`${response}\``,
 			COMMAND_CONF_NOCHANGE: (key) => `The value for **${key}** was already that value.`,
-			COMMAND_CONF_SERVER_DESCRIPTION: 'Define per-guild settings.',
-			COMMAND_CONF_SERVER: (key, list) => `**guild Settings${key}**\n${list}`,
+			COMMAND_CONF_SERVER_DESCRIPTION: 'Define per-server settings.',
+			COMMAND_CONF_SERVER: (key, list) => `**Server Settings${key}**\n${list}`,
 			COMMAND_CONF_USER_DESCRIPTION: 'Define per-user settings.',
 			COMMAND_CONF_USER: (key, list) => `**User Settings${key}**\n${list}`,
 			COMMAND_STATS: (memUsage, uptime, users, guilds, channels, klasaVersion, discordVersion, processVersion, message) => [
@@ -274,7 +274,7 @@ module.exports = class extends Language {
 				`• Mem Usage  :: ${memUsage} MB`,
 				`• Uptime     :: ${uptime}`,
 				`• Users      :: ${users}`,
-				`• Guilds     :: ${guilds}`,
+				`• Servers    :: ${guilds}`,
 				`• Channels   :: ${channels}`,
 				`• Klasa      :: v${klasaVersion}`,
 				`• Discord.js :: v${discordVersion}`,
