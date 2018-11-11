@@ -8,6 +8,16 @@ module.exports = class extends Extendable {
 		super(...args, { appliesTo: [Message] });
 	}
 
+	// Getters
+
+	get localPrefix() {
+		const prefix = this.prefixLength ? this.content.slice(0, this.prefixLength) : this.guildSettings.prefix;
+		if (this.prefix === this.client.monitors.get('commandHandler').prefixMention) return `@${this.client.user.tag}`;
+		if (Array.isArray(prefix)) return prefix[0];
+		if (!prefix.length) return this.client.DEFAULT_PREFIX;
+		return prefix;
+	}
+
 	// Sending responses
 
 	/**

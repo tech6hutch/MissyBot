@@ -12,7 +12,7 @@ module.exports = class MissyClient extends KlasaClient {
 	constructor(options = {}) {
 		options = mergeDefault({
 			// KlasaClientOptions
-			prefix: ['Missy,', 'Missy'],
+			regexPrefix: /Missy,?/i,
 			prefixCaseInsensitive: true,
 			commandEditing: true,
 			noPrefixDM: true,
@@ -74,6 +74,8 @@ module.exports = class MissyClient extends KlasaClient {
 			BLACK: 0x000000,
 			BLUE: 0x0000FF,
 		};
+
+		this.DEFAULT_PREFIX = 'Missy,';
 
 		this.missyID = '398127472564240387';
 
