@@ -12,7 +12,7 @@ module.exports = class MissyClient extends KlasaClient {
 	constructor(options = {}) {
 		options = mergeDefault({
 			// KlasaClientOptions
-			regexPrefix: /Missy,?/i,
+			regexPrefix: /^Missy,?/i,
 			prefixCaseInsensitive: true,
 			commandEditing: true,
 			noPrefixDM: true,
