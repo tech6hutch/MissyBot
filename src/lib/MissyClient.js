@@ -1,5 +1,6 @@
 require('./preload');
 
+const git = require('simple-git/promise');
 const { Permissions: { FLAGS } } = require('discord.js');
 const { KlasaClient, Schema, PermissionLevels, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
@@ -95,6 +96,8 @@ module.exports = class MissyClient extends KlasaClient {
 		this.registerStore(this.assets);
 		// this.objects = new ObjectStore(this);
 		// this.registerStore(this.objects);
+
+		this.git = git();
 
 		this.once('ready', () => {
 			this.users.fetch(this.missyID)
