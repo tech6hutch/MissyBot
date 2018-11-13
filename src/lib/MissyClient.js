@@ -72,8 +72,8 @@ module.exports = class MissyClient extends KlasaClient {
 
 		this.COLORS = {
 			WHITE: 0xFFFFFF,
-			BLACK: 0x000000,
-			BLUE: 0x0000FF,
+			BLACK: 0x111111,
+			BLUE: 0x0074D9,
 		};
 
 		this.DEFAULT_PREFIX = 'Missy,';
