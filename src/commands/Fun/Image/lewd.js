@@ -1,7 +1,7 @@
 const assert = require('assert');
 const strDistance = require('js-levenshtein');
-const RandomImageCommand = require('../../lib/base/RandomImageCommand');
-const { resolveLang } = require('../../lib/util/util');
+const RandomImageCommand = require('../../../lib/base/RandomImageCommand');
+const { resolveLang } = require('../../../lib/util/util');
 
 module.exports = class extends RandomImageCommand {
 
