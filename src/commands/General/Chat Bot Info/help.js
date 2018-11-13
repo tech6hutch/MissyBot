@@ -39,7 +39,7 @@ module.exports = class extends Command {
 		const help = await this.buildHelp(msg);
 		const categories = Object.keys(help);
 		const helpMessage = [
-			...msg.language.get('COMMAND_HELP_PREFIX_NOTE', msg.guildSettings.prefix),
+			...msg.language.get('COMMAND_HELP_PREFIX_NOTE', msg.guildSettings),
 		];
 		for (let cat = 0; cat < categories.length; cat++) {
 			helpMessage.push(`**${categories[cat]} Commands**:`, '```asciidoc');

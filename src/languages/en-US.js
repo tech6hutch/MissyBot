@@ -1,5 +1,5 @@
 const { Language, util, constants: { TIME: { MINUTE } } } = require('klasa');
-const { ensureArray, smartJoin } = require('../lib/util/util');
+const { smartJoin } = require('../lib/util/util');
 
 const DISCORD_EMOJI = '<:discord:503738729463021568>';
 
@@ -15,41 +15,16 @@ module.exports = class extends Language {
 			 * @param {string|string[]} prefix Guild prefixes or w/e
 			 * @returns {string}
 			 */
-			PREFIX_REMINDER: (prefix = `@${this.client.user.tag}`) => {
-				if (Array.isArray(prefix)) {
-					let missyIndex = -1;
-					let missyCommaIndex = -1;
-					prefix = prefix.map((pre, i) => {
-						switch (pre) {
-							case 'Missy':
-								missyIndex = i;
-								return pre;
-							case 'Missy,':
-								missyCommaIndex = i;
-								return pre;
-							default:
-								return `\`${pre}\``;
-						}
-					});
-					if (missyIndex > -1 && missyCommaIndex > -1) {
-						prefix[missyIndex] = `\`Missy\` (with or without a comma)`;
-						prefix.splice(missyCommaIndex, 1);
-					} else if (missyIndex > -1) {
-						prefix[missyIndex] = `\`${prefix[missyIndex]}\``;
-					} else if (missyCommaIndex > -1) {
-						prefix[missyCommaIndex] = `\`${prefix[missyCommaIndex]}\``;
-					}
-					// We maybe spliced out one of the prefixes.
-					// If there's only one, we'll just say there's only one prefix.
-					if (prefix.length === 1) [prefix] = prefix;
-				} else {
-					prefix = `\`${prefix}\``;
-				}
+			PREFIX_REMINDER: ({ prefix, disableNaturalPrefix }) => {
+				const prefixes = [];
+				if (!disableNaturalPrefix) prefixes.push(this.client.PREFIX_PLAIN);
+				if (prefix) prefixes.push(prefix);
+				if (!prefixes.length) prefixes.push(`@${this.client.user.tag}`);
 
-				return `The prefix${Array.isArray(prefix) ?
-					`es for this server are ${smartJoin(prefix)}` :
-					` in this server is set to ${prefix}`
-				}.`;
+				return `The prefix${prefixes.length > 1 ?
+					`es for this server are ` :
+					` in this server is set to `
+				}${smartJoin(prefixes.map(pre => `\`${pre}\``))}.`;
 			},
 
 			PLAYING_ACTIVITY: [
@@ -234,20 +209,17 @@ module.exports = class extends Language {
 			COMMAND_HELP_NODM: '❌ | I couldn\'t DM you :/ If you enable DMs from me, I can send you command help.',
 			COMMAND_HELP_OTHER_DM: '📥 | I sent them help about my commands.',
 			COMMAND_HELP_OTHER_NODM: '❌ | I couldn\'t DM them :/',
-			COMMAND_HELP_PREFIX_NOTE: guildPrefixes => {
-				const { noGuildOnlyPrefixes, guildDisabledAPrefix, guildPrefixList } = this.analyzeGuildPrefixes(guildPrefixes);
-
-				return noGuildOnlyPrefixes ? [
-					'The prefix is "Missy" (with or without a comma).',
-					'\u200b',
-				] : [
-					'The default prefix is "Missy" (with or without a comma).',
-					guildPrefixList.length === 0 ?
-						'In that server, however, I will only respond to @mentions.' :
-						`In that server, however, you may ${guildDisabledAPrefix ? 'only' : 'also'} use ${guildPrefixList}.`,
-					'\u200b',
-				];
-			},
+			COMMAND_HELP_PREFIX_NOTE: ({ prefix, disableNaturalPrefix }) => disableNaturalPrefix ? [
+				'The default prefix is `Missy` (with or without a comma).',
+				prefix ?
+					`In that server, however, you may only use \`${prefix}\`.` :
+					'In that server, however, I will only respond to @mentions.',
+				'\u200b',
+			] : [
+				'The prefix is "Missy" (with or without a comma).',
+				...prefix ? [`In that server, however, you may also use \`${prefix}\`.`] : [],
+				'\u200b',
+			],
 			COMMAND_HELP_USAGE: (usage) => `Usage :: ${usage}`,
 			COMMAND_HELP_EXTENDED: 'Extended Help ::',
 			COMMAND_ENABLE: (type, name) => `+ Successfully enabled ${type}: ${name}`,
@@ -362,22 +334,6 @@ module.exports = class extends Language {
 			LOADING_TEXT: 'Just a moment.',
 			SENT_IMAGE: 'Sent the image 👌',
 		};
-	}
-
-	analyzeGuildPrefixes(guildPrefixes) {
-		// Global prefixes (but guilds can still disable them)
-		const prefixes = ensureArray(this.client.options.prefix);
-
-		// Some logic
-		const guildDisabledAPrefix = prefixes.some(p => !guildPrefixes.includes(p));
-		const noGuildOnlyPrefixes = !guildDisabledAPrefix && guildPrefixes.length === prefixes.length;
-
-		// Build the string list of prefixes
-		let guildPrefixList = guildPrefixes;
-		if (!guildDisabledAPrefix) guildPrefixList = guildPrefixList.filter(p => !prefixes.includes(p));
-		guildPrefixList = smartJoin(guildPrefixList.map(p => `\`${p}\``));
-
-		return { noGuildOnlyPrefixes, guildDisabledAPrefix, guildPrefixList };
 	}
 
 	async init() {

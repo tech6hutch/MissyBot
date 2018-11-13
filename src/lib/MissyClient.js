@@ -76,7 +76,8 @@ module.exports = class MissyClient extends KlasaClient {
 			BLUE: 0x0074D9,
 		};
 
-		this.DEFAULT_PREFIX = 'Missy,';
+		this.PREFIX = 'Missy,';
+		this.PREFIX_PLAIN = 'Missy';
 
 		this.missyID = '398127472564240387';
 

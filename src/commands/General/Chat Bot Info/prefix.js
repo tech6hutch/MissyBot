@@ -12,7 +12,7 @@ module.exports = class extends Command {
 	}
 
 	run(msg) {
-		return msg.sendLocale('PREFIX_REMINDER', [msg.guildSettings.prefix.length > 0 ? msg.guildSettings.prefix : undefined]);
+		return msg.sendLocale('PREFIX_REMINDER', [msg.guildSettings]);
 	}
 
 };

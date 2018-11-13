@@ -14,7 +14,7 @@ module.exports = class extends Extendable {
 		const prefix = this.prefixLength ? this.content.slice(0, this.prefixLength) : this.guildSettings.prefix;
 		if (this.prefix === this.client.monitors.get('commandHandler').prefixMention) return `@${this.client.user.tag}`;
 		if (Array.isArray(prefix)) return prefix[0];
-		if (!prefix.length) return this.client.DEFAULT_PREFIX;
+		if (!prefix.length) return this.client.PREFIX;
 		return prefix;
 	}
 
