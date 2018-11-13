@@ -31,7 +31,7 @@ module.exports = class extends Command {
 
 	async shutdown(waitForThis) {
 		await Promise.all([
-			Promise.all(this.client.providers.map(provider => provider.shutdown())),
+			...this.client.providers.map(provider => provider.shutdown()),
 			waitForThis,
 		]);
 		process.exit();
