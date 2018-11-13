@@ -56,7 +56,7 @@ module.exports = class extends Command {
 			try {
 				// e.g., ['src', 'commands', 'Admin', 'eval.js']
 				const path = file.split(this.pathSepsRegex);
-				await this.loadPiece(this.client.pieceStores.get(path[1]), path.slice(2));
+				await this.loadPiece(this.client.pieceStores.get(path[1]), path.slice(2).join('/'));
 			} catch (e) {
 				this.client.emit('wtf', e);
 			}
