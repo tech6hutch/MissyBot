@@ -48,9 +48,11 @@ module.exports = class extends Extendable {
 		loadingText = this.language.get('LOADING_TEXT'),
 	} = {}) {
 		const loadingMsg = await this.send(loadingText);
+		const preEdits = loadingMsg.edits.length;
 		// eslint-disable-next-line callback-return
 		const response = await cb(loadingMsg);
-		await loadingMsg.delete();
+		// If the message was edited in cb, we don't wanna delete it
+		if (loadingMsg.edits.length === preEdits) await loadingMsg.delete();
 		return response;
 	}
 
