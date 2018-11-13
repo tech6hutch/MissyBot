@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { Command } = require('klasa');
+const { Command, util: { codeBlock } } = require('klasa');
 
 module.exports = class extends Command {
 
@@ -30,10 +30,10 @@ module.exports = class extends Command {
 		await msg.channel.send([
 			`**${changes}** files changed (**${insertions}** insertions, **${deletions}** deletions).`,
 			'\u200b',
-			...pieces.toLoad.length ? ['Pieces to load:', pieces.toLoad.join('\n'), '\u200b'] : [],
-			...pieces.toReload.length ? ['Pieces to reload:', pieces.toReload.join('\n'), '\u200b'] : [],
-			...pieces.toUnload.length ? ['Pieces to unload:', pieces.toUnload.join('\n'), '\u200b'] : [],
-			...nonPieces.length ? ['Non-piece files changed:', nonPieces.join('\n'), '\u200b'] : [],
+			...pieces.toLoad.length ? ['Pieces to load:', codeBlock('prolog', pieces.toLoad.join('\n')), '\u200b'] : [],
+			...pieces.toReload.length ? ['Pieces to reload:', codeBlock('prolog', pieces.toReload.join('\n')), '\u200b'] : [],
+			...pieces.toUnload.length ? ['Pieces to unload:', codeBlock('prolog', pieces.toUnload.join('\n')), '\u200b'] : [],
+			...nonPieces.length ? ['Non-piece files changed:', codeBlock('prolog', nonPieces.join('\n')), '\u200b'] : [],
 		], { split: { char: '\u200b' } });
 
 		if (nonPieces.length) {
