@@ -26,7 +26,7 @@ module.exports = class extends Monitor {
 	}
 
 	parseCommand(message) {
-		const result = this.customPrefix(message) || this.mentionPrefix(message) || this.naturalPrefix(message) || this.prefixLess(message);
+		const result = this.naturalPrefix(message) || this.customPrefix(message) || this.mentionPrefix(message) || this.prefixLess(message);
 		return result ? {
 			commandText: (message.content.slice(result.length).match(this.commandTextRegex) || [''])[0].toLowerCase(),
 			prefix: result.regex,
