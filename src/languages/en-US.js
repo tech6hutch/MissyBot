@@ -100,6 +100,7 @@ module.exports = class extends Language {
 				"I'm so confused @_@",
 				"I'm too dumb, sorry XD",
 				"I'm a potato!",
+				"I didn't get that @_@",
 			],
 			EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
