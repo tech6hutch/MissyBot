@@ -329,6 +329,25 @@ module.exports = class extends Language {
 			COMMAND_COOKIE_DESCRIPTION: 'I have a lot of cookies. 😋 Want one?',
 			COMMAND_DOG_DESCRIPTION: 'Show a random dog image!',
 			COMMAND_CAT_DESCRIPTION: 'Show a random cat image!',
+			COMMAND_SHIP_DESCRIPTION: 'Tag two people to ship them!',
+			COMMAND_SHIP: (msg, person1, person2, embed) => embed
+				.setTitle(`${person1.displayName} + ${person2.displayName}`)
+				.setDescription(`I think ${person1} and ${person2} would be wonderful together! :D`)
+				.setAuthor(msg.guild ? msg.guild.me.displayName : this.client.user.username, this.client.user.displayAvatarURL())
+				.setThumbnail('https://raw.githubusercontent.com/twitter/twemoji/gh-pages/72x72/1f49e.png')
+				.addField('Ship Level', '💟'.repeat(10), true)
+				.addField('Ship Compatibility', '100%! ♥', true)
+				.addField('Similar Interests', [
+					'• Both are human',
+					'• Both survive by consuming plant or animal matter',
+					'• Both use Discord',
+				].join('\n'), true)
+				.addField('Positive Qualities', [
+					'• Suitable mating partner',
+					'• Body heat can defrost cold objects',
+					"• You're both cuties!",
+				].join('\n'), true)
+				.setFooter('Go! '.repeat(4)),
 
 			// Custom misc.
 			LOADING_TEXT: 'Just a moment.',
