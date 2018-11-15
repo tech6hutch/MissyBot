@@ -31,7 +31,11 @@ module.exports = class extends Command {
 		return this.client.languages.default;
 	}
 
-	async run(msg) {
+	run(msg) {
+		return msg.sendLoading(this.updateBot.bind(this));
+	}
+
+	async updateBot(msg) {
 		const pullResult = await this.client.git.pull();
 
 		const { pieces, nonPieces } = this._segregateChanges(pullResult);
