@@ -32,7 +32,7 @@ module.exports = class extends Command {
 	}
 
 	run(msg) {
-		return msg.sendLoading(this.updateBot.bind(this));
+		return msg.sendLoading(() => this.updateBot(msg));
 	}
 
 	async updateBot(msg) {
