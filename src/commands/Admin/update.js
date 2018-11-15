@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { Command, util: { codeBlock } } = require('klasa');
+const { Command, util: { codeBlock, regExpEsc } } = require('klasa');
 
 module.exports = class extends Command {
 
@@ -9,10 +9,20 @@ module.exports = class extends Command {
 			permissionLevel: 10,
 		});
 
-		// This command is very based around your base directory being "src".
-		// It would need rewritten a little if your file structure is different.
-		this.baseDir = 'src';
-		this.pathSepsRegex = /[/\\]/;
+		const trailingSlash = /[/\\]$/;
+		const [cwd, userBaseDirectory] = [process.cwd(), this.client.userBaseDirectory]
+			.map(path => path.replace(trailingSlash, ''));
+		assert(userBaseDirectory.startsWith(cwd));
+		const baseDir = regExpEsc(userBaseDirectory
+			.replace(new RegExp(`^${regExpEsc(cwd)}`), '')
+			.replace(/\\/g, '/')
+			.replace(/^\//, ''));
+		// e.g., /^src\/?/g
+		this.baseDirRegex = baseDir ? new RegExp(`^${baseDir}/?`, 'g') : null;
+
+		this.hasBaseDir = Boolean(baseDir);
+
+		this.gitPathSeparator = '/';
 
 		this.loadRegex = /\\\\?|\//g;
 	}
@@ -42,7 +52,7 @@ module.exports = class extends Command {
 				null;
 		}
 
-		if (Object.values(pieces).some(pieceArray => pieceArray.length)) {
+		if (Object.values(pieces).some(arr => arr.length)) {
 			if (!await msg.ask('**Load piece changes?**')) return null;
 			await this.handlePieceChanges(pieces);
 			return msg.send('Done 👌🏽 (but check console for any errors)');
@@ -51,12 +61,16 @@ module.exports = class extends Command {
 		return msg.send('No new changes.');
 	}
 
+	eatBaseDir(path) {
+		return this.hasBaseDir ? path.replace(this.baseDirRegex, '') : path;
+	}
+
 	async handlePieceChanges(pieces) {
 		for (const file of pieces.toLoad) {
 			try {
-				// e.g., ['src', 'commands', 'Admin', 'eval.js']
-				const path = file.split(this.pathSepsRegex);
-				await this.loadPiece(this.client.pieceStores.get(path[1]), path.slice(2).join('/'));
+				// e.g., ['commands', 'Admin', 'eval.js']
+				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
+				await this.loadPiece(this.client.pieceStores.get(path[0]), path.slice(1).join('/'));
 			} catch (e) {
 				this.client.emit('wtf', e);
 			}
@@ -64,8 +78,8 @@ module.exports = class extends Command {
 
 		for (const file of pieces.toReload) {
 			try {
-				// e.g., ['src', 'commands', 'Admin', 'eval.js']
-				const path = file.split(this.pathSepsRegex);
+				// e.g., ['commands', 'Admin', 'eval.js']
+				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 				await this.reloadPiece(this._resolvePiece(path));
 			} catch (e) {
 				this.client.emit('wtf', e);
@@ -74,42 +88,13 @@ module.exports = class extends Command {
 
 		for (const file of pieces.toUnload) {
 			try {
-				// e.g., ['src', 'commands', 'Admin', 'eval.js']
-				const path = file.split(this.pathSepsRegex);
+				// e.g., ['commands', 'Admin', 'eval.js']
+				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 				await this.unloadPiece(this._resolvePiece(path));
 			} catch (e) {
 				this.client.emit('wtf', e);
 			}
 		}
-	}
-
-	_segregateChanges(pullResult) {
-		const { files, created, deleted } = pullResult;
-
-		const pieces = { toLoad: [], toReload: [], toUnload: [] };
-		const nonPieces = [];
-		const pieceTypes = this.client.pieceStores.keyArray();
-		for (const file of files) {
-			// e.g., ['src', 'commands', 'Admin', 'eval.js']
-			const path = file.split(this.pathSepsRegex);
-			if (path[0] === this.baseDir && pieceTypes.includes(path[1])) {
-				if (created.includes(file)) pieces.toLoad.push(file);
-				else if (deleted.includes(file)) pieces.toUnload.push(file);
-				else pieces.toReload.push(file);
-				assert(!(created.includes(file) && deleted.includes(file)));
-			} else {
-				nonPieces.push(file);
-			}
-		}
-
-		return { pieces, nonPieces };
-	}
-
-	_resolvePiece(path) {
-		// e.g., ['Admin', 'eval.js']
-		const storedPath = path.slice(2);
-		return this.client.pieceStores.get(path[1])
-			.find(piece => piece.file.length === storedPath.length && piece.file.every((part, i) => storedPath[i] === part));
 	}
 
 	async loadPiece(store, path) {
@@ -156,6 +141,37 @@ module.exports = class extends Command {
 			`);
 		}
 		return true;
+	}
+
+	_segregateChanges(pullResult) {
+		const { files, created, deleted } = pullResult;
+
+		const pieces = { toLoad: [], toReload: [], toUnload: [] };
+		const nonPieces = [];
+		const pieceTypes = this.client.pieceStores.keyArray();
+
+		for (const file of files) {
+			// e.g., 'commands/Admin/eval.js'
+			const fileWithoutBaseDir = this.eatBaseDir(file);
+			// e.g., ['commands', 'Admin', 'eval.js']
+			const path = fileWithoutBaseDir.split(this.gitPathSeparator);
+
+			if ((this.hasBaseDir && file.length === fileWithoutBaseDir.length) || !pieceTypes.includes(path[0])) {
+				nonPieces.push(file);
+			} else {
+				if (created.includes(file)) pieces.toLoad.push(file);
+				else if (deleted.includes(file)) pieces.toUnload.push(file);
+				else pieces.toReload.push(file);
+				assert(!(created.includes(file) && deleted.includes(file)));
+			}
+		}
+
+		return { pieces, nonPieces };
+	}
+
+	_resolvePiece([store, ...path]) {
+		return this.client.pieceStores.get(store)
+			.find(piece => piece.file.length === path.length && piece.file.every((part, i) => path[i] === part));
 	}
 
 };
