@@ -62,8 +62,8 @@ class Util {
 		return array[Math.floor(Math.random() * array.length)];
 	}
 
-	static _roundTwoDigits([first, second]) {
-		return `${Number(first) + (second >= 5)}${second}`;
+	static roundDigit([digit, otherDigit]) {
+		return Number(digit) + (otherDigit >= 5);
 	}
 
 	/**
@@ -76,8 +76,9 @@ class Util {
 	 */
 	static getFriendlyDuration(from, to = process.hrtime.bigint()) {
 		const time = Util.bigAbs(to - from).toString();
-		const digits = time.length;
 		let shift, suffix;
+
+		const digits = time.length;
 		for (const [d, suf] of Util.DIGITS_TO_UNITS) {
 			if (digits > d) {
 				shift = -d;
@@ -85,7 +86,10 @@ class Util {
 				break;
 			}
 		}
-		return `${time.slice(0, shift)}.${Util._roundTwoDigits(time.slice(shift, shift + 2))}${suffix}`;
+
+		const whole = time.slice(0, shift);
+		const fractional = `${time.slice(shift, shift + 1)}${Util.roundDigit(time.slice(shift + 1, shift + 3))}`;
+		return `${whole}.${fractional}${suffix}`;
 	}
 
 	/**
