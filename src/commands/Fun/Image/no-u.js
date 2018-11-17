@@ -5,8 +5,7 @@ module.exports = class extends Command {
 
 	constructor(...args) {
 		super(...args, {
-			name: 'no u',
-			aliases: ['no'],
+			aliases: ['no', 'no u'],
 			description: 'no u 🔀',
 			usage: '<u|you> [infinity]',
 			usageDelim: ' ',
@@ -15,6 +14,8 @@ module.exports = class extends Command {
 				'Missy, no u infinity',
 			]).join('\n'),
 		});
+		this.helpListName = 'no u';
+		this.usage.nearlyFullUsage = `no <u|you> [infinity]`;
 	}
 
 	async run(msg, [, infinity]) {

@@ -272,7 +272,7 @@ module.exports = class extends Language {
 				"But I'm a robot, I don't need to sleep ;-;",
 				"You can't tell me to sleep!",
 				['Nooooooo', "It's not bedtime yet!"],
-				msg => this.client.commands.get('no u').run(msg, []),
+				msg => this.client.commands.get('no-u').run(msg, []),
 			],
 			COMMAND_LEWD_DESCRIPTION: 'Nice try. 😝',
 			COMMAND_LEWD_LOADING_TEXT: '<.<\n>.>',
@@ -287,7 +287,7 @@ module.exports = class extends Language {
 			COMMAND_EAT_SELF: [
 				"But I'm a robot, I don't need to eat ;-;",
 				msg => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
-				msg => this.client.commands.get('no u').run(msg, []),
+				msg => this.client.commands.get('no-u').run(msg, []),
 			],
 			COMMAND_FAKEBAN: [
 				'Please give them another chance ;-;',
@@ -320,7 +320,6 @@ module.exports = class extends Language {
 			COMMAND_SEND_MARBLES: 'I seem to have lost all of mine @_@',
 			COMMAND_SEND_UNKNOWN: "I don't know how to send that >_<",
 			COMMAND_NOU_EXTENDEDHELP: examples => [
-				"I'm sorry for the cluttered usage.",
 				'Examples:',
 				...examples,
 			],

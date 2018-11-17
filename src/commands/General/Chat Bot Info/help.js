@@ -27,7 +27,7 @@ module.exports = class extends Command {
 	} = {}) {
 		if (command) {
 			const info = [
-				`= ${command.name} = `,
+				`= ${command.helpListName || command.name} = `,
 				isFunction(command.description) ? command.description(msg.language) : command.description,
 				msg.language.get('COMMAND_HELP_USAGE', command.usage.fullUsage(msg)),
 				msg.language.get('COMMAND_HELP_EXTENDED'),
@@ -59,7 +59,7 @@ module.exports = class extends Command {
 		const help = {};
 
 		const prefix = scalarOrFirst(this.client.options.prefix);
-		const commandNames = [...this.client.commands.keys()];
+		const commandNames = this.client.commands.map(cmd => cmd.helpListName || cmd.name);
 		const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
 		await Promise.all(this.client.commands.map((command) =>
@@ -68,7 +68,7 @@ module.exports = class extends Command {
 					if (!help.hasOwnProperty(command.category)) help[command.category] = {};
 					if (!help[command.category].hasOwnProperty(command.subCategory)) help[command.category][command.subCategory] = [];
 					const description = isFunction(command.description) ? command.description(message.language) : command.description;
-					help[command.category][command.subCategory].push(`${prefix} ${command.name.padEnd(longest)} :: ${description}`);
+					help[command.category][command.subCategory].push(`${prefix} ${(command.helpListName || command.name).padEnd(longest)} :: ${description}`);
 				})
 				.catch(() => {
 					// noop
