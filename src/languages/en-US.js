@@ -125,6 +125,7 @@ module.exports = class extends Language {
 				"Alright, I'll go play somewhere else until @'d",
 				'Understood 👍 To get my attention, @mention me',
 			],
+			FINALIZER_DELETE_FLAG_NO_DELETE: '❌ | I couldn\'t delete your message, sorry :/',
 
 			// Core commands
 			COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and servers from the bot.',
