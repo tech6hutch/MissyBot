@@ -41,7 +41,7 @@ module.exports = class extends Command {
 		const { pieces, nonPieces } = this._segregateChanges(pullResult);
 
 		const { changes, insertions, deletions } = pullResult.summary;
-		await msg.channel.send([
+		await msg.send([
 			`**${changes}** files changed (**${insertions}** insertions, **${deletions}** deletions).`,
 			'\u200b',
 			...pieces.toLoad.length ? ['Pieces to load:', codeBlock('prolog', pieces.toLoad.join('\n')), '\u200b'] : [],
