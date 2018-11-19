@@ -12,16 +12,14 @@ module.exports = class extends Command {
 
 	async run(msg) {
 		const botAvatar = this.client.user.displayAvatarURL();
-		const pingMsg = await msg.sendEmbed(
-			new MessageEmbed(msg.language.get('COMMAND_PING', this.client.ws.ping))
-				.setColor(this.client.COLORS.BLUE)
-				.setThumbnail(botAvatar)
-		);
-		return msg.sendEmbed(new MessageEmbed(
-			msg.language.get('COMMAND_PINGPONG',
-				(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - (msg.editedTimestamp || msg.createdTimestamp),
-				pingMsg.embeds[0])
-		));
+		const pingMsg = await msg.sendLocale('COMMAND_PING', [
+			this.client.ws.ping,
+			new MessageEmbed().setColor(this.client.COLORS.BLUE).setThumbnail(botAvatar),
+		]);
+		return msg.sendLocale('COMMAND_PINGPONG', [
+			(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - (msg.editedTimestamp || msg.createdTimestamp),
+			new MessageEmbed(pingMsg.embeds[0]),
+		]);
 	}
 
 };

@@ -1,12 +1,13 @@
 const { Language, util, constants: { TIME: { MINUTE } } } = require('klasa');
 const { smartJoin } = require('../lib/util/util');
 
-const DISCORD_EMOJI = '<:discord:503738729463021568>';
-
 module.exports = class extends Language {
 
 	constructor(...args) {
 		super(...args);
+
+		this.DISCORD_EMOJI = '<:discord:503738729463021568>';
+
 		this.language = {
 			DEFAULT: (key) => `${key} has not been localized for en-US yet.`,
 			DEFAULT_LANGUAGE: 'Default Language',
@@ -168,18 +169,10 @@ module.exports = class extends Language {
 			COMMAND_LOAD_FAIL: 'The file does not exist, or an error occurred while loading your file. Please check your console.',
 			COMMAND_LOAD_ERROR: (type, name, error) => `❌ Failed to load ${type}: ${name}. Reason:${util.codeBlock('js', error)}`,
 			COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
-			COMMAND_PING: ping => ({
-				fields: [{
-					name: `${DISCORD_EMOJI} Ping:`,
-					value: 'Pinging Discord...',
-				}, {
-					name: '💓 Heartbeat:',
-					value: `${Math.round(MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`,
-				}],
-				footer: {
-					text: "Bots have faster heartbeats than humans, so don't worry if mine is really high!",
-				},
-			}),
+			COMMAND_PING: (ping, embed) => embed
+				.addField(`${this.DISCORD_EMOJI} Ping:`, 'Pinging Discord...')
+				.addField('💓 Heartbeat:', `${Math.round(MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
+				.setFooter("Bots have faster heartbeats than humans, so don't worry if mine is really high!"),
 			COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
 			COMMAND_PINGPONG: (diff, embed) => {
 				embed.fields[0].value = `${diff} ms`;
@@ -354,10 +347,6 @@ module.exports = class extends Language {
 			LOADING_TEXT: 'Just a moment.',
 			SENT_IMAGE: 'Sent the image 👌',
 		};
-	}
-
-	async init() {
-		await super.init();
 	}
 
 };
