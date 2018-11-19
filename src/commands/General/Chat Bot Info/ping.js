@@ -11,10 +11,9 @@ module.exports = class extends Command {
 	}
 
 	async run(msg) {
-		const botAvatar = this.client.user.displayAvatarURL();
 		const pingMsg = await msg.sendLocale('COMMAND_PING', [
 			this.client.ws.ping,
-			new MessageEmbed().setColor(this.client.COLORS.BLUE).setThumbnail(botAvatar),
+			new MessageEmbed().setColor(this.client.COLORS.BLUE).setThumbnail(this.client.user.displayAvatarURL()),
 		]);
 		return msg.sendLocale('COMMAND_PINGPONG', [
 			(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - (msg.editedTimestamp || msg.createdTimestamp),
