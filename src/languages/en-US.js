@@ -9,13 +9,6 @@ module.exports = class extends Language {
 		this.DISCORD_EMOJI = '<:discord:503738729463021568>';
 
 		this.language = {
-			DEFAULT: (key) => `${key} has not been localized for en-US yet.`,
-			DEFAULT_LANGUAGE: 'Default Language',
-
-			/**
-			 * @param {string|string[]} prefix Guild prefixes or w/e
-			 * @returns {string}
-			 */
 			PREFIX_REMINDER: ({ prefix, disableNaturalPrefix }) => {
 				const prefixes = [];
 				if (!disableNaturalPrefix) prefixes.push(this.client.PREFIX_PLAIN);
@@ -38,16 +31,7 @@ module.exports = class extends Language {
 				['rock music 🤘', { type: 'LISTENING' }],
 			],
 
-			// SettingsGateway, resolver, and prompts
-
-			SETTING_GATEWAY_EXPECTS_GUILD: 'The parameter <Guild> expects either a Guild or a Guild Object.',
-			SETTING_GATEWAY_VALUE_FOR_KEY_NOEXT: (data, key) => `The value ${data} for the key ${key} does not exist.`,
-			SETTING_GATEWAY_VALUE_FOR_KEY_ALREXT: (data, key) => `The value ${data} for the key ${key} already exists.`,
-			SETTING_GATEWAY_SPECIFY_VALUE: 'You must specify the value to add or filter.',
-			SETTING_GATEWAY_KEY_NOT_ARRAY: (key) => `The key ${key} is not an Array.`,
-			SETTING_GATEWAY_KEY_NOEXT: (key) => `The key ${key} does not exist in the current data schema.`,
-			SETTING_GATEWAY_INVALID_TYPE: 'The type parameter must be either add or remove.',
-			SETTING_GATEWAY_INVALID_FILTERED_VALUE: (piece, value) => `${piece.key} doesn't accept the value: ${value}`,
+			// Resolver and prompts
 
 			RESOLVER_MULTI_TOO_FEW: (name, min = 1) => `Provided too few ${name}s. Atleast ${min} ${min === 1 ? 'is' : 'are'} required.`,
 			RESOLVER_INVALID_BOOL: (name) => `${name} must be true or false.`,
