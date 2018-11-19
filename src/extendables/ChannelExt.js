@@ -9,6 +9,8 @@ module.exports = class extends Extendable {
 		super(...args, { appliesTo: [TextChannel, DMChannel, GroupDMChannel, User] });
 	}
 
+	// Sending responses
+
 	sendRandom(key, args = [], responseArgs = [], options = {}) {
 		if (!Array.isArray(responseArgs)) {
 			if (!Array.isArray(args)) [options, args] = [args, []];
@@ -54,4 +56,45 @@ module.exports = class extends Extendable {
 		return [await (loadingMsg.editable ? loadingMsg.edit(doneText) : this.send(doneText)), response];
 	}
 
+	// Awaiting responses
+
+	async ask(user, content, options) {
+		const message = await this.sendMessage(content, options);
+		return (
+			this.permissionsFor(this.guild.me).has('ADD_REACTIONS') ?
+				awaitReaction(user, message) :
+				awaitMessage(user, this)
+		).then(() => true, () => false);
+	}
+
+	async awaitReply(user, question, time = 60000, embed) {
+		return this.awaitMsg(user, question, time, embed)
+			.then(msg => msg.content);
+	}
+
+	async awaitMsg(user, question, time = 60000, embed) {
+		await (embed ? this.send(question, { embed }) : this.send(question));
+		return this.awaitMessages(message => message.author.id === user.id,
+			{ max: 1, time, errors: ['time'] })
+			.then(messages => messages.first())
+			.catch(() => false);
+	}
+
+};
+
+const awaitReaction = async (user, message) => {
+	await message.react('🇾');
+	await message.react('🇳');
+	const data = await message.awaitReactions(reaction => reaction.users.has(user.id), { time: 20000, max: 1 });
+	message.reactions.removeAll();
+	if (data.firstKey() === '🇾') return true;
+	throw null;
+};
+
+const awaitMessage = async (user, channel) => {
+	const messages = await channel.awaitMessages(mes => mes.author === user, { time: 20000, max: 1 });
+	if (messages.size === 0) throw null;
+	const responseMessage = await messages.first();
+	if (responseMessage.content.toLowerCase() === 'yes') return true;
+	throw null;
 };
