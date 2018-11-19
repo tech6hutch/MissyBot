@@ -32,7 +32,7 @@ module.exports = class extends Command {
 	}
 
 	run(msg) {
-		return msg.sendLoading(() => this.updateBot(msg));
+		return msg.sendLoading(() => this.updateBot(msg), { loadingText: 'Pulling changes from GitHub...' });
 	}
 
 	async updateBot(msg) {
