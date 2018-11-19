@@ -51,13 +51,13 @@ module.exports = class extends Command {
 		], { split: { char: '\u200b' } });
 
 		if (nonPieces.length) {
-			return await msg.ask('Non-piece files changed. **Reboot the bot?**') ?
+			return await msg.channel.ask(msg.author, 'Non-piece files changed. **Reboot the bot?**') ?
 				this.store.get('reboot').run(msg) :
 				null;
 		}
 
 		if (Object.values(pieces).some(arr => arr.length)) {
-			if (!await msg.ask('**Load piece changes?**')) return null;
+			if (!await msg.channel.ask(msg.author, '**Load piece changes?**')) return null;
 			await this.handlePieceChanges(pieces);
 			return msg.send('Done 👌🏽 (but check console for any errors)');
 		}
