@@ -63,7 +63,7 @@ module.exports = class extends Command {
 			return qMsg.send('Done 👌🏽 (but check console for any errors)');
 		}
 
-		return msg.send('No new changes.');
+		return msg.channel.send('No new changes.');
 	}
 
 	eatBaseDir(path) {
