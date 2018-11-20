@@ -64,7 +64,7 @@ module.exports = class extends Extendable {
 			this.permissionsFor(this.guild.me).has('ADD_REACTIONS') ?
 				awaitReaction(user, message) :
 				awaitMessage(user, this)
-		).then(() => true, () => false);
+		).then(() => message).catch(() => { throw message; });
 	}
 
 	async awaitReply(user, question, time = 60000, embed) {
