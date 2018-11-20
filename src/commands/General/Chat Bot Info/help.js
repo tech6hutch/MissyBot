@@ -29,7 +29,7 @@ module.exports = class extends Command {
 			const info = [
 				`= ${command.helpListName || command.name} = `,
 				isFunction(command.description) ? command.description(msg.language) : command.description,
-				msg.language.get('COMMAND_HELP_USAGE', command.usage.fullUsage(msg)),
+				msg.language.get('COMMAND_HELP_USAGE', command.helpUsage || command.usage.fullUsage(msg)),
 				msg.language.get('COMMAND_HELP_EXTENDED'),
 				isFunction(command.extendedHelp) ? command.extendedHelp(msg.language) : command.extendedHelp
 			].join('\n');

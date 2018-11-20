@@ -1,7 +1,7 @@
 const assert = require('assert');
-const { Command } = require('klasa');
+const MissyCommand = require('../../../lib/structures/MissyCommand');
 
-module.exports = class extends Command {
+module.exports = class extends MissyCommand {
 
 	constructor(...args) {
 		super(...args, {
@@ -9,13 +9,13 @@ module.exports = class extends Command {
 			description: 'no u 🔀',
 			usage: '<u|you> [infinity]',
 			usageDelim: ' ',
+			helpListName: 'no u',
+			helpUsage: 'no <u|you> [infinity]',
 			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
 				'Missy, no u',
 				'Missy, no u infinity',
 			]).join('\n'),
 		});
-		this.helpListName = 'no u';
-		this.usage.nearlyFullUsage = `no <u|you> [infinity]`;
 	}
 
 	async run(msg, [, infinity]) {
