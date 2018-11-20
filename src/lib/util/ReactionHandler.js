@@ -99,7 +99,8 @@ class ReactionHandler extends ReactionCollector {
 				return;
 			}
 
-			const reactionPromise = reaction.users.remove(user);
+			// If this promise fails, the bot didn't have perms to remove others' reactions :/
+			const reactionPromise = reaction.users.remove(user).catch(() => null);
 			if (collQ.length === this.spamLimit.warn) {
 				this.message.channel.sendLocale('REACTIONHANDLER_SPAM_WARN');
 			}
@@ -114,7 +115,8 @@ class ReactionHandler extends ReactionCollector {
 			return;
 		}
 
-		const reactionPromise = reaction.users.remove(user);
+		// If this promise fails, the bot didn't have perms to remove others' reactions :/
+		const reactionPromise = reaction.users.remove(user).catch(() => null);
 		const methodPromise = Promise.resolve(this[this.methodMap.get(reaction.emoji.name)](user));
 		const obj = { reactionPromise, methodPromise };
 		Promise.all([reactionPromise, methodPromise, sleep(1000)])
@@ -130,8 +132,17 @@ class ReactionHandler extends ReactionCollector {
 	 * Called when the collector is finished collecting
 	 * @returns {void}
 	 */
-	onEnd() {
-		if (this.reactionsDone && !this.message.deleted) this.message.reactions.removeAll();
+	async onEnd() {
+		if (this.reactionsDone && !this.message.deleted) {
+			try {
+				// If this promise fails, the bot didn't have perms to remove others' reactions :/
+				await this.message.reactions.removeAll();
+			} catch (_) {
+				for (const reaction of this.message.reactions.values()) {
+					if (reaction.me) reaction.users.remove();
+				}
+			}
+		}
 	}
 
 	/**
