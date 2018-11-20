@@ -60,7 +60,7 @@ module.exports = class extends Command {
 			const qMsg = await msg.channel.ask(msg.author, '**Load piece changes?**').catch(() => false);
 			if (!qMsg) return null;
 			await this.handlePieceChanges(pieces);
-			return qMsg.send('Done 👌🏽 (but check console for any errors)');
+			return qMsg.edit('Done 👌🏽 (but check console for any errors)');
 		}
 
 		return msg.channel.send('No new changes.');
