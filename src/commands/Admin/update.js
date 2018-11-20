@@ -52,7 +52,7 @@ module.exports = class extends Command {
 
 		if (nonPieces.length) {
 			return await msg.channel.ask(msg.author, 'Non-piece files changed. **Reboot the bot?**').catch(() => false) ?
-				this.store.get('reboot').run(msg) :
+				this.store.get('reboot').run(msg.channel) :
 				null;
 		}
 
