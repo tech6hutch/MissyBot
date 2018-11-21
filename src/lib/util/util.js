@@ -1,3 +1,4 @@
+const levenshtein = require('js-levenshtein');
 const { util: { sleep } } = require('klasa');
 
 class Util {
@@ -130,6 +131,27 @@ class Util {
 	 */
 	static randomBetween(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	/**
+	 * Finds the closest match in `sharpHaystack` for `fuzzyNeedle`
+	 * @param {string} fuzzyNeedle The string to find the closest item in sharpHaystack for
+	 * @param {Iterable<string>} sharpHaystack The iterable of strings to compare against
+	 * @returns {string} The closest item in sharpHaystack to fuzzyNeedle
+	 */
+	static fuzzySearch(fuzzyNeedle, sharpHaystack) {
+		fuzzyNeedle = fuzzyNeedle.toLowerCase();
+		let leastDistance = Infinity;
+		let closestValue;
+		for (const value of sharpHaystack) {
+			const distance = levenshtein(fuzzyNeedle, value.toLowerCase());
+			if (distance < leastDistance) {
+				leastDistance = distance;
+				closestValue = value;
+			}
+		}
+
+		return closestValue;
 	}
 
 	/**

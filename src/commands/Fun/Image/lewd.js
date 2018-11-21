@@ -1,7 +1,6 @@
 const assert = require('assert');
-const strDistance = require('js-levenshtein');
 const RandomImageCommand = require('../../../lib/base/RandomImageCommand');
-const { resolveLang } = require('../../../lib/util/util');
+const { fuzzySearch, resolveLang } = require('../../../lib/util/util');
 
 module.exports = class extends RandomImageCommand {
 
@@ -22,13 +21,10 @@ module.exports = class extends RandomImageCommand {
 	}
 
 	async run(msg, [imageName]) {
-		if (imageName === 'list') {
-			return msg.send(this.images
-				.map(img => this.client.assets.get(img).title)
-				.join('\n'));
-		}
+		const msgOrNull = super.listIfList(msg, imageName);
+		if (msgOrNull) return msgOrNull;
 
-		imageName = imageName && this.resolveImageNameFuzzily(imageName);
+		imageName = imageName && fuzzySearch(imageName, this.images);
 
 		if (msg.channel.nsfw) {
 			return this.postNsfwImage(msg, imageName);
@@ -37,21 +33,6 @@ module.exports = class extends RandomImageCommand {
 			if (Math.random() < 0.05) return msg.channel.sendLocale('COMMAND_LEWD_NSFW_HINT');
 			return m;
 		}
-	}
-
-	resolveImageNameFuzzily(fuzzyName) {
-		fuzzyName = fuzzyName.toLowerCase();
-		let leastDistance = Infinity;
-		let closestName;
-		for (const imgName of this.images) {
-			const distance = strDistance(fuzzyName, imgName.toLowerCase());
-			if (distance < leastDistance) {
-				leastDistance = distance;
-				closestName = imgName;
-			}
-		}
-
-		return closestName;
 	}
 
 	postSfwImage(channel) {
@@ -81,9 +62,7 @@ module.exports = class extends RandomImageCommand {
 	}
 
 	init() {
-		for (const imageName of this.images) {
-			assert(this.client.assets.has(imageName));
-		}
+		super.init();
 		assert(this.client.assets.has(this.sfwImage));
 	}
 
