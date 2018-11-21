@@ -82,9 +82,9 @@ module.exports = class extends Command {
 
 	async handlePieceChanges(pieces) {
 		for (const file of pieces.toLoad) {
+			// e.g., ['commands', 'Admin', 'eval.js']
+			const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 			try {
-				// e.g., ['commands', 'Admin', 'eval.js']
-				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 				await this.loadPiece(this.client.pieceStores.get(path[0]), path.slice(1).join('/'));
 			} catch (e) {
 				this.client.emit('wtf', e);
@@ -92,19 +92,25 @@ module.exports = class extends Command {
 		}
 
 		for (const file of pieces.toReload) {
+			// e.g., ['commands', 'Admin', 'eval.js']
+			const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 			try {
-				// e.g., ['commands', 'Admin', 'eval.js']
-				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 				await this.reloadPiece(this._resolvePiece(path));
-			} catch (e) {
-				this.client.emit('wtf', e);
+			} catch (_) {
+				// If reloading failed, maybe it's not in the store because it was disabled?
+				this.client.emit('warn', `Reloading piece at \`${file}\` failed. Attempting to load it anew...`);
+				try {
+					await this.loadPiece(this.client.pieceStores.get(path[0]), path.slice(1).join('/'));
+				} catch (e) {
+					this.client.emit('wtf', e);
+				}
 			}
 		}
 
 		for (const file of pieces.toUnload) {
+			// e.g., ['commands', 'Admin', 'eval.js']
+			const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 			try {
-				// e.g., ['commands', 'Admin', 'eval.js']
-				const path = this.eatBaseDir(file).split(this.gitPathSeparator);
 				await this.unloadPiece(this._resolvePiece(path));
 			} catch (e) {
 				this.client.emit('wtf', e);
