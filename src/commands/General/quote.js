@@ -6,7 +6,7 @@ module.exports = class extends RandomImageCommand {
 		super(...args, {
 			enabled: false,
 			aliases: ['no-context'],
-			description: 'Get a no-context quote from Missy.',
+			description: lang => lang.get('COMMAND_QUOTE_DESCRIPTION'),
 			usage: '[list|quote-name:str]',
 			// Custom
 			images: [

@@ -326,6 +326,7 @@ module.exports = class extends Language {
 					"• You're both cuties!",
 				].join('\n'), true)
 				.setFooter('Go! '.repeat(4)),
+			COMMAND_QUOTE_DESCRIPTION: 'Get a no-context quote from Missy.',
 
 			// Custom misc.
 			LOADING_TEXT: 'Just a moment.',
