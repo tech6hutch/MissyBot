@@ -6,8 +6,8 @@ module.exports = class extends RandomImageCommand {
 		super(...args, {
 			enabled: false,
 			aliases: ['no-context'],
-			description: lang => lang.get('COMMAND_QUOTE_DESCRIPTION'),
 			usage: '[list|quote-name:str]',
+			description: lang => lang.get('COMMAND_QUOTE_DESCRIPTION'),
 			// Custom
 			images: [
 				'minorities',
