@@ -61,7 +61,7 @@ module.exports = class extends Extendable {
 	async ask(user, content, options) {
 		const message = await this.sendMessage(content, options);
 		return (
-			this.permissionsFor(this.guild.me).has('ADD_REACTIONS') ?
+			!this.guild || this.permissionsFor(this.guild.me).has('ADD_REACTIONS') ?
 				awaitReaction(user, message) :
 				awaitMessage(user, this)
 		).then(() => message).catch(() => { throw message; });
