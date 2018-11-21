@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { Command, util: { codeBlock, regExpEsc } } = require('klasa');
+const { Command, util: { codeBlock, regExpEsc }, KlasaMessage } = require('klasa');
 
 module.exports = class extends Command {
 
@@ -51,16 +51,26 @@ module.exports = class extends Command {
 		], { split: { char: '\u200b' } });
 
 		if (nonPieces.length) {
-			return await msg.channel.ask(msg.author, 'Non-piece files changed. **Reboot the bot?**').catch(() => false) ?
-				this.store.get('reboot').run(msg.channel) :
-				null;
+			try {
+				const qMsg = await msg.channel.ask(msg.author, 'Non-piece files changed. **Reboot the bot?**');
+				msg._responses = [qMsg];
+				return this.store.get('reboot').run(msg);
+			} catch (qMsg) {
+				if (qMsg instanceof KlasaMessage) msg._responses = [qMsg];
+				return null;
+			}
 		}
 
 		if (Object.values(pieces).some(arr => arr.length)) {
-			const qMsg = await msg.channel.ask(msg.author, '**Load piece changes?**').catch(() => false);
-			if (!qMsg) return null;
-			await this.handlePieceChanges(pieces);
-			return qMsg.edit('Done 👌🏽 (but check console for any errors)');
+			try {
+				const qMsg = await msg.channel.ask(msg.author, '**Load piece changes?**');
+				await this.handlePieceChanges(pieces);
+				msg._responses = [qMsg];
+				return msg.send('Done 👌🏽 (but check console for any errors)');
+			} catch (qMsg) {
+				if (qMsg instanceof KlasaMessage) msg._responses = [qMsg];
+				return null;
+			}
 		}
 
 		return msg.channel.send('No new changes.');
