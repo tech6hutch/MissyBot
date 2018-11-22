@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"module": "commonjs",
+		"target": "es2018",
+		"lib": [
+			"es2017"
+		],
+		"outDir": "dist",
+		"sourceMap": false,
+		"allowJs": false,
+		"removeComments": false,
+		"experimentalDecorators": false
+	},
+	"include": [
+		"src/"
+	],
+	"exclude": [
+		"node_modules",
+		"bower_components",
+		"jspm_packages",
+		"tmp",
+		"temp",
+		"bin",
+		"docs",
+		"pkg",
+		"examples"
+	]
+}

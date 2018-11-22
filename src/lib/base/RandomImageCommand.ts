@@ -1,10 +1,20 @@
-const assert = require('assert');
-const { Command } = require('klasa');
-const { arrayRandom, fuzzySearch, resolveLang } = require('../util/util');
+import assert from 'assert';
+import { Command, CommandStore, CommandOptions, Language, KlasaMessage } from 'klasa';
+import { arrayRandom, fuzzySearch, resolveLang } from '../util/util';
+import MissyClient from '../MissyClient';
+import { Sendable } from '../util/types';
+
+export interface RandomImageCommandOptions extends CommandOptions {
+	images: string[];
+	loadingTextFn?: (lang: Language) => string;
+}
 
 class RandomImageCommand extends Command {
 
-	constructor(client, store, file, directory, options = {}) {
+	images: string[];
+	loadingTextFn: (lang: Language) => string;
+
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: RandomImageCommandOptions) {
 		super(client, store, file, directory, options);
 
 		if (!Array.isArray(options.images)) throw new TypeError('options.images must be an array of strings and/or string arrays');
@@ -12,11 +22,11 @@ class RandomImageCommand extends Command {
 		this.loadingTextFn = options.loadingTextFn || (lang => lang.get('LOADING_TEXT'));
 	}
 
-	run(msg, [firstParam]) {
+	run(msg: KlasaMessage, [firstParam]: [string]) {
 		return this.listIfList(msg, firstParam) || this.postIfName(msg, firstParam) || this.postRandom(msg);
 	}
 
-	listIfList(channel, imageName) {
+	listIfList(channel: Sendable, imageName: string) {
 		return imageName === 'list' ?
 			channel.send(this.images
 				.map(img => this.client.assets.get(img).title)
@@ -24,7 +34,7 @@ class RandomImageCommand extends Command {
 			null;
 	}
 
-	postIfName(channel, imageName) {
+	postIfName(channel: Sendable, imageName: string) {
 		return imageName ?
 			channel.sendLoading(
 				() => this.getInFuzzily(imageName).uploadTo(channel),
@@ -33,7 +43,7 @@ class RandomImageCommand extends Command {
 			null;
 	}
 
-	postRandom(channel) {
+	postRandom(channel: Sendable) {
 		return channel.sendLoading(
 			() => this.get().uploadTo(channel),
 			{ loadingText: this.loadingTextFn(resolveLang(channel)) }

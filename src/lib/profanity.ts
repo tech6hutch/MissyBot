@@ -1,15 +1,17 @@
-const assert = require('assert');
-const { Collection } = require('discord.js');
+import assert from 'assert';
+import { Collection } from 'discord.js';
 
 // For brevity, since so many of these words can have the same suffixes
 const sSuffixes = ['s', 'ing', 'ed'];
 const sErSuffixes = [...sSuffixes, 'ers?'];
 const esSuffixes = ['es', 'ing', 'ed'];
 const esErSuffixes = [...esSuffixes, 'ers?'];
-/**
- * @type {Object<string, ({ name: string, suffixes?: string[], aliases?: string[], censored?: string })[]>}
- */
-const profanityToAssemble = {
+
+interface ITempProfanity {
+	[k: string]: Array<{ name: string, suffixes?: string[], aliases?: string[], censored?: string }>
+}
+
+const profanityToAssemble: ITempProfanity = {
 	'Insults 🙊': [
 		{
 			name: 'bitch',
@@ -195,15 +197,21 @@ const profanityToAssemble = {
 	],
 };
 for (const obj of Object.values(profanityToAssemble).reduce((arrays, catArr) => arrays.concat(catArr))) {
-	const { name, wordEnds, aliases, censored } = obj;
+	const { name, suffixes, aliases, censored } = obj;
 	assert(typeof name === 'string' && name.length);
-	assert((Array.isArray(wordEnds) && wordEnds.length) || wordEnds === undefined);
+	assert((Array.isArray(suffixes) && suffixes.length) || suffixes === undefined);
 	assert((Array.isArray(aliases) && aliases.length) || aliases === undefined);
 	assert((typeof censored === 'string' && censored.length) || censored === undefined);
 	assert((len => len >= 1 && len <= 4)(Object.keys(obj).length));
 }
 
-class Profanity extends Collection {
+class Profanity extends Collection<string, string> {
+
+	public regex: RegExp;
+
+	public regexes: Collection<string, { regexStr: string, regex: RegExp }>;
+	public byCategory: Collection<string, string[]>;
+	public censors: Collection<string, string>;
 
 	constructor() {
 		super();
@@ -213,13 +221,13 @@ class Profanity extends Collection {
 		this.censors = new Collection();
 
 		for (const [category, wordObjArray] of Object.entries(profanityToAssemble)) {
-			const catArray = [];
+			const catArray: string[] = [];
 			this.byCategory.set(category, catArray);
-			for (const { name, suffixes, aliases = [], censored = `${name[0]}-word` } of wordObjArray) {
+			for (const { name, suffixes, aliases = [], censored } of wordObjArray) {
 				catArray.push(name);
 				this.set(name, name);
 				for (const alias of aliases) this.set(alias, name);
-				this.censors.set(name, censored);
+				this.censors.set(name, censored || `${name[0]}-word`);
 
 				const regexStr = [
 					`(${name})${
@@ -233,7 +241,7 @@ class Profanity extends Collection {
 
 		this.regex = this._makeRegex();
 
-		assert(Array.isArray(this.words) && this.words.every(word => typeof word === 'string' && word.length));
+		assert(Array.isArray(this.words) && this.words.every(word => typeof word === 'string' && !!word.length));
 	}
 
 	get words() {
@@ -248,10 +256,10 @@ class Profanity extends Collection {
 		return new RegExp(this.regexes.map(obj => obj.regexStr).join('|'), 'gi');
 	}
 
-	get(key) {
+	get(key: string) {
 		return super.get(key.toLowerCase());
 	}
 
 }
 
-module.exports = new Profanity();
+export default new Profanity();

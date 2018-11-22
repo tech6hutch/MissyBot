@@ -1,16 +1,65 @@
-require('./preload');
+import './preload';
 
-const git = require('simple-git/promise');
-const { Permissions: { FLAGS } } = require('discord.js');
-const { KlasaClient, Schema, PermissionLevels, util: { mergeDefault } } = require('klasa');
-const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
-const AssetStore = require('./structures/AssetStore');
-// const ObjectStore = require('./structures/ObjectStore');
-const profanity = require('./profanity');
+import git from 'simple-git/promise';
+import {
+	Permissions,
+	Snowflake, TextChannel,
+} from 'discord.js';
+import {
+	KlasaClient, Schema, PermissionLevels,
+	KlasaClientOptions, KlasaConsoleOptions,
+} from 'klasa';
+import {
+	MissyStdoutStream, MissyStderrStream,
+	MissyStream,
+} from './MissyStreams';
+import AssetStore from './structures/AssetStore';
+// import ObjectStore from './structures/ObjectStore';
+import profanity from './profanity';
+import { mergeDefault } from './util/util';
+import { AssertionError } from 'assert';
 
-module.exports = class MissyClient extends KlasaClient {
+export interface MissyClientOptions extends KlasaClientOptions {
+	console?: KlasaConsoleOptions & {
+		stdout?: MissyStream,
+		stderr?: MissyStream,
+	};
+	missyLogChannel?: Snowflake;
+	missyErrorChannel?: Snowflake;
+}
 
-	constructor(options = {}) {
+const COLORS = {
+	WHITE: 0xFFFFFF,
+	BLACK: 0x111111,
+	BLUE: 0x0074D9,
+};
+
+export default class MissyClient extends KlasaClient {
+
+	COLORS: typeof COLORS;
+
+	PREFIX: string;
+	PREFIX_PLAIN: string;
+
+	missyID: Snowflake;
+
+	/**
+	 * People who can speak for the bot (use, e.g., the "say" command)
+	 *
+	 * See the once "ready" event, below, for the rest of the elements in this set.
+	 */
+	speakerIDs: Set<Snowflake>;
+
+	/**
+	 * Channels ignored as part of the "not you" system
+	 */
+	ignoredChannels: Set<TextChannel>;
+
+	assets: AssetStore;
+
+	git: git.SimpleGit;
+
+	constructor(options: MissyClientOptions = {}) {
 		options = mergeDefault({
 			// KlasaClientOptions
 			regexPrefix: /^Missy,?/i,
@@ -34,8 +83,8 @@ module.exports = class MissyClient extends KlasaClient {
 			missyErrorChannel: '499959529522331653',
 		}, options);
 
-		if (!options.gateways.clientStorage.schema) {
-			options.gateways.clientStorage.schema = new Schema()
+		if (!options.gateways!.clientStorage!.schema) {
+			options.gateways!.clientStorage!.schema = new Schema()
 				// Default
 				.add('userBlacklist', 'user', { array: true, configurable: true })
 				.add('guildBlacklist', 'guild', { array: true, configurable: true })
@@ -46,8 +95,8 @@ module.exports = class MissyClient extends KlasaClient {
 					.add('timestamp', 'bigint', { min: 0 }));
 		}
 
-		if (!options.gateways.users.schema) {
-			options.gateways.users.schema = new Schema()
+		if (!options.gateways!.users!.schema) {
+			options.gateways!.users!.schema = new Schema()
 				// No defaults
 				// Custom
 				.add('profanity', folder => profanity.words.forEach(word => folder
@@ -61,36 +110,24 @@ module.exports = class MissyClient extends KlasaClient {
 		if (!options.permissionLevels) {
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(FLAGS.MANAGE_GUILD), { fetch: true })
+				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD), { fetch: true })
 				.add(7, (_, msg) => msg.guild && msg.member === msg.guild.owner, { fetch: true })
-				.add(8, (client, msg) => client.speakerIDs.has(msg.author.id))
-				.add(9, (client, msg) => msg.author === client.owner || msg.author === client.missy, { break: true })
+				.add(8, (client: MissyClient, msg) => client.speakerIDs.has(msg.author.id))
+				.add(9, (client: MissyClient, msg) => msg.author === client.owner || msg.author === client.missy, { break: true })
 				.add(10, (client, msg) => msg.author === client.owner);
 		}
 
 		super(options);
 
-		this.COLORS = {
-			WHITE: 0xFFFFFF,
-			BLACK: 0x111111,
-			BLUE: 0x0074D9,
-		};
+		this.COLORS = COLORS;
 
 		this.PREFIX = 'Missy,';
 		this.PREFIX_PLAIN = 'Missy';
 
 		this.missyID = '398127472564240387';
 
-		/**
-		 * People who can speak for the bot (use, e.g., the "say" command)
-		 *
-		 * See the once "ready" event, below, for the rest of the elements in this set.
-		 */
 		this.speakerIDs = new Set([this.missyID]);
 
-		/**
-		 * Channels ignored as part of the "not you" system
-		 */
 		this.ignoredChannels = new Set();
 
 		this.assets = new AssetStore(this);
@@ -109,12 +146,13 @@ module.exports = class MissyClient extends KlasaClient {
 				.catch(e => this.emit('wtf', ["Moonbeam wasn't found:", e]));
 
 			// Channel setup for console log and error
-			const { stdout, stderr } = options.console;
-			const logChannel = this.channels.get(options.missyLogChannel);
-			if (logChannel) stdout.setChannel(logChannel);
+			const { stdout, stderr } = options.console!;
+			if (!(stdout && stderr)) throw new AssertionError();
+			const logChannel = this.channels.get(options.missyLogChannel!);
+			if (logChannel instanceof TextChannel) stdout.setChannel(logChannel);
 			else this.console.error("Couldn't find log Discord channel");
-			const errorChannel = this.channels.get(options.missyErrorChannel);
-			if (errorChannel) stderr.setChannel(errorChannel);
+			const errorChannel = this.channels.get(options.missyErrorChannel!);
+			if (errorChannel instanceof TextChannel) stderr.setChannel(errorChannel);
 			else this.console.error("Couldn't find error Discord channel");
 		});
 	}
