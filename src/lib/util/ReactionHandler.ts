@@ -1,79 +1,86 @@
 // Based on Klasa's, but modified to be more generic. Original is: Copyright (c) 2017-2018 dirigeants. All rights reserved. MIT license.
 
-const { ReactionCollector } = require('discord.js');
-const { util: { sleep } } = require('klasa');
+import {
+	ReactionCollector,
+	CollectorFilter, MessageReaction, Message,
+} from 'discord.js';
+import { KlasaUser } from 'klasa';
+import IconifiedDisplay from './IconifiedDisplay';
+import { sleep } from './util';
+import { AnyObj } from './types';
+
+export type SpamLimit = { warn: number, stop: number };
+
+export interface ReactionHandlerOptions {
+	/** A filter function to add to the ReactionHandler */
+	filter?: Function;
+	/** The maximum total amount of reactions to collect */
+	max?: number;
+	/** The maximum number of emojis to collect */
+	maxEmojis?: number;
+	/** The maximum number of users to react */
+	maxUsers?: number;
+	/** If a stop reaction should be included */
+	stop?: boolean;
+	/** The number of page changes to be pending before warning or stopping */
+	spamLimit?: SpamLimit;
+}
+
+/** A single unicode character */
+export type Emoji = string;
 
 /**
  * My ReactionHandler, for handling reaction input for rich embed displays/menus
- * @extends ReactionCollector
  */
-class ReactionHandler extends ReactionCollector {
+export default class ReactionHandler extends ReactionCollector {
 
-	/**
-	 * A single unicode character
-	 * @typedef {string} Emoji
-	 */
+	/** The rich embed display/menu that this handler is for */
+	display: IconifiedDisplay;
 
-	/**
-	 * @typedef {Object} ReactionHandlerOptions
-	 * @property {Function} [filter] A filter function to add to the ReactionHandler
-	 * @property {boolean} [stop=true] If a stop reaction should be included
-	 * @property {number} [max] The maximum total amount of reactions to collect
-	 * @property {number} [maxEmojis] The maximum number of emojis to collect
-	 * @property {number} [maxUsers] The maximum number of users to react
-	 * @property {number} [time] The maximum amount of time before this RichMenu should expire
-	 * @property {{warn: number, stop: number}} [spamLimit=Infinity] The number of page changes to be pending before warning or stopping
-	 */
+	/** An emoji to method map, to map custom emojis to static method names */
+	methodMap: Map<string, Emoji>;
+
+	/** Whether the menu is awaiting a response of a prompt, to block all other jump reactions */
+	awaiting: boolean;
+
+	/** Whether reactions have finished queuing (used to handle clearing reactions on early menu selections) */
+	reactionsDone: boolean;
+
+	/** Used to ignore reactions when users spam them */
+	collectionQueue: Array<object>;
+
+	/** The number of page changes to be pending before warning or stopping */
+	spamLimit: SpamLimit;
 
 	/**
 	 * Constructs our ReactionHandler instance
-	 * @param {KlasaMessage} message A message this ReactionHandler should handle reactions
-	 * @param {Function} filter A filter function to determine which emoji reactions should be handled
-	 * @param {ReactionHandlerOptions} options The options for this ReactionHandler
-	 * @param {(RichDisplay|RichMenu)} display The RichDisplay or RichMenu that this handler is for
-	 * @param {Emoji[]} [emojis=Object.values(display.emojis)] The emojis which should be used in this handler
+	 * @param message A message this ReactionHandler should handle reactions
+	 * @param filter A filter function to determine which emoji reactions should be handled
+	 * @param options The options for this ReactionHandler
+	 * @param display The rich embed display/menu that this handler is for
+	 * @param emojis The emojis which should be used in this handler
 	 */
-	constructor(message, filter, options, display, emojis = Object.values(display.emojis)) {
+	constructor(message: Message, filter: CollectorFilter, options: ReactionHandlerOptions, display: IconifiedDisplay, emojis: Emoji[] = Object.values(display.emojis)) {
 		super(message, filter, options);
 
-		/**
-		 * The display/menu this Handler is for
-		 * @type {(RichDisplay|RichMenu)}
-		 */
 		this.display = display;
 
-		/**
-		 * An emoji to method map, to map custom emojis to static method names
-		 * @type {Map<string, Emoji>}
-		 */
-		this.methodMap = new Map(Object.entries(this.display.emojis).map(([key, value]) => [value, key]));
+		this.methodMap = new Map(Object.entries(this.display.emojis).map(([key, value]): [string, string] => [value, key]));
 
-		/**
-		 * Whether the menu is awaiting a response of a prompt, to block all other jump reactions
-		 * @type {boolean}
-		 */
 		this.awaiting = false;
 
-		/**
-		 * Whether reactions have finished queuing (used to handle clearing reactions on early menu selections)
-		 * @type {boolean}
-		 */
 		this.reactionsDone = false;
 
-		/**
-		 * Used to ignore reactions when users spam them
-		 * @type {Array<object>}
-		 */
 		this.collectionQueue = [];
 
-		/**
-		 * The number of page changes to be pending before warning or stopping
-		 * @type {{warn: number, stop: number}}
-		 */
 		this.spamLimit = options.spamLimit || { warn: Infinity, stop: Infinity };
 
-		if (emojis.length) this._queueEmojiReactions(emojis.slice());
-		else return this.stop();
+		if (emojis.length) {
+			this._queueEmojiReactions(emojis.slice());
+		} else {
+			this.stop();
+			return;
+		}
 
 		this.on('collect', (reaction, user) => {
 			this.onCollect(reaction, user);
@@ -85,11 +92,10 @@ class ReactionHandler extends ReactionCollector {
 
 	/**
 	 * Called whenever a reaction is collected
-	 * @param {MessageReaction} reaction The reaction that was collected
-	 * @param {KlasaUser} user The user that added the reaction
-	 * @returns {void}
+	 * @param reaction The reaction that was collected
+	 * @param user The user that added the reaction
 	 */
-	onCollect(reaction, user) {
+	onCollect(reaction: MessageReaction, user: KlasaUser): void {
 		const { collectionQueue: collQ } = this;
 
 		if (collQ.length >= this.spamLimit.warn && reaction.emoji.name !== '⏹') {
@@ -117,7 +123,7 @@ class ReactionHandler extends ReactionCollector {
 
 		// If this promise fails, the bot didn't have perms to remove others' reactions :/
 		const reactionPromise = reaction.users.remove(user).catch(() => null);
-		const methodPromise = Promise.resolve(this[this.methodMap.get(reaction.emoji.name)](user));
+		const methodPromise = Promise.resolve((<AnyObj>this)[this.methodMap.get(reaction.emoji.name)!](user));
 		const obj = { reactionPromise, methodPromise };
 		Promise.all([reactionPromise, methodPromise, sleep(1000)])
 			.then(() => {
@@ -130,9 +136,8 @@ class ReactionHandler extends ReactionCollector {
 
 	/**
 	 * Called when the collector is finished collecting
-	 * @returns {void}
 	 */
-	async onEnd() {
+	async onEnd(): Promise<void> {
 		if (this.reactionsDone && !this.message.deleted) {
 			try {
 				// If this promise fails, the bot didn't have perms to remove others' reactions :/
@@ -147,35 +152,29 @@ class ReactionHandler extends ReactionCollector {
 
 	/**
 	 * The action to take when the "info" emoji is reacted
-	 * @returns {Promise<KlasaMessage>}
 	 */
-	info() {
+	info(): Promise<Message> {
 		return this.message.edit(this.display.pages.info);
 	}
 
 	/**
 	 * The action to take when the "stop" emoji is reacted
-	 * @returns {void}
 	 */
-	stop() {
+	stop(): void {
 		super.stop();
 	}
 
 	/**
 	 * The action to take when the "first" emoji is reacted
-	 * @param {Emoji[]} emojis The remaining emojis to react
-	 * @returns {null}
-	 * @private
+	 * @param emojis The remaining emojis to react
 	 */
-	async _queueEmojiReactions(emojis) {
+	private async _queueEmojiReactions(emojis: Emoji[]): Promise<null | any> {
 		if (this.message.deleted) return this.stop();
 		if (this.ended) return this.message.reactions.removeAll();
-		await this.message.react(emojis.shift());
+		await this.message.react(emojis.shift()!);
 		if (emojis.length) return this._queueEmojiReactions(emojis);
 		this.reactionsDone = true;
 		return null;
 	}
 
 }
-
-module.exports = ReactionHandler;

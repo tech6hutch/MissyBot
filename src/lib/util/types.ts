@@ -1,6 +1,9 @@
 import { TextChannel, DMChannel, GroupDMChannel, User, Message as DiscordMessage, MessageOptions, MessageEmbed } from 'discord.js';
 import { KlasaMessage, Language as KlasaLanguage } from "klasa";
 
+export type IndexedObj<T> = Record<string, T>;
+export type AnyObj = IndexedObj<any>;
+
 export type Sendable = TextChannel | DMChannel | GroupDMChannel | User | KlasaMessage;
 
 export interface Language extends KlasaLanguage {
