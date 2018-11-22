@@ -90,9 +90,11 @@ module.exports = class extends Language {
 			EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 			// Monitors
-			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | Or type **"ABORT"** to cancel. (Auto-cancels after **${time}** seconds.)`,
-			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** can be repeated | Or type **"CANCEL"** to cancel. (Auto-cancels after **${time}** seconds.)`,
+			// eslint-disable-next-line max-len
+			MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time, abortOptions) => `${tag} | **${error}** | Or type **${abortOptions.map(abort => abort.toUpperCase()).join('**, **')}** to cancel. (Auto-cancels after **${time}** seconds.)`,
+			MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** can be repeated | Or type **CANCEL** to cancel. (Auto-cancels after **${time}** seconds.)`,
 			MONITOR_COMMAND_HANDLER_ABORTED: 'Canceled 👌🏽',
+			MONITOR_COMMAND_HANDLER_POSSIBILITIES: ['cancel'],
 
 			// Inhibitors
 			INHIBITOR_COOLDOWN: (remaining) => `You have just used this command. You can use this command again in ${remaining} second${remaining === 1 ? '' : 's'}.`,
