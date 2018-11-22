@@ -2,6 +2,7 @@ import {
 	Command,
 	KlasaClient, CommandStore, CommandOptions,
 } from 'klasa';
+import MissyClient from '../MissyClient';
 
 export interface MissyCommandOptions extends CommandOptions {
 	helpListName?: string;
@@ -9,6 +10,8 @@ export interface MissyCommandOptions extends CommandOptions {
 }
 
 export default class MissyCommand extends Command {
+
+	client: MissyClient;
 
 	helpListName: string;
 	helpUsage: string;

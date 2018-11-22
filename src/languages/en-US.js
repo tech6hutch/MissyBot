@@ -288,6 +288,7 @@ module.exports = class extends Language {
 				'I see you swearing 👀',
 				'',
 				"Don't worry, tho, I like swearing. I just have too much self control to do it myself 😛",
+				'Only tracks swears in English.',
 			].join('\n'),
 			COMMAND_MYSWEARS_NO_UNCENSORED: 'You can only view the uncensored version in a NSFW channel!',
 			COMMAND_MYSWEARS_MOD_UNCENSORED: "The uncensored version is normally restricted to NSFW channels, but since you're a mod I'll assume you know what you're doing.",

@@ -1,5 +1,5 @@
 import { TextChannel, DMChannel, GroupDMChannel, User, Message as DiscordMessage, MessageOptions, MessageEmbed } from 'discord.js';
-import { KlasaMessage, Language as KlasaLanguage } from "klasa";
+import { KlasaMessage, Language as KlasaLanguage, Settings } from "klasa";
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
@@ -17,5 +17,9 @@ export interface Message extends DiscordMessage {
 }
 
 export interface MissySendAliases {
-	
+	// TODO
+}
+
+export interface UserSettings extends Settings {
+	profanity: IndexedObj<number>;
 }

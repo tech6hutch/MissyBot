@@ -1,10 +1,15 @@
-const { Command, util: { isFunction } } = require('klasa');
-const { scalarOrFirst } = require('../../../lib/util/util');
+import { util as KlasaUtil, KlasaClient, CommandStore, KlasaMessage, Command } from 'klasa';
+import MissyCommand from '../../../lib/structures/MissyCommand';
+import { scalarOrFirst } from '../../../lib/util/util';
+import { Sendable, IndexedObj } from '../../../lib/util/types';
 
-module.exports = class extends Command {
+const { isFunction } = KlasaUtil;
+type RunReturn = Promise<KlasaMessage | KlasaMessage[]>;
 
-	constructor(...args) {
-		super(...args, {
+export default class extends MissyCommand {
+
+	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string) {
+		super(client, store, file, directory, {
 			aliases: ['commands'],
 			guarded: true,
 			description: language => language.get('COMMAND_HELP_DESCRIPTION'),
@@ -17,14 +22,14 @@ module.exports = class extends Command {
 		});
 	}
 
-	async run(message, [command]) {
+	async run(message: KlasaMessage, [command]: [MissyCommand?]): RunReturn {
 		return this.sendHelp(message, command);
 	}
 
-	async sendHelp(msg, command, toChannel = command ? msg : msg.author, {
+	async sendHelp(msg: KlasaMessage, command?: MissyCommand, toChannel: Sendable = command ? msg : msg.author, {
 		doneText = msg.language.get('COMMAND_HELP_DM'),
 		failText = msg.language.get('COMMAND_HELP_NODM'),
-	} = {}) {
+	} = {}): RunReturn {
 		if (command) {
 			const info = [
 				`= ${command.helpListName || command.name} = `,
@@ -33,7 +38,7 @@ module.exports = class extends Command {
 				msg.language.get('COMMAND_HELP_EXTENDED'),
 				isFunction(command.extendedHelp) ? command.extendedHelp(msg.language) : command.extendedHelp
 			].join('\n');
-			return toChannel.send(info, { code: 'asciidoc' });
+			return <RunReturn>toChannel.send(info, { code: 'asciidoc' });
 		}
 
 		const help = await this.buildHelp(msg);
@@ -51,18 +56,18 @@ module.exports = class extends Command {
 		}
 
 		return toChannel.send(helpMessage, { split: { char: '\u200b' } })
-			.then(() => { if (msg.channel.type !== 'dm') msg.send(doneText); })
-			.catch(() => { if (msg.channel.type !== 'dm') msg.send(failText); });
+			.then((m: KlasaMessage) => msg.channel.type === 'dm' ? m : msg.send(doneText))
+			.catch((m: KlasaMessage) => msg.channel.type === 'dm' ? m : msg.send(failText));
 	}
 
-	async buildHelp(message) {
-		const help = {};
+	async buildHelp(message: KlasaMessage) {
+		const help: IndexedObj<IndexedObj<string[]>> = {};
 
 		const prefix = scalarOrFirst(this.client.options.prefix);
-		const commandNames = this.client.commands.map(cmd => cmd.helpListName || cmd.name);
+		const commandNames = this.client.commands.map((cmd: MissyCommand) => cmd.helpListName || cmd.name);
 		const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
 
-		await Promise.all(this.client.commands.map((command) =>
+		await Promise.all(this.client.commands.map((command: MissyCommand) =>
 			this.client.inhibitors.run(message, command, true)
 				.then(() => {
 					if (!help.hasOwnProperty(command.category)) help[command.category] = {};
@@ -78,4 +83,4 @@ module.exports = class extends Command {
 		return help;
 	}
 
-};
+}

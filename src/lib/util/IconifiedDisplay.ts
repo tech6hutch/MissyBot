@@ -3,6 +3,20 @@ import { KlasaUser } from 'klasa';
 import ReactionHandler, { Emoji, ReactionHandlerOptions } from './ReactionHandler';
 import { IndexedObj, AnyObj } from './types';
 
+// TODO: I don't think I need or want all of these
+export type IconifiedDisplayRunOptions = {
+	filter?: ((reaction: MessageReaction, user: KlasaUser) => boolean);
+	firstLast?: boolean;
+	jump?: boolean;
+	max?: number;
+	maxEmojis?: number;
+	maxUsers?: number;
+	prompt?: string;
+	startPage?: number;
+	stop?: boolean;
+	time?: number;
+} & ReactionHandlerOptions;
+
 export default class IconifiedDisplay {
 
 	static ReactionHandler = ReactionHandler;
@@ -40,7 +54,7 @@ export default class IconifiedDisplay {
 		};
 	}
 
-	async run(msg: Message, options: ReactionHandlerOptions = {}) {
+	async run(msg: Message, options: IconifiedDisplayRunOptions = {}) {
 		const emojis = Object.values(this.emojis);
 		return new IconifiedDisplay.ReactionHandler(
 			await msg.edit(this.content, { embed: this.pages.info }),
