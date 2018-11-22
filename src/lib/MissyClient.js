@@ -1,7 +1,7 @@
 require('./preload');
 
 const git = require('simple-git/promise');
-const { Permissions: { FLAGS } } = require('discord.js');
+const { Permissions } = require('discord.js');
 const { KlasaClient, Schema, PermissionLevels, util: { mergeDefault } } = require('klasa');
 const { MissyStdoutStream, MissyStderrStream } = require('./MissyStreams');
 const AssetStore = require('./structures/AssetStore');
@@ -61,7 +61,7 @@ module.exports = class MissyClient extends KlasaClient {
 		if (!options.permissionLevels) {
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(FLAGS.MANAGE_GUILD), { fetch: true })
+				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD), { fetch: true })
 				.add(7, (_, msg) => msg.guild && msg.member === msg.guild.owner, { fetch: true })
 				.add(8, (client, msg) => client.speakerIDs.has(msg.author.id))
 				.add(9, (client, msg) => msg.author === client.owner || msg.author === client.missy, { break: true })
@@ -117,6 +117,14 @@ module.exports = class MissyClient extends KlasaClient {
 			if (errorChannel) stderr.setChannel(errorChannel);
 			else this.console.error("Couldn't find error Discord channel");
 		});
+	}
+
+	get invite() {
+		const permissions = new Permissions(this.constructor.basePermissions)
+			.add(...this.commands.map(command => command.requiredPermissions))
+			.add(...this.commands.map(command => command.optionalPermissions || 0))
+			.bitfield;
+		return `https://discordapp.com/oauth2/authorize?client_id=${this.application.id}&permissions=${permissions}&scope=bot`;
 	}
 
 	get missy() {

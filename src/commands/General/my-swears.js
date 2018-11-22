@@ -111,6 +111,7 @@ class MySwearsCmd extends Command {
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
 		});
+		this.optionalPermissions = ['MANAGE_MESSAGES'];
 	}
 
 	async run(msg, [category = 'list']) {
