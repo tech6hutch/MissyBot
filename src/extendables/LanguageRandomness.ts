@@ -3,7 +3,7 @@ import { arrayRandom } from '../lib/util/util';
 
 declare module 'klasa' {
 	export interface Language {
-		getRandom(term: string, args: any[], elArgs: any[]): string;
+		getRandom(term: string, args?: any[], elArgs?: any[]): string;
 	}
 }
 

@@ -15,8 +15,10 @@ declare module 'klasa' {
 		readonly localPrefix: string;
 
 		ask(this: KlasaMessage, content: string, options?: MessageOptions): Promise<KlasaMessage>;
-		awaitReply(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed): Promise<string | false>;
-		awaitMsg(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed): Promise<KlasaMessage>;
+		awaitReply(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed):
+			Promise<string | false>;
+		awaitMsg(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed):
+			Promise<KlasaMessage | false>;
 	}
 }
 
@@ -102,35 +104,47 @@ export default class extends Extendable {
 			!(this.channel instanceof TextChannel) || this.channel.permissionsFor(this.guild.me)!.has('ADD_REACTIONS') ?
 				awaitReaction(this, message) :
 				awaitMessage(this)
-		).then(() => message).catch(() => { throw message; });
+		).then(() => message, () => { throw message; });
 	}
 
-	async awaitReply(this: KlasaMessage, question: string, time = 60000, embed?: MessageEmbed): Promise<string | false> {
+	async awaitReply(
+		this: KlasaMessage,
+		question: string, time = 60000, embed?: MessageEmbed,
+	): Promise<string | false> {
 		return this.awaitMsg(question, time, embed)
-			.then(msg => msg.content)
-			.catch((): false => false);
+			.then(msg => msg ? msg.content : false);
 	}
 
-	async awaitMsg(this: KlasaMessage, question: string, time = 60000, embed?: MessageEmbed): Promise<KlasaMessage> {
+	async awaitMsg(
+		this: KlasaMessage,
+		question: string, time = 60000, embed?: MessageEmbed,
+	): Promise<KlasaMessage | false> {
 		await (embed ? this.send(question, { embed }) : this.send(question));
-		return await this.channel.awaitMessages(message => message.author.id === this.author.id,
-			{ max: 1, time, errors: ['time'] })
-			.then(messages => <KlasaMessage>messages.first());
+		return await this.channel.awaitMessages(
+			message => message.author.id === this.author.id,
+			{ max: 1, time, errors: ['time'] }
+		).then(messages => <KlasaMessage>messages.first(), (): false => false);
 	}
 
 }
 
-const awaitReaction = async (msg: KlasaMessage, message: KlasaMessage) => {
-	await message.react('🇾');
-	await message.react('🇳');
-	const data = await message.awaitReactions(reaction => reaction.users.has(msg.author.id), { time: 20000, max: 1 });
-	message.reactions.removeAll();
+const awaitReaction = async (initialMsg: KlasaMessage, qMsg: KlasaMessage): Promise<true> => {
+	await qMsg.react('🇾');
+	await qMsg.react('🇳');
+	const data = await qMsg.awaitReactions(
+		reaction => reaction.users.has(initialMsg.author.id),
+		{ time: 20000, max: 1 },
+	);
+	qMsg.reactions.removeAll();
 	if (data.firstKey() === '🇾') return true;
 	throw null;
 };
 
-const awaitMessage = async (message: KlasaMessage) => {
-	const messages = await message.channel.awaitMessages(mes => mes.author === message.author, { time: 20000, max: 1 });
+const awaitMessage = async (initialMsg: KlasaMessage): Promise<true> => {
+	const messages = await initialMsg.channel.awaitMessages(
+		mes => mes.author === initialMsg.author,
+		{ time: 20000, max: 1 },
+	);
 	if (messages.size === 0) throw null;
 	const responseMessage = await messages.first()!;
 	if (responseMessage.content.toLowerCase() === 'yes') return true;

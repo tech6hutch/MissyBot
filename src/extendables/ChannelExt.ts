@@ -1,7 +1,7 @@
 import assert from 'assert';
 import {
 	TextChannel, DMChannel, GroupDMChannel,
-	MessageOptions,
+	MessageOptions, MessageEmbed,
 } from 'discord.js';
 import {
 	Extendable, KlasaUser,
@@ -13,21 +13,30 @@ import { Sendable, MissySendAliases } from '../lib/util/types';
 
 type ExtChannel = TextChannel | DMChannel | GroupDMChannel | KlasaUser;
 
-declare module 'klasa' {
-	interface ExtChannelAskMethods {
-		ask(user: KlasaUser, content: string, options?: MessageOptions): Promise<KlasaMessage>;
-	}
+const ExtChannelValue = [TextChannel, DMChannel, GroupDMChannel, KlasaUser];
 
-	export interface TextChannel extends MissySendAliases, ExtChannelAskMethods {}
-	export interface DMChannel extends MissySendAliases, ExtChannelAskMethods {}
-	export interface GroupDMChannel extends MissySendAliases, ExtChannelAskMethods {}
-	export interface KlasaUser extends MissySendAliases, ExtChannelAskMethods {}
+interface ExtChannelAskMethods {
+	ask(user: KlasaUser, content: string, options?: MessageOptions): Promise<KlasaMessage>;
+	awaitReply(this: ExtChannel, user: KlasaUser, question: string, time?: number, embed?: MessageEmbed):
+		Promise<string | false>;
+	awaitMsg(user: KlasaUser, question: string, time?: number, embed?: MessageEmbed):
+		Promise<KlasaMessage | false>;
+}
+
+declare module 'discord.js' {
+	export interface TextChannel extends MissySendAliases, ExtChannelAskMethods { }
+	export interface DMChannel extends MissySendAliases, ExtChannelAskMethods { }
+	export interface GroupDMChannel extends MissySendAliases, ExtChannelAskMethods { }
+}
+
+declare module 'klasa' {
+	export interface KlasaUser extends MissySendAliases, ExtChannelAskMethods { }
 }
 
 export default class extends Extendable {
 
 	constructor(client: MissyClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [TextChannel, DMChannel, GroupDMChannel, KlasaUser] });
+		super(client, store, file, directory, { appliesTo: ExtChannelValue });
 	}
 
 	// Sending responses
@@ -62,12 +71,12 @@ export default class extends Extendable {
 	}
 
 	/**
-	 * @param {(KlasaMessage|TextChannel)} channel The channel you intend to post in
-	 * @param {Function} cb The callback function to call in the middle
-	 * @param {Object} [options] Extra options
-	 * @param {string} [options.loadingText='Just a moment.'] Text to send to this.channel before the callback
-	 * @param {string} [options.doneText='Sent the image 👌'] Text to send to this.channel after the callback
-	 * @returns {Promise<[KlasaMessage, KlasaMessage]>} Resolves to a confirmation message in this.channel and the return of cb
+	 * @param channel The channel you intend to post in
+	 * @param cb The callback function to call in the middle
+	 * @param options Extra options
+	 * @param options.loadingText Text to send to this.channel before the callback
+	 * @param options.doneText Text to send to this.channel after the callback
+	 * @returns Resolves to a confirmation message in this.channel and the return of cb
 	 */
 	async sendLoadingFor<T = KlasaMessage>(this: ExtChannel, channel: Sendable, cb: (msg: Sendable) => T, {
 		loadingText = resolveLang(this).get('LOADING_TEXT'),
@@ -77,7 +86,9 @@ export default class extends Extendable {
 		// eslint-disable-next-line callback-return
 		const response = await cb(channel);
 		return [
-			scalarOrFirst(<KlasaMessage | KlasaMessage[]>await (loadingMsg.editable ? loadingMsg.edit(doneText) : this.send(doneText))),
+			scalarOrFirst(<KlasaMessage | KlasaMessage[]>await (
+				loadingMsg.editable ? loadingMsg.edit(doneText) : this.send(doneText)
+			)),
 			response,
 		];
 	}
@@ -90,37 +101,49 @@ export default class extends Extendable {
 			!(this instanceof TextChannel) || this.permissionsFor(this.guild.me)!.has('ADD_REACTIONS') ?
 				awaitReaction(user, message) :
 				awaitMessage(user, this)
-		).then(() => message).catch(() => { throw message; });
+		).then(() => message, () => { throw message; });
 	}
 
-	async awaitReply(user, question, time = 60000, embed) {
+	async awaitReply(
+		this: ExtChannel,
+		user: KlasaUser, question: string, time = 60000, embed?: MessageEmbed,
+	): Promise<string | false> {
 		return this.awaitMsg(user, question, time, embed)
-			.then(msg => msg.content);
+		.then(msg => msg ? msg.content : false);
 	}
 
-	async awaitMsg(user, question, time = 60000, embed) {
+	async awaitMsg(
+		this: ExtChannel,
+		user: KlasaUser, question: string, time = 60000, embed?: MessageEmbed,
+	): Promise<KlasaMessage | false> {
 		await (embed ? this.send(question, { embed }) : this.send(question));
-		return this.awaitMessages(message => message.author.id === user.id,
-			{ max: 1, time, errors: ['time'] })
-			.then(messages => messages.first())
-			.catch(() => false);
+		return (this instanceof KlasaUser ? this.dmChannel : this).awaitMessages(
+			message => message.author.id === user.id,
+			{ max: 1, time, errors: ['time'] },
+		).then(messages => <KlasaMessage>messages.first(), (): false => false);
 	}
 
 }
 
-const awaitReaction = async (user, message) => {
-	await message.react('🇾');
-	await message.react('🇳');
-	const data = await message.awaitReactions(reaction => reaction.users.has(user.id), { time: 20000, max: 1 });
-	message.reactions.removeAll();
+const awaitReaction = async (user: KlasaUser, qMsg: KlasaMessage): Promise<true> => {
+	await qMsg.react('🇾');
+	await qMsg.react('🇳');
+	const data = await qMsg.awaitReactions(
+		reaction => reaction.users.has(user.id),
+		{ time: 20000, max: 1 },
+	);
+	qMsg.reactions.removeAll();
 	if (data.firstKey() === '🇾') return true;
 	throw null;
 };
 
-const awaitMessage = async (user, channel) => {
-	const messages = await channel.awaitMessages(mes => mes.author === user, { time: 20000, max: 1 });
+const awaitMessage = async (user: KlasaUser, channel: ExtChannel): Promise<true> => {
+	const messages = await (channel instanceof KlasaUser ? channel.dmChannel : channel).awaitMessages(
+		mes => mes.author === user,
+		{ time: 20000, max: 1 },
+	);
 	if (messages.size === 0) throw null;
-	const responseMessage = await messages.first();
+	const responseMessage = await messages.first()!;
 	if (responseMessage.content.toLowerCase() === 'yes') return true;
 	throw null;
 };
