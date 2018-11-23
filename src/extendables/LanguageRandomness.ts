@@ -1,10 +1,16 @@
 import { Extendable, Language, KlasaClient, ExtendableStore } from 'klasa';
 import { arrayRandom } from '../lib/util/util';
 
+declare module 'klasa' {
+	export interface Language {
+		getRandom(term: string, args: any[], elArgs: any[]): string;
+	}
+}
+
 export default class extends Extendable {
 
 	constructor(client: KlasaClient, store: ExtendableStore, file: string[], directory: string) {
-		// @ts-ignore because bad typings?
+		// @ts-ignore because Language is abstract and it doesn't like that
 		super(client, store, file, directory, { appliesTo: [Language] });
 	}
 

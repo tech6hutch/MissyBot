@@ -1,15 +1,17 @@
 import assert from 'assert';
-import { Command, CommandStore, CommandOptions, Language, KlasaMessage } from 'klasa';
+import { CommandStore, Language, KlasaMessage } from 'klasa';
 import { arrayRandom, fuzzySearch, resolveLang } from '../util/util';
 import MissyClient from '../MissyClient';
-import { Sendable } from '../util/types';
+import MissyCommand, { MissyCommandOptions } from '../structures/MissyCommand';
+import { Sendable, IndexedObj, AnyObj } from '../util/types';
+import Asset from '../structures/Asset';
 
-export interface RandomImageCommandOptions extends CommandOptions {
+export interface RandomImageCommandOptions extends MissyCommandOptions {
 	images: string[];
 	loadingTextFn?: (lang: Language) => string;
 }
 
-class RandomImageCommand extends Command {
+export default class RandomImageCommand extends MissyCommand {
 
 	images: string[];
 	loadingTextFn: (lang: Language) => string;
@@ -50,7 +52,7 @@ class RandomImageCommand extends Command {
 		);
 	}
 
-	init() {
+	async init() {
 		for (const imageName of this.images) {
 			assert(this.client.assets.has(imageName));
 		}
@@ -58,43 +60,37 @@ class RandomImageCommand extends Command {
 
 	/**
 	 * Gets a random image from this[key]
-	 * @param {string} [key='images'] The property to get from
-	 * @returns {Asset}
+	 * @param key The property to get from
 	 */
-	get(key = 'images') {
-		return this.client.assets.get(arrayRandom(this[key]));
+	get(key = 'images'): Asset {
+		return this.client.assets.get(arrayRandom((<AnyObj>this)[key]));
 	}
 
 	/**
 	 * Gets a random image's name from this[key]
-	 * @param {string} [key='images'] The property to get from
-	 * @returns {string}
+	 * @param key The property to get from
 	 */
-	getName(key = 'images') {
-		return arrayRandom(this[key]);
+	getName(key = 'images'): string {
+		return arrayRandom((<AnyObj>this)[key]);
 	}
 
 	/**
 	 * Gets the image at collKey from this[key]
-	 * @param {string} name The key in this[key] to get from
-	 * @param {string} [key='images'] The property to get from
-	 * @returns {Asset}
+	 * @param name The key in this[key] to get from
+	 * @param key The property to get from
 	 */
-	getIn(name, key = 'images') {
-		if (!this[key].includes(name)) throw new TypeError('Invalid image name');
+	getIn(name: string, key = 'images'): Asset {
+		if (!(<AnyObj>this)[key].includes(name)) throw new TypeError('Invalid image name');
 		return this.client.assets.get(name);
 	}
 
 	/**
 	 * Gets the image at collKey from this[key], fuzzily
-	 * @param {string} name Something similar to a key in this[key]
-	 * @param {string} [key='images'] The property to get from
-	 * @returns {Asset}
+	 * @param name Something similar to a key in this[key]
+	 * @param key The property to get from
 	 */
-	getInFuzzily(name, key = 'images') {
-		return this.getIn(fuzzySearch(name, this[key]), key);
+	getInFuzzily(name: string, key = 'images'): Asset {
+		return this.getIn(fuzzySearch(name, (<AnyObj>this)[key]), key);
 	}
 
 }
-
-module.exports = RandomImageCommand;

@@ -1,23 +1,21 @@
-import { TextChannel, DMChannel, GroupDMChannel, User, Message as DiscordMessage, MessageOptions, MessageEmbed } from 'discord.js';
-import { KlasaMessage, Language as KlasaLanguage, Settings } from "klasa";
+import { TextChannel, DMChannel, GroupDMChannel, User, MessageOptions } from 'discord.js';
+import { KlasaMessage, Settings } from "klasa";
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
 
 export type Sendable = TextChannel | DMChannel | GroupDMChannel | User | KlasaMessage;
 
-export interface Language extends KlasaLanguage {
-	getRandom(term: string, args: any[], elArgs: any[]): string;
-}
-
-export interface Message extends DiscordMessage {
-	ask(this: Message, content: string, options: MessageOptions): Promise<KlasaMessage>;
-	awaitReply(this: Message, question: string, time?: number, embed?: MessageEmbed): Promise<string | false>;
-	awaitMsg(this: Message, question: string, time?: number, embed?: MessageEmbed): Promise<Message>;
-}
-
 export interface MissySendAliases {
-	// TODO
+	sendRandom(key: string, localeArgs: any[], localeResponseArgs: any[], options: MessageOptions):
+		Promise<KlasaMessage | KlasaMessage[]>;
+	sendLoading<T = KlasaMessage>(cb: (msg: KlasaMessage) => T, options: {
+		loadingText: string,
+	}): Promise<T>;
+	sendLoadingFor<T = KlasaMessage>(this: KlasaMessage, channel: Sendable, cb: (msg: Sendable) => T, options: {
+		loadingText: string,
+		doneText: string,
+	}): Promise<[KlasaMessage, T]>
 }
 
 export interface UserSettings extends Settings {
