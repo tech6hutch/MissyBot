@@ -3,7 +3,7 @@ import { arrayRandom } from '../lib/util/util';
 
 declare module 'klasa' {
 	export interface Language {
-		getRandom(term: string, args?: any[], elArgs?: any[]): string;
+		getRandom<T = string>(term: string, args?: any[], elArgs?: any[]): T;
 	}
 }
 
@@ -20,7 +20,7 @@ export default class extends Extendable {
 	 * @param args Any arguments to pass to the lookup
 	 * @param elArgs Any arguments to pass to the random result
 	 */
-	getRandom(this: Language, term: string, args: any[] = [], elArgs: any[] = []): string {
+	getRandom<T = string>(this: Language, term: string, args: any[] = [], elArgs: any[] = []): T {
 		const value = arrayRandom(this.get(term, ...args));
 		return typeof value === 'function' ? value(...elArgs) : value;
 	}

@@ -1,16 +1,22 @@
-const { Task, Duration, constants: { TIME: { MINUTE } } } = require('klasa');
-const { randomBetween } = require('../lib/util/util');
+import { ActivityOptions } from 'discord.js';
+import {
+	Task, Duration, constants,
+	TaskStore,
+} from 'klasa';
+import MissyClient from '../lib/MissyClient';
+import { randomBetween } from '../lib/util/util';
 
 module.exports = class extends Task {
 
-	constructor(...args) {
-		super(...args);
-		this.nextTimestamp = Infinity;
-		this.nextAt = null;
-		this.timeout = null;
+	nextTimestamp = Infinity;
+	nextAt: Date | null = null;
+	timeout: NodeJS.Timer | null = null;
+
+	constructor(client: MissyClient, store: TaskStore, file: string[], directory: string) {
+		super(client, store, file, directory);
 	}
 
-	nextIn(showIn) {
+	nextIn(showIn?: boolean) {
 		return Duration.toNow(this.nextTimestamp, showIn);
 	}
 
@@ -21,10 +27,10 @@ module.exports = class extends Task {
 	}
 
 	setRandomActivity() {
-		return this.client.user.setActivity(...this.client.languages.default.getRandom('PLAYING_ACTIVITY'));
+		return this.client.user!.setActivity(...this.client.languages.default.getRandom<[string, ActivityOptions]>('PLAYING_ACTIVITY'));
 	}
 
-	scheduleNext(delay = MINUTE * randomBetween(15, 120)) {
+	scheduleNext(delay = constants.TIME.MINUTE * randomBetween(15, 120)) {
 		this._clearTimeout();
 		this.nextTimestamp = Date.now() + delay;
 		this.nextAt = new Date(this.nextTimestamp);
