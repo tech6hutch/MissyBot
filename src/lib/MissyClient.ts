@@ -53,7 +53,7 @@ export default class MissyClient extends KlasaClient {
 	/**
 	 * Channels ignored as part of the "not you" system
 	 */
-	ignoredChannels: Set<TextChannel>;
+	ignoredChannels: Set<Snowflake>;
 
 	assets: AssetStore;
 
