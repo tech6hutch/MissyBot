@@ -1,10 +1,10 @@
-import { TextChannel, DMChannel, GroupDMChannel, User, MessageOptions } from 'discord.js';
-import { KlasaMessage, Settings } from "klasa";
+import { TextChannel, DMChannel, GroupDMChannel, MessageOptions } from 'discord.js';
+import { KlasaMessage, KlasaUser, Settings } from "klasa";
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
 
-export type Sendable = TextChannel | DMChannel | GroupDMChannel | User | KlasaMessage;
+export type Sendable = TextChannel | DMChannel | GroupDMChannel | KlasaUser | KlasaMessage;
 
 export interface MissySendAliases {
 	sendRandom(key: string, localeArgs: any[], localeResponseArgs: any[], options: MessageOptions):
