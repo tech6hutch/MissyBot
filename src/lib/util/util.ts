@@ -3,7 +3,7 @@ import levenshtein from 'js-levenshtein';
 import { GuildChannel, Client } from 'discord.js';
 import { util as KlasaUtil, KlasaMessage, Language } from 'klasa';
 
-export const { sleep, mergeDefault } = KlasaUtil;
+export const { sleep, regExpEsc, mergeDefault } = KlasaUtil;
 
 export const DIGITS_TO_UNITS: Map<number, string> = new Map([
 	[9, 's'],
