@@ -30,3 +30,5 @@ export type KlasaMessageWithGuildSettings = KlasaMessage & { guildSettings: Guil
 export interface UserSettings extends Settings {
 	profanity: IndexedObj<number>;
 }
+
+export type KlasaMessageWithUserSettings = KlasaMessage & { author: { settings: UserSettings } };
