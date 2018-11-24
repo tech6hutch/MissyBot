@@ -1,19 +1,27 @@
-const { Language, util, constants: { TIME: { MINUTE } } } = require('klasa');
-const { smartJoin } = require('../lib/util/util');
+import {
+	Language, util, constants,
+	LanguageStore, KlasaMessage,
+} from 'klasa';
+import MissyClient from '../lib/MissyClient';
+import { smartJoin } from '../lib/util/util';
+import { IndexedObj } from '../lib/util/types';
 
 module.exports = class extends Language {
 
-	constructor(...args) {
-		super(...args);
+	client: MissyClient;
+	language: IndexedObj<string | string[] | any[] | ((...args: any[]) => string | string[])>;
 
-		this.DISCORD_EMOJI = '<:discord:503738729463021568>';
+	DISCORD_EMOJI = '<:discord:503738729463021568>';
+
+	constructor(client: MissyClient, store: LanguageStore, file: string[], directory: string) {
+		super(client, store, file, directory);
 
 		this.language = {
 			PREFIX_REMINDER: ({ prefix, disableNaturalPrefix }) => {
 				const prefixes = [];
 				if (!disableNaturalPrefix) prefixes.push(this.client.PREFIX_PLAIN);
 				if (prefix) prefixes.push(prefix);
-				if (!prefixes.length) prefixes.push(`@${this.client.user.tag}`);
+				if (!prefixes.length) prefixes.push(`@${this.client.user!.tag}`);
 
 				return `The prefix${prefixes.length > 1 ?
 					`es for this server are ` :
@@ -155,7 +163,7 @@ module.exports = class extends Language {
 			COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
 			COMMAND_PING: (ping, embed) => embed
 				.addField(`${this.DISCORD_EMOJI} Ping:`, 'Pinging Discord...')
-				.addField('💓 Heartbeat:', `${Math.round(MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
+				.addField('💓 Heartbeat:', `${Math.round(constants.TIME.MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
 				.setFooter("Bots have faster heartbeats than humans, so don't worry if mine is really high!"),
 			COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
 			COMMAND_PINGPONG: (diff, embed) => {
@@ -163,7 +171,7 @@ module.exports = class extends Language {
 				return embed;
 			},
 			COMMAND_INVITE: () => [
-				`To add ${this.client.user.username} to your Discord server:`,
+				`To add ${this.client.user!.username} to your Discord server:`,
 				this.client.invite,
 				util.codeBlock('', [
 					'The above link is generated requesting the minimum permissions required to use every command currently.',
@@ -177,7 +185,7 @@ module.exports = class extends Language {
 				"Hi! I'm MissyBot!",
 				'',
 				// eslint-disable-next-line max-len
-				`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, ${this.client.missy.tag}. My creator is ${this.client.owner.tag}, he's great! I have a variety of fun commands and responses.`,
+				`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, \`${this.client.missy!.tag}\`. My creator is \`${this.client.owner!.tag}\`, he's great! I have a variety of fun commands and responses.`,
 				'',
 				'For a list of my commands: `Missy, help`',
 			],
@@ -230,9 +238,7 @@ module.exports = class extends Language {
 				`• Klasa      :: v${klasaVersion}`,
 				`• Discord.js :: v${discordVersion}`,
 				`• Node.js    :: ${processVersion}`,
-				this.client.options.shardCount ?
-					`• Shard      :: ${((message.guild ? message.guild.shardID : message.channel.shardID) || this.client.options.shardId) + 1} / ${this.client.options.shardCount}` :
-					''
+				`• Shard      :: ${(message.guild ? message.guild.shardID : 0) + 1} / ${this.client.options.totalShardCount}`,
 			],
 			COMMAND_STATS_DESCRIPTION: 'Provides some details about the bot and stats.',
 
@@ -250,7 +256,7 @@ module.exports = class extends Language {
 				"But I'm a robot, I don't need to sleep ;-;",
 				"You can't tell me to sleep!",
 				['Nooooooo', "It's not bedtime yet!"],
-				msg => this.client.commands.get('no-u').run(msg, []),
+				(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
 			],
 			COMMAND_LEWD_DESCRIPTION: 'Nice try. 😝',
 			COMMAND_LEWD_LOADING_TEXT: '<.<\n>.>',
@@ -264,8 +270,8 @@ module.exports = class extends Language {
 			],
 			COMMAND_EAT_SELF: [
 				"But I'm a robot, I don't need to eat ;-;",
-				msg => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
-				msg => this.client.commands.get('no-u').run(msg, []),
+				(msg: KlasaMessage) => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
+				(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
 			],
 			COMMAND_FAKEBAN: [
 				'Please give them another chance ;-;',
@@ -312,7 +318,7 @@ module.exports = class extends Language {
 			COMMAND_SHIP: (msg, person1, person2, embed) => embed
 				.setTitle(`${person1.displayName} + ${person2.displayName}`)
 				.setDescription(`I think ${person1} and ${person2} would be wonderful together! :D`)
-				.setAuthor(msg.guild ? msg.guild.me.displayName : this.client.user.username, this.client.user.displayAvatarURL())
+				.setAuthor(msg.guild ? msg.guild.me.displayName : this.client.user!.username, this.client.user!.displayAvatarURL())
 				.setThumbnail('https://raw.githubusercontent.com/twitter/twemoji/gh-pages/72x72/1f49e.png')
 				.addField('Ship Level', '💟'.repeat(10), true)
 				.addField('Ship Compatibility', '100%! ♥', true)
