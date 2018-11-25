@@ -1,23 +1,16 @@
 import './preload';
 
 import git from 'simple-git/promise';
-import {
-	Permissions,
-	Snowflake, TextChannel,
-} from 'discord.js';
+import { Permissions, Snowflake } from 'discord.js';
 import {
 	KlasaClient, Schema, PermissionLevels,
 	KlasaClientOptions, KlasaConsoleOptions,
 } from 'klasa';
-import {
-	MissyStdoutStream, MissyStderrStream,
-	MissyStream,
-} from './MissyStreams';
+import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
 import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
 import profanity from './profanity';
 import { mergeDefault } from './util/util';
-import { AssertionError } from 'assert';
 
 export interface MissyClientOptions extends KlasaClientOptions {
 	console?: KlasaConsoleOptions & {
@@ -36,12 +29,17 @@ const COLORS = {
 
 export default class MissyClient extends KlasaClient {
 
+	options: Required<MissyClientOptions>;
+
 	COLORS: typeof COLORS;
 
 	PREFIX: string;
 	PREFIX_PLAIN: string;
 
 	missyID: Snowflake;
+	otherIDs: {
+		moonbeam: Snowflake;
+	};
 
 	/**
 	 * People who can speak for the bot (use, e.g., the "say" command)
@@ -49,6 +47,13 @@ export default class MissyClient extends KlasaClient {
 	 * See the once "ready" event, below, for the rest of the elements in this set.
 	 */
 	speakerIDs: Set<Snowflake>;
+
+	/**
+	 * Developers for the bot (including Missy)
+	 *
+	 * See the once "ready" event, below, for the rest of the elements in this set.
+	 */
+	devIDs: Set<Snowflake>;
 
 	/**
 	 * Channels ignored as part of the "not you" system
@@ -108,13 +113,14 @@ export default class MissyClient extends KlasaClient {
 		}
 
 		if (!options.permissionLevels) {
+			const { MANAGE_GUILD } = Permissions.FLAGS;
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD), { fetch: true })
-				.add(7, (_, msg) => msg.guild && msg.member === msg.guild.owner, { fetch: true })
-				.add(8, (client: MissyClient, msg) => client.speakerIDs.has(msg.author.id))
-				.add(9, (client: MissyClient, msg) => msg.author === client.owner || msg.author === client.missy, { break: true })
-				.add(10, (client, msg) => msg.author === client.owner);
+				.add(6, (_, { guild, member }) => guild && member.permissions.has(MANAGE_GUILD), { fetch: true })
+				.add(7, (_, { guild, member }) => guild && member === guild.owner, { fetch: true })
+				.add(8, (_, { client: { speakerIDs }, author }) => speakerIDs.has(author.id))
+				.add(9, (_, { client: { devIDs }, author }) => devIDs.has(author.id), { break: true })
+				.add(10, (_, { client: { owner }, author }) => author === owner);
 		}
 
 		super(options);
@@ -125,8 +131,12 @@ export default class MissyClient extends KlasaClient {
 		this.PREFIX_PLAIN = 'Missy';
 
 		this.missyID = '398127472564240387';
+		this.otherIDs = {
+			moonbeam: '214442156788678658',
+		};
 
-		this.speakerIDs = new Set([this.missyID]);
+		this.speakerIDs = new Set([this.missyID, this.otherIDs.moonbeam]);
+		this.devIDs = new Set([this.missyID]);
 
 		this.ignoredChannels = new Set();
 
@@ -136,25 +146,6 @@ export default class MissyClient extends KlasaClient {
 		// this.registerStore(this.objects);
 
 		this.git = git();
-
-		this.once('ready', () => {
-			this.users.fetch(this.missyID)
-				.catch(e => this.emit('wtf', ["Missy wasn't found:", e]));
-			const moonbeamID = '214442156788678658';
-			this.users.fetch(moonbeamID)
-				.then(() => this.speakerIDs.add(moonbeamID))
-				.catch(e => this.emit('wtf', ["Moonbeam wasn't found:", e]));
-
-			// Channel setup for console log and error
-			const { stdout, stderr } = options.console!;
-			if (!(stdout && stderr)) throw new AssertionError();
-			const logChannel = this.channels.get(options.missyLogChannel!);
-			if (logChannel instanceof TextChannel) stdout.setChannel(logChannel);
-			else this.console.error("Couldn't find log Discord channel");
-			const errorChannel = this.channels.get(options.missyErrorChannel!);
-			if (errorChannel instanceof TextChannel) stderr.setChannel(errorChannel);
-			else this.console.error("Couldn't find error Discord channel");
-		});
 	}
 
 	get missy() {
