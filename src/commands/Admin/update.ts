@@ -1,10 +1,23 @@
-const assert = require('assert');
-const { Command, util: { codeBlock, regExpEsc }, KlasaMessage } = require('klasa');
+import assert from 'assert';
+import { PullResult } from 'simple-git/promise';
+import { Command, KlasaMessage, CommandStore, KlasaUser, Store, Piece } from 'klasa';
+import RebootCmd from './reboot';
+import MissyClient from '../../lib/MissyClient';
+import { codeBlock, regExpEsc } from '../../lib/util/util';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	client: MissyClient;
+
+	baseDirRegex: RegExp | null;
+	hasBaseDir: boolean;
+
+	gitPathSeparator = '/';
+
+	loadRegex = /\\\\?|\//g;
+
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
+		super(client, store, file, directory, {
 			description: 'Pull in new changes from GitHub.',
 			permissionLevel: 10,
 		});
@@ -21,21 +34,17 @@ module.exports = class extends Command {
 		this.baseDirRegex = baseDir ? new RegExp(`^${baseDir}/?`, 'g') : null;
 
 		this.hasBaseDir = Boolean(baseDir);
-
-		this.gitPathSeparator = '/';
-
-		this.loadRegex = /\\\\?|\//g;
 	}
 
 	get defaultLang() {
 		return this.client.languages.default;
 	}
 
-	run(msg) {
+	run(msg: KlasaMessage) {
 		return msg.sendLoading(() => this.updateBot(msg), { loadingText: 'Pulling changes from GitHub...' });
 	}
 
-	async updateBot(msg) {
+	async updateBot(msg: KlasaMessage): Promise<KlasaMessage | KlasaMessage[] | null | never> {
 		const pullResult = await this.client.git.pull();
 
 		const { pieces, nonPieces } = this._segregateChanges(pullResult);
@@ -52,35 +61,39 @@ module.exports = class extends Command {
 
 		if (nonPieces.length) {
 			try {
-				const qMsg = await msg.channel.ask(msg.author, 'Non-piece files changed. **Reboot the bot?**');
+				const qMsg = await msg.channel.ask(<KlasaUser>msg.author, 'Non-piece files changed. **Reboot the bot?**');
+				// @ts-ignore using private member KlasaMessage#_responses
 				msg._responses = [qMsg];
-				return this.store.get('reboot').run(msg);
+				return (<RebootCmd><Command>this.store.get('reboot')).run(msg);
 			} catch (qMsg) {
+				// @ts-ignore using private member KlasaMessage#_responses
 				if (qMsg instanceof KlasaMessage) msg._responses = [qMsg];
 				return null;
 			}
 		}
 
-		if (Object.values(pieces).some(arr => arr.length)) {
+		if (Object.values(pieces).some(arr => !!arr.length)) {
 			try {
-				const qMsg = await msg.channel.ask(msg.author, '**Load piece changes?**');
+				const qMsg = await msg.channel.ask(<KlasaUser>msg.author, '**Load piece changes?**');
 				await this.handlePieceChanges(pieces);
+				// @ts-ignore using private member KlasaMessage#_responses
 				msg._responses = [qMsg];
 				return msg.send('Done 👌🏽 (but check console for any errors)');
 			} catch (qMsg) {
+				// @ts-ignore using private member KlasaMessage#_responses
 				if (qMsg instanceof KlasaMessage) msg._responses = [qMsg];
 				return null;
 			}
 		}
 
-		return msg.channel.send('No new changes.');
+		return msg.channel.send('No new changes.') as Promise<KlasaMessage | KlasaMessage[]>;
 	}
 
-	eatBaseDir(path) {
-		return this.hasBaseDir ? path.replace(this.baseDirRegex, '') : path;
+	eatBaseDir(path: string): string {
+		return this.hasBaseDir ? path.replace(this.baseDirRegex!, '') : path;
 	}
 
-	async handlePieceChanges(pieces) {
+	async handlePieceChanges(pieces: { toLoad: string[], toReload: string[], toUnload: string[] }) {
 		for (const file of pieces.toLoad) {
 			// e.g., ['commands', 'Admin', 'eval.js']
 			const path = this.eatBaseDir(file).split(this.gitPathSeparator);
@@ -118,8 +131,8 @@ module.exports = class extends Command {
 		}
 	}
 
-	async loadPiece(store, path) {
-		path = (path.endsWith('.js') ? path : `${path}.js`).split(this.loadRegex);
+	async loadPiece(store: Store<string, Piece>, pathStr: string) {
+		const path = (pathStr.endsWith('.js') ? pathStr : `${pathStr}.js`).split(this.loadRegex);
 		const piece = await store.load(store.userDirectory, path);
 
 		try {
@@ -139,7 +152,7 @@ module.exports = class extends Command {
 		}
 	}
 
-	async reloadPiece(piece) {
+	async reloadPiece(piece: Piece) {
 		try {
 			await piece.reload();
 			if (this.client.shard) {
@@ -154,7 +167,7 @@ module.exports = class extends Command {
 		}
 	}
 
-	async unloadPiece(piece) {
+	async unloadPiece(piece: Piece) {
 		piece.unload();
 		if (this.client.shard) {
 			await this.client.shard.broadcastEval(`
@@ -164,11 +177,11 @@ module.exports = class extends Command {
 		return true;
 	}
 
-	_segregateChanges(pullResult) {
+	_segregateChanges(pullResult: PullResult) {
 		const { files, created, deleted } = pullResult;
 
-		const pieces = { toLoad: [], toReload: [], toUnload: [] };
-		const nonPieces = [];
+		const pieces = { toLoad: <string[]>[], toReload: <string[]>[], toUnload: <string[]>[] };
+		const nonPieces = <string[]>[];
 		const pieceTypes = this.client.pieceStores.keyArray();
 
 		for (const file of files) {
@@ -190,9 +203,9 @@ module.exports = class extends Command {
 		return { pieces, nonPieces };
 	}
 
-	_resolvePiece([store, ...path]) {
-		return this.client.pieceStores.get(store)
+	_resolvePiece([store, ...path]: string[]) {
+		return (<Store<string, Piece>>this.client.pieceStores.get(store))
 			.find(piece => piece.file.length === path.length && piece.file.every((part, i) => path[i] === part));
 	}
 
-};
+}

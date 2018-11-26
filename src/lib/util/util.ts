@@ -3,7 +3,7 @@ import levenshtein from 'js-levenshtein';
 import { GuildChannel, Client } from 'discord.js';
 import { util as KlasaUtil, KlasaMessage, Language } from 'klasa';
 
-export const { sleep, regExpEsc, mergeDefault } = KlasaUtil;
+export const { codeBlock, exec, mergeDefault, regExpEsc, sleep } = KlasaUtil;
 
 export const DIGITS_TO_UNITS: Map<number, string> = new Map([
 	[9, 's'],
@@ -37,14 +37,6 @@ export const nthLast: IndexIntoAt = (indexable: any, n: number): any =>
 	indexable[indexable.length - n];
 
 /**
- * Returns the absolute value of a BigInt (the value without regard to sign)
- * @param bigint The BigInt value
- * @returns A positive BigInt
- */
-export const bigAbs = (bigint: bigint): bigint =>
-	bigint < 0 ? -bigint : bigint;
-
-/**
  * @param string The string to capitalize
  */
 export const capitalizeFirstLetter = (string: string): string =>
@@ -75,13 +67,11 @@ export const roundDigit = ([digit, otherDigit]: string) =>
 
 /**
  * Get a duration formatted in a friendly string
- * @param from High precision number to compare from
- * @param to High precision number to compare to
+ * @param from Number to compare from
+ * @param to Number to compare to
  */
-export function getFriendlyDuration(from: bigint, to: bigint): string {
-	// @ts-ignore Bloody outdated Node.js types
-	if (!to) to = process.hrtime.bigint();
-	const time = bigAbs(to - from).toString();
+export function getFriendlyDuration(from: number, to = Date.now()): string {
+	const time = Math.abs(to - from).toString();
 	let shift: number | undefined, suffix: string | undefined;
 
 	const digits = time.length;

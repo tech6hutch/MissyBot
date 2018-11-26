@@ -97,7 +97,7 @@ export default class MissyClient extends KlasaClient {
 				// Custom
 				.add('restart', folder => folder
 					.add('message', 'messagepromise')
-					.add('timestamp', 'bigint', { min: 0 }));
+					.add('timestamp', 'number', { min: 0 }));
 		}
 
 		if (!options.gateways!.users!.schema) {
