@@ -1,20 +1,24 @@
 // Copyright (c) 2017-2018 dirigeants. All rights reserved. MIT license.
-const fetch = require('node-fetch');
-const { MessageEmbed } = require('discord.js');
-const { Command } = require('klasa');
-const { arrayRandom } = require('../../../lib/util/util');
+import fetch from 'node-fetch';
+import { MessageEmbed } from 'discord.js';
+import { Command, CommandStore, KlasaMessage } from 'klasa';
+import MissyClient from '../../../lib/MissyClient';
+import { arrayRandom } from '../../../lib/util/util';
 
-module.exports = class extends Command {
+export default class extends Command {
 
-	constructor(...args) {
-		super(...args, {
+	client: MissyClient;
+
+	catEmojis = ['🐱', '🐈'];
+
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
+		super(client, store, file, directory, {
 			aliases: ['randomcat', 'meow', 'pussy'],
 			description: lang => lang.get('COMMAND_CAT_DESCRIPTION'),
 		});
-		this.catEmojis = ['🐱', '🐈'];
 	}
 
-	async run(msg) {
+	async run(msg: KlasaMessage) {
 		return msg.sendLoading(async () => {
 			const file = await fetch('http://aws.random.cat/meow')
 				.then(response => response.json())
@@ -29,4 +33,4 @@ module.exports = class extends Command {
 		});
 	}
 
-};
+}
