@@ -1,9 +1,11 @@
-const { Command } = require('klasa');
+import { CommandStore, KlasaMessage, KlasaUser } from 'klasa';
+import MissyClient from '../../lib/MissyClient';
+import MissyCommand from '../../lib/structures/MissyCommand';
 
-module.exports = class extends Command {
+export default class extends MissyCommand {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
+		super(client, store, file, directory, {
 			promptLimit: 3,
 			description: lang => lang.get('COMMAND_COOKIE_DESCRIPTION'),
 			usage: '<milk:yesno> [for:user]',
@@ -30,8 +32,8 @@ module.exports = class extends Command {
 			});
 	}
 
-	async run(msg, [milk, forUser]) {
+	async run(msg: KlasaMessage, [milk, forUser]: [boolean, KlasaUser?]) {
 		return msg.send(`${forUser ? `${forUser} ` : ''}${milk ? '🍪🥛' : '🍪'}`);
 	}
 
-};
+}
