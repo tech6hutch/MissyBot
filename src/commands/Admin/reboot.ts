@@ -1,10 +1,11 @@
-import { Command, CommandStore, KlasaMessage } from 'klasa';
+import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
+import MissyCommand from '../../lib/structures/MissyCommand';
 import { getFriendlyDuration, scalarOrFirst } from '../../lib/util/util';
 
 const rebootKeys = ['message', 'timestamp'].map(key => `restart.${key}`);
 
-export default class extends Command {
+export default class extends MissyCommand {
 
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {

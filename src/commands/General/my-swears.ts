@@ -1,13 +1,13 @@
 import assert from 'assert';
 import { MessageEmbed, Permissions, TextChannel } from 'discord.js';
-import { KlasaClient, CommandStore, KlasaMessage } from 'klasa';
+import { CommandStore, KlasaMessage, KlasaUser } from 'klasa';
+import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/MissyCommand';
 import IconifiedDisplay from '../../lib/util/IconifiedDisplay';
 import ReactionHandler from '../../lib/util/ReactionHandler';
 import profanity from '../../lib/profanity';
 import { fuzzySearch, scalarOrFirst } from '../../lib/util/util';
 import { UserSettings, IndexedObj, AnyObj } from '../../lib/util/types';
-import MissyClient from '../../lib/MissyClient';
 
 const emojiRegex = /\p{Emoji_Presentation}/u;
 const capitalize = (firstLetterOrPart =>
@@ -31,7 +31,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 
 		super({
 			template,
-			user: msg.author,
+			user: msg.author as KlasaUser,
 			msgContent: content,
 
 			infoPage: (() => {
@@ -109,7 +109,7 @@ ProfanityDisplay.ReactionHandler = ProfanityReactionHandler;
 
 export default class MySwearsCmd extends MissyCommand {
 
-	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string) {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
 			usage: `[list|all|category:str]`,
 			description: '🗣 👀',

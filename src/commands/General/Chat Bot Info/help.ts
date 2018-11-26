@@ -1,4 +1,5 @@
-import { util as KlasaUtil, KlasaClient, CommandStore, KlasaMessage, Command } from 'klasa';
+import { util as KlasaUtil, CommandStore, KlasaMessage, KlasaUser } from 'klasa';
+import MissyClient from '../../../lib/MissyClient';
 import MissyCommand from '../../../lib/structures/MissyCommand';
 import { scalarOrFirst } from '../../../lib/util/util';
 import { Sendable, IndexedObj } from '../../../lib/util/types';
@@ -8,7 +9,7 @@ type RunReturn = Promise<KlasaMessage | KlasaMessage[]>;
 
 export default class extends MissyCommand {
 
-	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string) {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
 			aliases: ['commands'],
 			guarded: true,
@@ -26,7 +27,7 @@ export default class extends MissyCommand {
 		return this.sendHelp(message, command);
 	}
 
-	async sendHelp(msg: KlasaMessage, command?: MissyCommand, toChannel: Sendable = command ? msg : msg.author, {
+	async sendHelp(msg: KlasaMessage, command?: MissyCommand, toChannel: Sendable = command ? msg : <KlasaUser>msg.author, {
 		doneText = msg.language.get('COMMAND_HELP_DM'),
 		failText = msg.language.get('COMMAND_HELP_NODM'),
 	} = {}): RunReturn {

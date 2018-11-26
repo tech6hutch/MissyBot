@@ -1,8 +1,9 @@
-import { Command, CommandStore, KlasaMessage } from 'klasa';
+import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
+import MissyCommand from '../../../lib/structures/MissyCommand';
 import { Sendable } from '../../../lib/util/types';
 
-export default class extends Command {
+export default class extends MissyCommand {
 
 	msgSymbol = Symbol('say command');
 

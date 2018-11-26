@@ -1,13 +1,12 @@
 import assert from 'assert';
 import { PullResult } from 'simple-git/promise';
-import { Command, KlasaMessage, CommandStore, KlasaUser, Store, Piece } from 'klasa';
+import { KlasaMessage, CommandStore, KlasaUser, Store, Piece } from 'klasa';
 import RebootCmd from './reboot';
 import MissyClient from '../../lib/MissyClient';
+import MissyCommand from '../../lib/structures/MissyCommand';
 import { codeBlock, regExpEsc } from '../../lib/util/util';
 
-export default class extends Command {
-
-	client: MissyClient;
+export default class extends MissyCommand {
 
 	baseDirRegex: RegExp | null;
 	hasBaseDir: boolean;
@@ -64,7 +63,7 @@ export default class extends Command {
 				const qMsg = await msg.channel.ask(<KlasaUser>msg.author, 'Non-piece files changed. **Reboot the bot?**');
 				// @ts-ignore using private member KlasaMessage#_responses
 				msg._responses = [qMsg];
-				return (<RebootCmd><Command>this.store.get('reboot')).run(msg);
+				return (<RebootCmd><MissyCommand>this.store.get('reboot')).run(msg);
 			} catch (qMsg) {
 				// @ts-ignore using private member KlasaMessage#_responses
 				if (qMsg instanceof KlasaMessage) msg._responses = [qMsg];

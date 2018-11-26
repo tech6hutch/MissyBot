@@ -1,9 +1,10 @@
-import { KlasaClient, CommandStore, KlasaMessage } from 'klasa';
+import { CommandStore } from 'klasa';
+import MissyClient from '../../lib/MissyClient';
 import RandomImageCommand from '../../lib/base/RandomImageCommand';
 
 export default class extends RandomImageCommand {
 
-	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string) {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
 			enabled: false,
 			aliases: ['no-context'],

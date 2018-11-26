@@ -1,6 +1,6 @@
 import {
 	Command,
-	KlasaClient, CommandStore, CommandOptions,
+	CommandStore, CommandOptions,
 } from 'klasa';
 import MissyClient from '../MissyClient';
 
@@ -16,7 +16,7 @@ export default class MissyCommand extends Command {
 	helpListName: string;
 	helpUsage: string;
 
-	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
 		super(client, store, file, directory, options);
 
 		this.helpListName = options.helpListName || this.name;

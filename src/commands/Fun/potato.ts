@@ -3,9 +3,9 @@ import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/MissyCommand';
 import { arrayRandom } from '../../lib/util/util';
-import { IndexedObj } from '../../lib/util/types';
+import { IndexedObj, Sendable } from '../../lib/util/types';
 
-type Subcommand = (message: KlasaMessage) => Promise<KlasaMessage | KlasaMessage[]>;
+type Subcommand = (message: Sendable) => Promise<KlasaMessage | KlasaMessage[]>;
 type SubcommandIndexed = IndexedObj<Subcommand>;
 
 const potatoTypes = ['emoji', 'image'];
@@ -25,15 +25,15 @@ export default class extends MissyCommand {
 		assert(potatoTypes.every(method => typeof (<SubcommandIndexed><any>this)[method] === 'function'));
 	}
 
-	random(msg: KlasaMessage) {
+	random(msg: Sendable) {
 		return (<SubcommandIndexed><any>this)[arrayRandom(this.potatoTypes)](msg);
 	}
 
-	emoji(msg: KlasaMessage) {
+	emoji(msg: Sendable) {
 		return msg.send(arrayRandom(this.potatoEmojis));
 	}
 
-	image(msg: KlasaMessage) {
+	image(msg: Sendable) {
 		return msg.sendLoading(() => this.client.assets.get('potato-cat').uploadTo(msg));
 	}
 

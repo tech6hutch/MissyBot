@@ -1,9 +1,10 @@
-import { KlasaClient, CommandStore, KlasaMessage } from 'klasa';
+import { CommandStore, KlasaMessage } from 'klasa';
+import MissyClient from '../../../lib/MissyClient';
 import MissyCommand from '../../../lib/structures/MissyCommand';
 
 export default class extends MissyCommand {
 
-	constructor(client: KlasaClient, store: CommandStore, file: string[], directory: string) {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
 			aliases: ['prefixes'],
 			runIn: ['text'],

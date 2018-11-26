@@ -1,8 +1,9 @@
 import { DMChannel } from 'discord.js';
-import { Command, CommandStore, KlasaMessage, KlasaUser } from 'klasa';
+import { CommandStore, KlasaMessage, KlasaUser } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
+import MissyCommand from '../../../lib/structures/MissyCommand';
 
-export default class extends Command {
+export default class extends MissyCommand {
 
 	msgSymbol = Symbol('DM command');
 
