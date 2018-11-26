@@ -28,15 +28,15 @@ export default class RandomImageCommand extends MissyCommand {
 		return this.listIfList(msg, firstParam) || this.postIfName(msg, firstParam) || this.postRandom(msg);
 	}
 
-	listIfList(channel: Sendable, imageName: string) {
+	listIfList(channel: Sendable, imageName: string | undefined) {
 		return imageName === 'list' ?
 			channel.send(this.images
 				.map(img => this.client.assets.get(img).title)
-				.join('\n')) :
+				.join('\n')) as Promise<KlasaMessage | KlasaMessage[]> :
 			null;
 	}
 
-	postIfName(channel: Sendable, imageName: string) {
+	postIfName(channel: Sendable, imageName: string | undefined) {
 		return imageName ?
 			channel.sendLoading(
 				() => this.getInFuzzily(imageName).uploadTo(channel),

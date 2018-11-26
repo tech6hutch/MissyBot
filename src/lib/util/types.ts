@@ -12,7 +12,7 @@ export interface MissySendAliases {
 	sendLoading<T = KlasaMessage>(cb: (msg: KlasaMessage) => T | Promise<T>, options?: {
 		loadingText?: string,
 	}): Promise<T>;
-	sendLoadingFor<T = KlasaMessage>(this: KlasaMessage, channel: Sendable, cb: (msg: Sendable) => T | Promise<T>, options?: {
+	sendLoadingFor<T = KlasaMessage>(channel: Sendable, cb: (msg: Sendable) => T | Promise<T>, options?: {
 		loadingText?: string,
 		doneText?: string,
 	}): Promise<[KlasaMessage, T]>

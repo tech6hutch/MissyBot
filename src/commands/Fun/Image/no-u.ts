@@ -1,10 +1,12 @@
-const assert = require('assert');
-const MissyCommand = require('../../../lib/structures/MissyCommand');
+import assert from 'assert';
+import { CommandStore, KlasaMessage } from 'klasa';
+import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyClient from '../../../lib/MissyClient';
 
-module.exports = class extends MissyCommand {
+export default class extends MissyCommand {
 
-	constructor(...args) {
-		super(...args, {
+	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
+		super(client, store, file, directory, {
 			aliases: ['no', 'no u'],
 			description: 'no u 🔀',
 			usage: '<u|you> [infinity]',
@@ -14,20 +16,20 @@ module.exports = class extends MissyCommand {
 			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
 				'Missy, no u',
 				'Missy, no u infinity',
-			]).join('\n'),
+			]),
 		});
 	}
 
-	async run(msg, [, infinity]) {
+	async run(msg: KlasaMessage, [, infinity]: [string, string?]) {
 		return msg.sendLoading(
 			() => this.client.assets.get(`no-u${infinity ? '-infinity' : ''}`).uploadTo(msg),
 			{ loadingText: msg.language.get('COMMAND_NOU_LOADING_TEXT') }
 		);
 	}
 
-	init() {
+	async init() {
 		assert(this.client.assets.has('no-u'));
 		assert(this.client.assets.has('no-u-infinity'));
 	}
 
-};
+}

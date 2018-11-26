@@ -304,10 +304,10 @@ module.exports = class extends Language {
 			COMMAND_SEND_POTATO: 'Sent them a potato 👌',
 			COMMAND_SEND_MARBLES: 'I seem to have lost all of mine @_@',
 			COMMAND_SEND_UNKNOWN: "I don't know how to send that >_<",
-			COMMAND_NOU_EXTENDEDHELP: examples => [
+			COMMAND_NOU_EXTENDEDHELP: (examples: string[]) => [
 				'Examples:',
 				...examples,
-			],
+			].join('\n'),
 			COMMAND_NOU_LOADING_TEXT: 'Rebutting your argument...',
 			COMMAND_POTATO_DESCRIPTION: 'Post a random potato!',
 			COMMAND_MEME_DESCRIPTION: "It seems I've made a meme!",

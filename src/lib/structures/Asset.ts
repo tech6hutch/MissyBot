@@ -2,7 +2,7 @@ import assert, { AssertionError } from 'assert';
 import { join } from 'path';
 import { readFile } from 'fs-nextra';
 import { MessageOptions, FileOptions } from 'discord.js';
-import { Piece, PieceOptions } from 'klasa';
+import { Piece, PieceOptions, KlasaMessage } from 'klasa';
 import MissyClient from '../MissyClient';
 import AssetStore from './AssetStore';
 import { capitalizeFirstLetter } from '../util/util';
@@ -90,7 +90,7 @@ class Asset extends Piece {
 		return channel.send(caption, {
 			...messageOptions,
 			files: [this.fileOption],
-		});
+		}) as Promise<KlasaMessage | KlasaMessage[]>;
 	}
 
 	async loadAsset() {

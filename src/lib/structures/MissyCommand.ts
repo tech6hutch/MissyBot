@@ -4,10 +4,10 @@ import {
 } from 'klasa';
 import MissyClient from '../MissyClient';
 
-export interface MissyCommandOptions extends CommandOptions {
+export type MissyCommandOptions = {
 	helpListName?: string;
 	helpUsage?: string;
-}
+} & CommandOptions;
 
 export default class MissyCommand extends Command {
 
