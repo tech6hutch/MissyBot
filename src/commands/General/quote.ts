@@ -1,6 +1,6 @@
 import { CommandStore } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import RandomImageCommand from '../../lib/base/RandomImageCommand';
+import RandomImageCommand from '../../lib/structures/RandomImageCommand';
 
 export default class extends RandomImageCommand {
 

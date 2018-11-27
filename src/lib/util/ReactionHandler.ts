@@ -82,7 +82,7 @@ export default class ReactionHandler extends ReactionCollector {
 			return;
 		}
 
-		this.on('collect', (reaction, user) => {
+		this.on('collect', (reaction, user: KlasaUser) => {
 			this.onCollect(reaction, user);
 		});
 		this.on('end', () => {

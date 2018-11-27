@@ -2,7 +2,7 @@ import assert from 'assert';
 import { TextChannel } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
-import RandomImageCommand from '../../../lib/base/RandomImageCommand';
+import RandomImageCommand from '../../../lib/structures/RandomImageCommand';
 import { fuzzySearch, resolveLang } from '../../../lib/util/util';
 import { Sendable } from '../../../lib/util/types';
 

@@ -12,7 +12,7 @@ class ObjectStore extends Store<string, Piece> {
 	 */
 	constructor(client: KlasaClient) {
 		// super(client, 'objects', Object); this isn't gonna work
-		super(client, 'objects', Piece);
+		super(client, 'objects', <any>Piece);
 	}
 
 }
