@@ -1,24 +1,24 @@
-class MixinBuilder {
+import { IndexedObj } from "./types";
 
-	constructor(SuperClass) {
-		this.SuperClass = SuperClass;
-	}
+type Class = new(...args: any[]) => any;
+
+export default class MixinBuilder {
+
+	constructor(public SuperClass: Class) {}
 
 	/**
 	 * Add mixins
-	 * @param  {...*} mixins Mixins to mix in
-	 * @returns {function(new:Function, ...*)}
+	 * @param mixins Mixins to mix in
 	 */
-	with(...mixins) {
+	with(...mixins: any[]): Class {
 		return mixins.reduce((Class, mixin) => mixin(Class), this.SuperClass);
 	}
 
 	/**
 	 * Call this to start mixing your class
-	 * @param {function(new:Function, ...*)} SuperClass The parent class
-	 * @returns {MixinBuilder}
+	 * @param SuperClass The parent class
 	 */
-	static mix(SuperClass) {
+	static mix(SuperClass: Class) {
 		return new MixinBuilder(SuperClass);
 	}
 
@@ -27,13 +27,12 @@ class MixinBuilder {
 	 *
 	 * This is for classes you don't have any control over.
 	 * For your own, just make them mixins to start with.
-	 * @param {function(new:Function, ...*)} Class The class to mixinify
-	 * @returns {function(new:Function, ...*): function(new:Function, ...*)}
+	 * @param Class The class to mixinify
 	 */
-	static mixinify(Class) {
-		return SuperClass => MixinBuilder.mergeProto(class Mixin extends SuperClass {
+	static mixinify(Class: Class) {
+		return (SuperClass: Class) => MixinBuilder.mergeProto(class Mixin extends SuperClass {
 
-			constructor(superClassArgs, mixinArgs) {
+			constructor(superClassArgs: any[], mixinArgs: any[]) {
 				super(...superClassArgs);
 				Object.defineProperties(this, Object.getOwnPropertyDescriptors(new Class(...mixinArgs)));
 			}
@@ -41,8 +40,8 @@ class MixinBuilder {
 		}, Class);
 	}
 
-	static mergeProto({ prototype: classProto }, { prototype: superClassProto }) {
-		const descriptorsToDefine = {};
+	static mergeProto({ prototype: classProto }: any, { prototype: superClassProto }: any): Class {
+		const descriptorsToDefine = {} as IndexedObj<PropertyDescriptor>;
 		for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(superClassProto))) {
 			if (typeof classProto[key] === 'undefined') descriptorsToDefine[key] = descriptor;
 		}
@@ -51,4 +50,4 @@ class MixinBuilder {
 
 }
 
-module.exports = MixinBuilder;
+export const { mix, mixinify } = MixinBuilder;
