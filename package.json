@@ -2,7 +2,7 @@
   "name": "missybot",
   "version": "0.1.0",
   "description": "",
-  "main": "src/dist/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "pm2 start . -n \"MissyBot\" && pm2 logs",
     "test": "echo \"Error: no test specified\" && exit 1"
