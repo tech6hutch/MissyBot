@@ -43,15 +43,11 @@ export default class MissyClient extends KlasaClient {
 
 	/**
 	 * People who can speak for the bot (use, e.g., the "say" command)
-	 *
-	 * See the once "ready" event, below, for the rest of the elements in this set.
 	 */
 	speakerIDs: Set<Snowflake>;
 
 	/**
-	 * Developers for the bot (including Missy)
-	 *
-	 * See the once "ready" event, below, for the rest of the elements in this set.
+	 * Developers of the bot (including Missy)
 	 */
 	devIDs: Set<Snowflake>;
 
@@ -116,11 +112,11 @@ export default class MissyClient extends KlasaClient {
 			const { MANAGE_GUILD } = Permissions.FLAGS;
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, (_, { guild, member }) => guild && member.permissions.has(MANAGE_GUILD), { fetch: true })
-				.add(7, (_, { guild, member }) => guild && member === guild.owner, { fetch: true })
-				.add(8, (_, { client: { speakerIDs }, author }) => speakerIDs.has(author.id))
-				.add(9, (_, { client: { devIDs }, author }) => devIDs.has(author.id), { break: true })
-				.add(10, (_, { client: { owner }, author }) => author === owner);
+				.add(6, ({ guild, member }) => guild && member.permissions.has(MANAGE_GUILD), { fetch: true })
+				.add(7, ({ guild, member }) => guild && member === guild.owner, { fetch: true })
+				.add(8, ({ author, client }) => client.speakerIDs.has(author.id))
+				.add(9, ({ author, client }) => client.devIDs.has(author.id), { break: true })
+				.add(10, ({ author, client }) => author === client.owner);
 		}
 
 		super(options);
