@@ -33,9 +33,9 @@ export default class extends MissyCommand {
 	} = {}): RunReturn {
 		if (command) {
 			const info = [
-				`= ${command.helpListName || command.name} = `,
+				`= ${command.helpListName} = `,
 				isFunction(command.description) ? command.description(msg.language) : command.description,
-				msg.language.get('COMMAND_HELP_USAGE', command.helpUsage || command.usage.fullUsage(msg)),
+				msg.language.get('COMMAND_HELP_USAGE', command.usage.fullUsage(msg)),
 				msg.language.get('COMMAND_HELP_EXTENDED'),
 				isFunction(command.extendedHelp) ? command.extendedHelp(msg.language) : command.extendedHelp
 			].join('\n');
@@ -74,7 +74,7 @@ export default class extends MissyCommand {
 					if (!help.hasOwnProperty(command.category)) help[command.category] = {};
 					if (!help[command.category].hasOwnProperty(command.subCategory)) help[command.category][command.subCategory] = [];
 					const description = isFunction(command.description) ? command.description(message.language) : command.description;
-					help[command.category][command.subCategory].push(`${prefix} ${(command.helpListName || command.name).padEnd(longest)} :: ${description}`);
+					help[command.category][command.subCategory].push(`${prefix} ${(command.helpListName).padEnd(longest)} :: ${description}`);
 				})
 				.catch(() => {
 					// noop

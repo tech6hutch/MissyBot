@@ -1,5 +1,6 @@
 import { Extendable, CommandUsage, ExtendableStore, KlasaMessage } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyCommand from '../lib/structures/MissyCommand';
 import { last } from '../lib/util/util';
 
 export default class extends Extendable {
@@ -14,7 +15,8 @@ export default class extends Extendable {
 	 */
 	fullUsage(this: CommandUsage, message: KlasaMessage): string {
 		const prefix = message.localPrefix;
-		return `${last(prefix) === '.' ? prefix : `${prefix} `}${this.nearlyFullUsage}`;
+		const nearlyFullUsage = (message.command && (<MissyCommand>message.command).helpNearlyFullUsage) || this.nearlyFullUsage;
+		return `${last(prefix) === '.' ? prefix : `${prefix} `}${nearlyFullUsage}`;
 	}
 
 }

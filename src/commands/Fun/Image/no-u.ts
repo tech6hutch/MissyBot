@@ -7,12 +7,14 @@ export default class extends MissyCommand {
 
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
+			// "no u", with a space, so that the help command's custom resolver accepts that string
 			aliases: ['no', 'no u'],
 			description: 'no u 🔀',
 			usage: '<u|you> [infinity]',
 			usageDelim: ' ',
 			helpListName: 'no u',
-			helpUsage: 'no <u|you> [infinity]',
+			helpUsageName: 'no <u|you>',
+			helpUsage: '[infinity]',
 			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
 				'Missy, no u',
 				'Missy, no u infinity',
