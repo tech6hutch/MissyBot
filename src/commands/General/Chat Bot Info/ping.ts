@@ -1,7 +1,7 @@
 import { MessageEmbed } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
-import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { scalarOrFirst } from '../../../lib/util/util';
 
 export default class extends MissyCommand {

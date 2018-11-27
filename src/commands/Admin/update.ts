@@ -3,7 +3,7 @@ import { PullResult } from 'simple-git/promise';
 import { KlasaMessage, CommandStore, KlasaUser, Store, Piece } from 'klasa';
 import RebootCmd from './reboot';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { codeBlock, regExpEsc } from '../../lib/util/util';
 
 export default class extends MissyCommand {

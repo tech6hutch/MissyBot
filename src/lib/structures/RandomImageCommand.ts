@@ -2,8 +2,8 @@ import assert from 'assert';
 import { CommandStore, Language, KlasaMessage } from 'klasa';
 import { arrayRandom, fuzzySearch, resolveLang } from '../util/util';
 import MissyClient from '../MissyClient';
-import MissyCommand, { MissyCommandOptions } from '../structures/MissyCommand';
-import { Sendable, IndexedObj, AnyObj } from '../util/types';
+import MissyCommand, { MissyCommandOptions } from './base/MissyCommand';
+import { Sendable, AnyObj } from '../util/types';
 import Asset from '../structures/Asset';
 
 export interface RandomImageCommandOptions extends MissyCommandOptions {

@@ -1,6 +1,6 @@
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import HelpCmd from './Chat Bot Info/help';
 import LewdCmd from '../Fun/Image/lewd';
 import PotatoCmd from '../Fun/potato';
@@ -35,7 +35,7 @@ export default class extends MissyCommand {
 
 			case 'nudes':
 			case 'noods': {
-				const lewdCmd = <LewdCmd><MissyCommand>this.store.get('lewd');
+				const lewdCmd = <LewdCmd><any>this.store.get('lewd');
 				return local ?
 					lewdCmd.postSfwImage(msg) :
 					lewdCmd.postSfwImageSomewhere(msg, whom).then(array => array[0]);

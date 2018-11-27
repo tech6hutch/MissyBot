@@ -2,7 +2,7 @@ import assert from 'assert';
 import { MessageEmbed, Permissions, TextChannel } from 'discord.js';
 import { CommandStore, KlasaMessage, KlasaUser } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import IconifiedDisplay from '../../lib/util/IconifiedDisplay';
 import ReactionHandler from '../../lib/util/ReactionHandler';
 import profanity from '../../lib/profanity';

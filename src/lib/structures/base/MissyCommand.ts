@@ -2,7 +2,7 @@ import {
 	Command,
 	CommandStore, CommandOptions,
 } from 'klasa';
-import MissyClient from '../MissyClient';
+import MissyClient from '../../MissyClient';
 
 export type MissyCommandOptions = {
 	/** Shown in the list and as the title for individual cmd help */

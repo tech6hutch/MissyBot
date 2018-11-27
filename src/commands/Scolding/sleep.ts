@@ -1,7 +1,7 @@
 import { User } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import RebootCmd from '../Admin/reboot';
 import { naturalPause } from '../../lib/util/util';
 

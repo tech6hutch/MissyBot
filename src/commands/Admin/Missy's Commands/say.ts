@@ -1,6 +1,6 @@
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
-import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { Sendable } from '../../../lib/util/types';
 
 export default class extends MissyCommand {

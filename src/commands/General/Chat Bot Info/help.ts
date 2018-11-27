@@ -1,6 +1,6 @@
 import { util as KlasaUtil, CommandStore, KlasaMessage, KlasaUser } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
-import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { scalarOrFirst } from '../../../lib/util/util';
 import { Sendable, IndexedObj } from '../../../lib/util/types';
 

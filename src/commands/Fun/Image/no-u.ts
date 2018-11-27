@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { CommandStore, KlasaMessage } from 'klasa';
-import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import MissyClient from '../../../lib/MissyClient';
 
 export default class extends MissyCommand {

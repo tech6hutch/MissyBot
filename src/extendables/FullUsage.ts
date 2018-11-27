@@ -1,6 +1,6 @@
 import { Extendable, CommandUsage, ExtendableStore, KlasaMessage } from 'klasa';
 import MissyClient from '../lib/MissyClient';
-import MissyCommand from '../lib/structures/MissyCommand';
+import MissyCommand from '../lib/structures/base/MissyCommand';
 import { last } from '../lib/util/util';
 
 export default class extends Extendable {

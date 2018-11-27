@@ -1,6 +1,6 @@
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { getFriendlyDuration, scalarOrFirst } from '../../lib/util/util';
 
 const rebootKeys = ['message', 'timestamp'].map(key => `restart.${key}`);

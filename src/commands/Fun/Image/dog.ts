@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { MessageEmbed } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
-import MissyCommand from '../../../lib/structures/MissyCommand';
+import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { arrayRandom } from '../../../lib/util/util';
 
 export default class extends MissyCommand {

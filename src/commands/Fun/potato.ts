@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
-import MissyCommand from '../../lib/structures/MissyCommand';
+import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { arrayRandom } from '../../lib/util/util';
 import { IndexedObj, Sendable } from '../../lib/util/types';
 
