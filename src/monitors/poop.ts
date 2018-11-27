@@ -1,9 +1,7 @@
-import { Monitor, KlasaMessage } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { KlasaMessage } from 'klasa';
+import MissyMonitor from '../lib/structures/base/MissyMonitor';
 
-export default class extends Monitor {
-
-	client: MissyClient;
+export default class extends MissyMonitor {
 
 	// Only has a word boundary at the beginning so it matches e.g. "pooping"
 	regex = /\bpoop/i;

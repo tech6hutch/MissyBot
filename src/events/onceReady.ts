@@ -1,11 +1,10 @@
 import { AssertionError } from 'assert';
 import { TextChannel } from 'discord.js';
-import { Event, util, EventStore } from 'klasa';
+import { util, EventStore } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 
-export default class extends Event {
-
-	client: MissyClient;
+export default class extends MissyEvent {
 
 	constructor(client: MissyClient, store: EventStore, file: string[], directory: string) {
 		super(client, store, file, directory, {

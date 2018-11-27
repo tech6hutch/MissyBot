@@ -1,8 +1,9 @@
-import { Monitor, MonitorStore, KlasaMessage } from 'klasa';
+import { MonitorStore, KlasaMessage } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyMonitor from '../lib/structures/base/MissyMonitor';
 import { Sendable } from '../lib/util/types';
 
-export default class extends Monitor {
+export default class extends MissyMonitor {
 
 	logChannel: Sendable | null = null;
 

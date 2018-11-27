@@ -1,10 +1,8 @@
-import { Inhibitor, KlasaMessage } from 'klasa';
+import { KlasaMessage } from 'klasa';
 import CmdHandler from '../monitors/commandHandler';
-import MissyClient from '../lib/MissyClient';
+import MissyInhibitor from '../lib/structures/base/MissyInhibitor';
 
-export default class extends Inhibitor {
-
-	client: MissyClient;
+export default class extends MissyInhibitor {
 
 	get prefixMention(): RegExp {
 		return (<CmdHandler>this.client.monitors.get('commandHandler')).prefixMention!;

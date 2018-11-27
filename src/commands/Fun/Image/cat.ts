@@ -8,8 +8,6 @@ import { arrayRandom } from '../../../lib/util/util';
 
 export default class extends MissyCommand {
 
-	client: MissyClient;
-
 	catEmojis = ['🐱', '🐈'];
 
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {

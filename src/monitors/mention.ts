@@ -1,9 +1,8 @@
-import { Monitor, MonitorStore, KlasaMessage } from 'klasa';
+import { MonitorStore, KlasaMessage } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyMonitor from '../lib/structures/base/MissyMonitor';
 
-export default class extends Monitor {
-
-	client: MissyClient;
+export default class extends MissyMonitor {
 
 	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
 		super(client, store, file, directory, {

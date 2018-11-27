@@ -1,8 +1,9 @@
 import {
-	Monitor, Stopwatch,
+	Stopwatch,
 	MonitorStore, KlasaMessage, Command,
 } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyMonitor from '../lib/structures/base/MissyMonitor';
 import { regExpEsc } from '../lib/util/util';
 import { IndexedObj, KlasaMessageWithGuildSettings } from '../lib/util/types';
 
@@ -16,7 +17,7 @@ type PrefixObjectNullable = null | {
 	regex: RegExp | null;
 };
 
-export default class extends Monitor {
+export default class extends MissyMonitor {
 
 	commandTextRegex = /\b[\w-]+\b/;
 	prefixes: Map<string, PrefixObject> = new Map();

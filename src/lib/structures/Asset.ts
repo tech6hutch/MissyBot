@@ -5,7 +5,7 @@ import { MessageOptions, FileOptions } from 'discord.js';
 import { Piece, PieceOptions, KlasaMessage } from 'klasa';
 import MissyClient from '../MissyClient';
 import AssetStore from './AssetStore';
-import { capitalizeFirstLetter } from '../util/util';
+import { capitalizeFirstLetter, assertEqual } from '../util/util';
 import { Sendable } from '../util/types';
 
 export interface AssetOptions extends PieceOptions {
@@ -24,6 +24,8 @@ export interface AssetOptions extends PieceOptions {
  * @extends {Piece}
  */
 class Asset extends Piece {
+
+	readonly client = <MissyClient>super.client;
 
 	title: string;
 
@@ -47,6 +49,8 @@ class Asset extends Piece {
 	 */
 	constructor(client: MissyClient, store: AssetStore, file: string[], directory: string, options: AssetOptions = {}) {
 		super(client, store, file, directory, options);
+
+		assertEqual(client, super.client, this.client);
 
 		this.title = options.title || this.name
 			.split('-')

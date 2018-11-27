@@ -1,16 +1,14 @@
 import { MessageReaction } from 'discord.js';
-import { Event, KlasaUser } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { KlasaUser } from 'klasa';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 
-export default class extends Event {
-
-	client: MissyClient;
+export default class extends MissyEvent {
 
 	run(reaction: MessageReaction, user: KlasaUser) {
 		const { message: msg } = reaction;
 		return (
 			msg.author === this.client.user &&
-			this.client.devIDs.has(msg.author.id) &&
+			this.client.devIDs.has(user.id) &&
 			reaction.emoji.name === '🗑' &&
 			!msg.deleted &&
 			msg.deletable

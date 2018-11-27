@@ -1,7 +1,8 @@
-import { Event, EventStore } from 'klasa';
+import { EventStore } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 
-export default class extends Event {
+export default class extends MissyEvent {
 
 	constructor(client: MissyClient, store: EventStore, file: string[], directory: string) {
 		super(client, store, file, directory, { once: true });

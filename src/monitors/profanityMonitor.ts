@@ -1,10 +1,11 @@
 import assert from 'assert';
-import { Monitor, MonitorStore, KlasaMessage } from 'klasa';
+import { MonitorStore } from 'klasa';
 import MissyClient from '../lib/MissyClient';
+import MissyMonitor from '../lib/structures/base/MissyMonitor';
 import profanity from '../lib/profanity';
 import { IndexedObj, KlasaMessageWithUserSettings } from '../lib/util/types';
 
-export default class extends Monitor {
+export default class extends MissyMonitor {
 
 	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
 		super(client, store, file, directory, { ignoreOthers: false });

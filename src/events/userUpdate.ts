@@ -1,10 +1,8 @@
 import assert from 'assert';
-import { Event, KlasaUser } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { KlasaUser } from 'klasa';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 
-export default class extends Event {
-
-	client: MissyClient;
+export default class extends MissyEvent {
 
 	async run(oldUser: KlasaUser, newUser: KlasaUser) {
 		assert(oldUser.id === newUser.id);

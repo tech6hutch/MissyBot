@@ -1,4 +1,4 @@
-import { util as KlasaUtil, CommandStore, KlasaMessage, KlasaUser } from 'klasa';
+import { util as KlasaUtil, CommandStore, KlasaMessage, KlasaUser, Command } from 'klasa';
 import MissyClient from '../../../lib/MissyClient';
 import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { scalarOrFirst } from '../../../lib/util/util';
@@ -57,24 +57,26 @@ export default class extends MissyCommand {
 		}
 
 		return toChannel.send(helpMessage, { split: { char: '\u200b' } })
-			.then((m: KlasaMessage) => msg.channel.type === 'dm' ? m : msg.send(doneText))
-			.catch((m: KlasaMessage) => msg.channel.type === 'dm' ? m : msg.send(failText));
+			.then((m: KlasaMessage | KlasaMessage[]) => msg.channel.type === 'dm' ? m : msg.send(doneText))
+			.catch((m: KlasaMessage | KlasaMessage[]) => msg.channel.type === 'dm' ? m : msg.send(failText));
 	}
 
 	async buildHelp(message: KlasaMessage) {
 		const help: IndexedObj<IndexedObj<string[]>> = {};
 
 		const prefix = scalarOrFirst(this.client.options.prefix);
-		const commandNames = this.client.commands.map((cmd: MissyCommand) => cmd.helpListName || cmd.name);
-		const longest = commandNames.reduce((long, str) => Math.max(long, str.length), 0);
+		const commandNames = this.client.commands.map((cmd: Command) => (<MissyCommand>cmd).helpListName || cmd.name);
+		const longest = commandNames.reduce((long: number, str: string) => Math.max(long, str.length), 0);
 
-		await Promise.all(this.client.commands.map((command: MissyCommand) =>
+		await Promise.all(this.client.commands.map((command: Command) =>
 			this.client.inhibitors.run(message, command, true)
 				.then(() => {
 					if (!help.hasOwnProperty(command.category)) help[command.category] = {};
 					if (!help[command.category].hasOwnProperty(command.subCategory)) help[command.category][command.subCategory] = [];
 					const description = isFunction(command.description) ? command.description(message.language) : command.description;
-					help[command.category][command.subCategory].push(`${prefix} ${(command.helpListName).padEnd(longest)} :: ${description}`);
+					help[command.category][command.subCategory].push(
+						`${prefix} ${((<MissyCommand>command).helpListName).padEnd(longest)} :: ${description}`
+					);
 				})
 				.catch(() => {
 					// noop

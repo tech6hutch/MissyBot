@@ -1,6 +1,7 @@
-import { Finalizer, KlasaMessage, Command } from 'klasa';
+import { KlasaMessage, Command } from 'klasa';
+import MissyFinalizer from '../lib/structures/base/MissyFinalizer';
 
-export default class extends Finalizer {
+export default class extends MissyFinalizer {
 
 	async run(message: KlasaMessage, command: Command) {
 		if (message.flags.delete && !command.deletable) {

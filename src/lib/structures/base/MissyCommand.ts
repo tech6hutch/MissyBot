@@ -3,6 +3,7 @@ import {
 	CommandStore, CommandOptions,
 } from 'klasa';
 import MissyClient from '../../MissyClient';
+import { assertEqual } from '../../util/util';
 
 export type MissyCommandOptions = {
 	/** Shown in the list and as the title for individual cmd help */
@@ -13,9 +14,9 @@ export type MissyCommandOptions = {
 	helpUsage?: string;
 } & CommandOptions;
 
-export default class MissyCommand extends Command {
+export default abstract class MissyCommand extends Command {
 
-	readonly client: MissyClient;
+	readonly client = <MissyClient>super.client;
 
 	/** Shown in the list and as the title for individual cmd help */
 	helpListName: string;
@@ -24,6 +25,8 @@ export default class MissyCommand extends Command {
 
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
 		super(client, store, file, directory, options);
+
+		assertEqual(client, super.client, this.client);
 
 		this.helpListName = options.helpListName || this.name;
 		this.helpNearlyFullUsage = options.helpUsage ?

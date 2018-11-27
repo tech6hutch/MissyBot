@@ -1,7 +1,8 @@
 import { Snowflake } from 'discord.js';
-import { Event, KlasaMessage, Monitor } from 'klasa';
+import { KlasaMessage, Monitor } from 'klasa';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 
-export default class CmdlessMsgEvent extends Event {
+export default class CmdlessMsgEvent extends MissyEvent {
 
 	memePingers: Snowflake[] = [
 		// Hutch

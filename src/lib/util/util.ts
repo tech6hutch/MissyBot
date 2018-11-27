@@ -1,4 +1,4 @@
-import { AssertionError } from 'assert';
+import assert, { AssertionError } from 'assert';
 import levenshtein from 'js-levenshtein';
 import { GuildChannel, Client } from 'discord.js';
 import { util as KlasaUtil, KlasaMessage, Language } from 'klasa';
@@ -165,3 +165,9 @@ export const resolveLang = (obj: KlasaMessage | GuildChannel | { client: Client 
 	(<KlasaMessage>obj).language ||
 		((<GuildChannel>obj).guild && (<GuildChannel>obj).guild.language) ||
 		obj.client.languages.default;
+
+// Condition and assertion testing
+
+export const equal = (...args: any[]) => args.slice(1).every((value, i) => args[i] === value);
+
+export const assertEqual = (...args: any[]) => assert(equal(...args));

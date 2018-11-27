@@ -1,10 +1,8 @@
 import { Collection } from 'discord.js';
-import { Finalizer, KlasaMessage } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { KlasaMessage } from 'klasa';
+import MissyFinalizer from '../lib/structures/base/MissyFinalizer';
 
-export default class extends Finalizer {
-
-	client: MissyClient;
+export default class extends MissyFinalizer {
 
 	watchedChannels: Map<string, Promise<Collection<string, KlasaMessage>>> = new Map();
 	regex = /not you(,? ?missy)?/i;

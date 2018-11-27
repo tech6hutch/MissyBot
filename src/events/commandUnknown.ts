@@ -1,12 +1,10 @@
-import { Event, KlasaMessage } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { KlasaMessage } from 'klasa';
+import MissyEvent from '../lib/structures/base/MissyEvent';
 import IgnoreNotYouInhibitor from '../inhibitors/ignoreNotYou';
 import NotYouFinalizer from '../finalizers/notYou';
 import { capitalizeFirstLetter } from '../lib/util/util';
 
-export default class UnknownCmd extends Event {
-
-	client: MissyClient;
+export default class UnknownCmd extends MissyEvent {
 
 	commandTextRegex = /\b[\w-]+\b/;
 	mentionRegex: RegExp | null = null;
