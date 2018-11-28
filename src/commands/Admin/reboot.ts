@@ -29,7 +29,9 @@ export default class extends MissyCommand {
 	async init() {
 		const { client, client: { settings } } = this;
 
-		const [message, timestamp] = await Promise.all(<[Promise<KlasaMessage>, number]>rebootKeys.map(key => settings!.fuckingResolve(key)));
+		const [message, timestamp] = await Promise
+			.all(<[Promise<KlasaMessage>, number]>rebootKeys.map(async key => settings!.fuckingResolve(key)))
+			.catch((): [null, null] => [null, null]);
 		await settings!.reset(rebootKeys);
 
 		if (message) message.sendLocale('COMMAND_REBOOT_SUCCESS', [timestamp && getFriendlyDuration(timestamp)]);

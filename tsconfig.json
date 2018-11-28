@@ -5,7 +5,8 @@
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"target": "esnext",
-		"outDir": "dist"
+		"outDir": "dist",
+		"sourceMap": true
 	},
 	"include": [
 		"src/"

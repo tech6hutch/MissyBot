@@ -29,6 +29,7 @@ const COLORS = {
 
 export default class MissyClient extends KlasaClient {
 
+	// @ts-ignore assigned in the parent class
 	options: Required<MissyClientOptions>;
 
 	COLORS: typeof COLORS;

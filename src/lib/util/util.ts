@@ -1,15 +1,11 @@
-import assert, { AssertionError } from 'assert';
+import assert from 'assert';
 import levenshtein from 'js-levenshtein';
 import { GuildChannel, Client } from 'discord.js';
-import { util as KlasaUtil, KlasaMessage, Language } from 'klasa';
+import { util as KlasaUtil, constants, KlasaMessage, Language } from 'klasa';
 
 export const { codeBlock, exec, mergeDefault, regExpEsc, sleep } = KlasaUtil;
 
-export const DIGITS_TO_UNITS: Map<number, string> = new Map([
-	[9, 's'],
-	[6, 'ms'],
-	[3, 'μs'],
-]);
+const { TIME } = constants;
 
 interface IndexInto {
 	(indexable: string): string;
@@ -62,31 +58,30 @@ export const ensureArray = <T>(arrayOrScalar: T[] | T): T[] =>
 export const arrayRandom = <T>(array: T[]): T =>
 	array[Math.floor(Math.random() * array.length)];
 
-export const roundDigit = ([digit, otherDigit]: string) =>
-	Number(digit) + +(+otherDigit >= 5);
-
 /**
  * Get a duration formatted in a friendly string
  * @param from Number to compare from
  * @param to Number to compare to
  */
 export function getFriendlyDuration(from: number, to = Date.now()): string {
-	const time = Math.abs(to - from).toString();
-	let shift: number | undefined, suffix: string | undefined;
+	const digits = 2;
+	let time = Math.abs(to - from);
 
-	const digits = time.length;
-	for (const [d, suf] of DIGITS_TO_UNITS) {
-		if (digits > d) {
-			shift = -d;
-			suffix = suf;
-			break;
-		}
-	}
-	if (shift == null || suffix == null) throw new AssertionError();
+	const hr = time >= TIME.HOUR ?
+		Math.floor(time / TIME.HOUR) :
+		0;
+	time -= hr * TIME.HOUR;
+	const hrStr = hr ? `${hr} hr ` : '';
 
-	const whole = time.slice(0, shift);
-	const fractional = `${time.slice(shift, shift + 1)}${roundDigit(time.slice(shift + 1, shift + 3))}`;
-	return `${whole}.${fractional}${suffix}`;
+	const min = time >= TIME.MINUTE ?
+		Math.floor(time / TIME.MINUTE) :
+		0;
+	time -= min * TIME.MINUTE;
+	const minStr = min ? `${hrStr}${min} min ` : '';
+
+	if (time >= TIME.SECOND) return `${minStr}${(time / TIME.SECOND).toFixed(digits)} s`;
+
+	return `${time.toFixed(digits)} ms`;
 }
 
 /**

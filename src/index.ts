@@ -1,11 +1,13 @@
-import MissyClient from './lib/MissyClient';
+import assert from 'assert';
 import { readJSON } from 'fs-nextra';
-
-console.log(process.cwd());
+import MissyClient from './lib/MissyClient';
 
 readJSON('config.json')
-	.then(({ token }: { token: string }) => new MissyClient().login(token))
-	.catch((e: Error) => {
+	.then(({ token }: { token?: string }) => {
+		assert(token);
+		new MissyClient().login(token);
+	})
+	.catch((e: any) => {
 		console.error('Failed to start bot:', e);
 		process.exit(1);
 	});

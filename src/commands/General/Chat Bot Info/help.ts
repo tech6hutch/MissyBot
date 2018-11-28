@@ -56,7 +56,7 @@ export default class extends MissyCommand {
 			helpMessage.push('```', '\u200b');
 		}
 
-		return toChannel.send(helpMessage, { split: { char: '\u200b' } })
+		return toChannel.sendMessage(helpMessage, { split: { char: '\u200b' } })
 			.then((m: KlasaMessage | KlasaMessage[]) => msg.channel.type === 'dm' ? m : msg.send(doneText))
 			.catch((m: KlasaMessage | KlasaMessage[]) => msg.channel.type === 'dm' ? m : msg.send(failText));
 	}
