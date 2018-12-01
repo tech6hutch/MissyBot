@@ -14,7 +14,8 @@ module.exports = class extends Monitor {
 		if (msg.author === this.client.missy) {
 			if (this.regex.test(msg.content)) return msg.react('💩');
 		} else if (msg.author.id === '156757401201016832') {
-			return msg.react('🍞');
+			// return msg.react('🍞');
+			return null;
 		}
 		return null;
 	}
