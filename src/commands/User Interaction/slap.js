@@ -12,7 +12,7 @@ module.exports = class extends Command {
 	}
 
 	run(msg, [user = getAboveUser(msg)]) {
-		return msg.sendLocale('COMMAND_SLAP', [user]);
+		return msg.sendRandom('COMMAND_SLAP', [user]);
 	}
 
 };
