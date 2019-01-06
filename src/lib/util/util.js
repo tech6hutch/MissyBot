@@ -220,6 +220,14 @@ class Util {
 		return [await hereChan.send(doneText), imgMsg];
 	}
 
+	static getAboveUser(msg) {
+		const msgs = msg.channel.messages.array();
+		const index = msgs.indexOf(msg);
+		// TODO: error message
+		if (index < 1) throw 'Could not find user';
+		return msgs[index - 1].author;
+	}
+
 }
 
 Util.DIGITS_TO_UNITS = new Map([

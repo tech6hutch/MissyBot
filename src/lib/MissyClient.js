@@ -61,11 +61,11 @@ module.exports = class MissyClient extends KlasaClient {
 		if (!options.permissionLevels) {
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, (_, msg) => msg.guild && msg.member.permissions.has(Permissions.FLAGS.MANAGE_GUILD), { fetch: true })
-				.add(7, (_, msg) => msg.guild && msg.member === msg.guild.owner, { fetch: true })
-				.add(8, (client, msg) => client.speakerIDs.has(msg.author.id))
-				.add(9, (client, msg) => msg.author === client.owner || msg.author === client.missy, { break: true })
-				.add(10, (client, msg) => msg.author === client.owner);
+				.add(6, ({ guild, member }) => guild && member.permissions.has(Permissions.FLAGS.MANAGE_GUILD), { fetch: true })
+				.add(7, ({ guild, member }) => guild && member === guild.owner, { fetch: true })
+				.add(8, ({ author, client }) => client.speakerIDs.has(author.id))
+				.add(9, ({ author, client }) => author === client.owner || author === client.missy, { break: true })
+				.add(10, ({ author, client }) => author === client.owner);
 		}
 
 		super(options);
