@@ -350,8 +350,8 @@ module.exports = class extends Language {
 				const a = [
 					`Does not spank ${user}`,
 					`Swats in the direction of ${user}'s butt, but doesn't make contact`,
-					`Pat's ${user}'s back`,
-					`Lightly smacks the side of ${user}'s butt only with her fingertips`,
+					`Pats ${user}'s back`,
+					`Lightly smacks the side of ${user}'s butt with her fingertips`,
 					`Let's ${user} off with a warning`,
 				].map(s => `_\\*${s}\\*_`);
 				return [
