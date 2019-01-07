@@ -352,7 +352,7 @@ module.exports = class extends Language {
 					`Swats in the direction of ${user}'s butt, but doesn't make contact`,
 					`Pats ${user}'s back`,
 					`Lightly smacks the side of ${user}'s butt with her fingertips`,
-					`Let's ${user} off with a warning`,
+					`Lets ${user} off with a warning`,
 				].map(s => `_\\*${s}\\*_`);
 				return [
 					...a,
