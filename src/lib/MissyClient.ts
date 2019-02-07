@@ -4,8 +4,9 @@ import git from 'simple-git/promise';
 import { Permissions, Snowflake } from 'discord.js';
 import {
 	KlasaClient, Schema, PermissionLevels,
-	KlasaClientOptions, KlasaConsoleOptions,
+	KlasaClientOptions, ConsoleOptions,
 } from 'klasa';
+import MissyCommand from './structures/base/MissyCommand';
 import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
 import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
@@ -13,7 +14,7 @@ import profanity from './profanity';
 import { mergeDefault } from './util/util';
 
 export interface MissyClientOptions extends KlasaClientOptions {
-	console?: KlasaConsoleOptions & {
+	console?: ConsoleOptions & {
 		stdout?: MissyStream,
 		stderr?: MissyStream,
 	};
@@ -143,6 +144,14 @@ export default class MissyClient extends KlasaClient {
 		// this.registerStore(this.objects);
 
 		this.git = git();
+	}
+
+	get invite() {
+		const permissions: number = new Permissions(MissyClient.basePermissions)
+			.add(...this.commands.map(command => command.requiredPermissions))
+			.add(...this.commands.map(command => (command as MissyCommand).optionalPermissions || 0))
+			.bitfield;
+		return `https://discordapp.com/oauth2/authorize?client_id=${this.application.id}&permissions=${permissions}&scope=bot`;
 	}
 
 	get missy() {

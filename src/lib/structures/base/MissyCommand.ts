@@ -1,10 +1,16 @@
 import {
+	Permissions,
+	PermissionResolvable,
+} from 'discord.js';
+import {
 	Command,
 	CommandStore, CommandOptions,
 } from 'klasa';
 import MissyClient from '../../MissyClient';
 
 export type MissyCommandOptions = {
+	/** The optional bot permissions recommended to run this command */
+	optionalPermissions?: PermissionResolvable;
 	/** Shown in the list and as the title for individual cmd help */
 	helpListName?: string;
 	/** Shown in the usage */
@@ -18,6 +24,8 @@ export default abstract class MissyCommand extends Command {
 	// @ts-ignore assigned in the parent class
 	readonly client: MissyClient;
 
+	/** The optional bot permissions recommended to run this command */
+	optionalPermissions: Permissions;
 	/** Shown in the list and as the title for individual cmd help */
 	helpListName: string;
 	/** Replaces the default usage, if present */
@@ -26,6 +34,8 @@ export default abstract class MissyCommand extends Command {
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
 		super(client, store, file, directory, options);
 
+		// @ts-ignore using .freeze()
+		this.optionalPermissions = new Permissions(options.optionalPermissions).freeze();
 		this.helpListName = options.helpListName || this.name;
 		this.helpNearlyFullUsage = options.helpUsage ?
 			`${options.helpUsageName || this.usage.commands} ${options.helpUsage}` :
