@@ -89,9 +89,10 @@ module.exports = class extends MissyLanguage {
 		EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 		// Monitors
-		MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time) => `${tag} | **${error}** | Or type **"ABORT"** to cancel. (Auto-cancels after **${time}** seconds.)`,
-		MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** can be repeated | Or type **"CANCEL"** to cancel. (Auto-cancels after **${time}** seconds.)`,
+		MONITOR_COMMAND_HANDLER_REPROMPT: (tag, error, time, abortOptions: string[]) => `${tag} | **${error}** | Or type **${abortOptions.map(abort => abort.toUpperCase()).join('**, **')}** to cancel. (Auto-cancels after **${time}** seconds.)`,
+		MONITOR_COMMAND_HANDLER_REPEATING_REPROMPT: (tag, name, time) => `${tag} | **${name}** can be repeated | Or type **CANCEL** to cancel. (Auto-cancels after **${time}** seconds.)`,
 		MONITOR_COMMAND_HANDLER_ABORTED: 'Canceled 👌🏽',
+		MONITOR_COMMAND_HANDLER_POSSIBILITIES: ['cancel'],
 
 		// Inhibitors
 		INHIBITOR_COOLDOWN: (remaining) => `You have just used this command. You can use this command again in ${remaining} second${remaining === 1 ? '' : 's'}.`,
@@ -325,6 +326,40 @@ module.exports = class extends MissyLanguage {
 			].join('\n'), true)
 			.setFooter('Go! '.repeat(4)),
 		COMMAND_QUOTE_DESCRIPTION: 'Get a no-context quote from Missy.',
+		COMMAND_INTERACTION_EXTENDEDHELP: "If you don't mention anyone, I'll assume you mean the person above you.",
+		COMMAND_ATTACK_DESCRIPTION: "I'll go on the attack!",
+		COMMAND_ATTACK: user => [`${user} <a:attack:530938382763819030>`],
+		COMMAND_SLAP_DESCRIPTION: 'If you really want me to, I can slap someone. ✋🏽',
+		COMMAND_SLAP: user => {
+			const a = [
+				`If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
+			];
+			return [
+				...a,
+				...a,
+				...a,
+				`_\\*Slaps ${user} hard across the face\\*_ ...Oh! I'm sorry! I hit too hard ;-;`,
+			];
+		},
+		COMMAND_PUNCH_DESCRIPTION: 'Falcon, PAWWWWNCH! 👊🏽',
+		COMMAND_PUNCH: user => [`_\\*Lightly punches ${user}'s arm\\*_`],
+		COMMAND_SPANK_DESCRIPTION: 'Has someone been naughty? Pleasedontmakemedothis',
+		COMMAND_SPANK: user => {
+			const a = [
+				`Does not spank ${user}`,
+				`Swats in the direction of ${user}'s butt, but doesn't make contact`,
+				`Pats ${user}'s back`,
+				`Lightly smacks the side of ${user}'s butt with her fingertips`,
+				`Lets ${user} off with a warning`,
+			].map(s => `_\\*${s}\\*_`);
+			return [
+				...a,
+				...a,
+				...a,
+				// eslint-disable-next-line max-len
+				`_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
+			];
+		},
 
 		// Custom misc.
 		LOADING_TEXT: 'Just a moment.',

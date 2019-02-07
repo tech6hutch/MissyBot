@@ -1,7 +1,7 @@
 import assert from 'assert';
 import levenshtein from 'js-levenshtein';
 import { GuildChannel, Client } from 'discord.js';
-import { util as KlasaUtil, constants, KlasaMessage, Language } from 'klasa';
+import { util as KlasaUtil, constants, KlasaMessage, Language, KlasaUser } from 'klasa';
 
 export const { codeBlock, exec, mergeDefault, regExpEsc, sleep } = KlasaUtil;
 
@@ -160,6 +160,14 @@ export const resolveLang = (obj: KlasaMessage | GuildChannel | { client: Client 
 	(<KlasaMessage>obj).language ||
 		((<GuildChannel>obj).guild && (<GuildChannel>obj).guild.language) ||
 		obj.client.languages.default;
+
+export function getAboveUser(msg: KlasaMessage): KlasaUser {
+	const msgs = msg.channel.messages.array();
+	const index = msgs.indexOf(msg);
+	// TODO: error message
+	if (index < 1) throw 'Could not find user';
+	return msgs[index - 1].author as KlasaUser;
+}
 
 // Condition and assertion testing
 
