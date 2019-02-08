@@ -1,5 +1,6 @@
 import { KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
+import CmdHandler from '../monitors/commandHandler';
 import IgnoreNotYouInhibitor from '../inhibitors/ignoreNotYou';
 import NotYouFinalizer from '../finalizers/notYou';
 import { capitalizeFirstLetter } from '../lib/util/util';
@@ -9,6 +10,10 @@ export default class UnknownCmd extends MissyEvent {
 	commandTextRegex = /\b[\w-]+\b/;
 	mentionRegex: RegExp | null = null;
 	missyRegex: RegExp | null = null;
+
+	get cmdHandler(): CmdHandler {
+		return this.client.monitors.get('commandHandler') as CmdHandler;
+	}
 
 	get notYou(): NotYouFinalizer {
 		return this.client.finalizers.get('notYou') as NotYouFinalizer;
@@ -50,7 +55,9 @@ export default class UnknownCmd extends MissyEvent {
 
 		if (text === 'not you') return this.notYou.ignoreChannel(msg);
 
-		return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
+		if (prefix === this.cmdHandler.prefixMention) {
+			return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
+		}
 	}
 
 	async inhibit(msg: KlasaMessage, prefix: RegExp): Promise<boolean> {
