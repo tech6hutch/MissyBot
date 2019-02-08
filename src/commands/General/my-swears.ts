@@ -115,6 +115,7 @@ export default class MySwearsCmd extends MissyCommand {
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
 		});
+		this.optionalPermissions = ['MANAGE_MESSAGES'];
 	}
 
 	async run(msg: KlasaMessage, [category = 'list']): Promise<KlasaMessage | KlasaMessage[]> {
