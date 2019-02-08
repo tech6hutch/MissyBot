@@ -2,7 +2,7 @@
   "name": "missybot",
   "version": "0.1.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "pm2 start . -n \"MissyBot\" && pm2 logs",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,12 +13,15 @@
     "canvas": "^1.6.12",
     "canvas-constructor": "^1.1.2",
     "discord.js": "github:discordjs/discord.js#master",
-    "js-levenshtein": "^1.1.4",
-    "klasa": "github:dirigeants/klasa#master",
+    "js-levenshtein": "github:tech6hutch/js-levenshtein#typings",
+    "klasa": "github:kyranet/klasa#typings-refactor",
     "simple-git": "^1.107.0"
   },
   "devDependencies": {
+    "@types/node": "^10.12.9",
+    "@types/node-fetch": "^2.1.4",
     "eslint": "^5.6.1",
-    "eslint-config-klasa": "github:dirigeants/klasa-lint"
+    "eslint-config-klasa": "github:dirigeants/klasa-lint",
+    "tslint": "^5.11.0"
   }
 }

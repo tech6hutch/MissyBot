@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"target": "es2018",
+		"outDir": "dist",
+		"sourceMap": true
+	},
+	"include": [
+		"src/"
+	],
+	"exclude": [
+		"node_modules",
+		"bower_components",
+		"jspm_packages",
+		"tmp",
+		"temp",
+		"bin",
+		"docs",
+		"pkg",
+		"examples"
+	]
+}
