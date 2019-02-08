@@ -17,7 +17,7 @@ const capitalize = (firstLetterOrPart =>
 class ProfanityDisplay extends IconifiedDisplay {
 
 	constructor(msg: KlasaMessage) {
-		const { profanity: userProfanity } = msg.author.settings as UserSettings;
+		const userProfanity = msg.author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
 		const { censor, content = '' } = MySwearsCmd.determineCensorshipAndContent(msg);
 		const template = new MessageEmbed()
 			.setColor((<MissyClient>msg.client).COLORS[censor ? 'WHITE' : 'BLACK'])
@@ -136,7 +136,7 @@ export default class MySwearsCmd extends MissyCommand {
 	}
 
 	show(msg: KlasaMessage, category?: string) {
-		const { profanity: userProfanity } = msg.author.settings as UserSettings;
+		const userProfanity = msg.author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
 		const { censor, content } = MySwearsCmd.determineCensorshipAndContent(msg);
 
 		const embed = new MessageEmbed();

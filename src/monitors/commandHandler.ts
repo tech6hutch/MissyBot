@@ -5,7 +5,7 @@ import {
 import MissyClient from '../lib/MissyClient';
 import MissyMonitor from '../lib/structures/base/MissyMonitor';
 import { regExpEsc } from '../lib/util/util';
-import { IndexedObj, KlasaMessageWithGuildSettings } from '../lib/util/types';
+import { IndexedObj } from '../lib/util/types';
 
 type PrefixObject = {
 	length: number;
@@ -34,7 +34,7 @@ export default class extends MissyMonitor {
 		if (message.guild && !message.guild.me) await message.guild.members.fetch(this.client.user!);
 		if (!message.channel.postable) return undefined;
 
-		const { commandText, prefix, prefixLength } = this.parseCommand(message as KlasaMessageWithGuildSettings);
+		const { commandText, prefix, prefixLength } = this.parseCommand(message);
 		if (!commandText) return this.client.emit('commandlessMessage', message, prefix, prefixLength);
 
 		const command = this.client.commands.get(commandText as string);
@@ -44,7 +44,7 @@ export default class extends MissyMonitor {
 		return this.runCommand(message._registerCommand({ command, prefix, prefixLength }));
 	}
 
-	parseCommand(message: KlasaMessageWithGuildSettings) {
+	parseCommand(message: KlasaMessage) {
 		const result = this.naturalPrefix(message) || this.customPrefix(message) || this.mentionPrefix(message) || this.prefixLess(message);
 		return result ? {
 			commandText: (message.content.slice(result.length).match(this.commandTextRegex) || [''])[0].toLowerCase(),
@@ -53,7 +53,8 @@ export default class extends MissyMonitor {
 		} : { commandText: false };
 	}
 
-	customPrefix({ content, guildSettings: { prefix } }: KlasaMessageWithGuildSettings): PrefixObjectNullable {
+	customPrefix({ content, guildSettings }: KlasaMessage): PrefixObjectNullable {
+		const prefix = guildSettings.get('prefix') as string | string[];
 		if (!prefix) return null;
 		for (const prf of Array.isArray(prefix) ? prefix : [prefix]) {
 			const testingPrefix = this.prefixes.get(prf) || this.generateNewPrefix(prf);
@@ -67,7 +68,8 @@ export default class extends MissyMonitor {
 		return prefixMention ? { length: prefixMention[0].length, regex: this.prefixMention! } : null;
 	}
 
-	naturalPrefix({ content, guildSettings: { disableNaturalPrefix } }: KlasaMessageWithGuildSettings): PrefixObjectNullable {
+	naturalPrefix({ content, guildSettings }: KlasaMessage): PrefixObjectNullable {
+		const disableNaturalPrefix = guildSettings.get('disableNaturalPrefix') as boolean;
 		if (disableNaturalPrefix || !this.client.options.regexPrefix) return null;
 		const results = this.client.options.regexPrefix.exec(content);
 		return results ? { length: results[0].length, regex: this.client.options.regexPrefix } : null;

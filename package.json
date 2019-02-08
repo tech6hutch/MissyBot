@@ -13,9 +13,8 @@
     "canvas": "^1.6.12",
     "canvas-constructor": "^1.1.2",
     "discord.js": "github:discordjs/discord.js#master",
-    "js-levenshtein": "TODO: Change to main after my PR is merged",
     "js-levenshtein": "github:tech6hutch/js-levenshtein#typings",
-    "klasa": "github:dirigeants/klasa#master",
+    "klasa": "github:kyranet/klasa#typings-refactor",
     "simple-git": "^1.107.0"
   },
   "devDependencies": {

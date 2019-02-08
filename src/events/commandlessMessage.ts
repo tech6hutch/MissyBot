@@ -2,7 +2,6 @@ import { Snowflake } from 'discord.js';
 import { KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 import CmdHandler from '../monitors/commandHandler';
-import { KlasaMessageWithGuildSettings } from '../lib/util/types';
 
 export default class CmdlessMsgEvent extends MissyEvent {
 
@@ -22,7 +21,7 @@ export default class CmdlessMsgEvent extends MissyEvent {
 
 		if (prefix) {
 			const reply = await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
-			return reply ? this.handlePrefixlessCommand(<KlasaMessageWithGuildSettings>reply) : undefined;
+			return reply ? this.handlePrefixlessCommand(reply) : undefined;
 		}
 
 		if (msg.mentions.has(this.client.user!)) {
@@ -34,7 +33,7 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		return undefined;
 	}
 
-	async handlePrefixlessCommand(msg: KlasaMessageWithGuildSettings) {
+	async handlePrefixlessCommand(msg: KlasaMessage) {
 		const { cmdHandler } = this;
 
 		// If there's a prefix, the regular command handler will handle it.

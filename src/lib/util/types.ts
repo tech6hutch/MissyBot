@@ -1,5 +1,5 @@
 import { TextChannel, DMChannel, GroupDMChannel, MessageOptions } from 'discord.js';
-import { KlasaMessage, KlasaUser, Settings, Language, Command } from "klasa";
+import Klasa, { KlasaMessage, KlasaUser, Command } from "klasa";
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
@@ -18,17 +18,18 @@ export interface MissySendAliases {
 	}): Promise<[KlasaMessage, T]>
 }
 
-export interface GuildSettings extends Settings {
-	prefix: string;
-	language: Language;
-	disableNaturalPrefix: boolean;
-	disabledCommands: Command[];
+export namespace GuildSettings {
+	export type Prefix = string | string[];
+	export const Prefix = 'prefix';
+	export type Language = Klasa.Language;
+	export const Language = 'language';
+	export type DisableNaturalPrefix = boolean;
+	export const DisableNaturalPrefix = 'disableNaturalPrefix';
+	export type DisabledCommands = Command[];
+	export const DisabledCommands = 'disabledCommands';
 }
 
-export type KlasaMessageWithGuildSettings = KlasaMessage & { guildSettings: GuildSettings };
-
-export interface UserSettings extends Settings {
-	profanity: IndexedObj<number>;
+export namespace UserSettings {
+	export type Profanity = IndexedObj<number>;
+	export const Profanity = 'profanity';
 }
-
-export type KlasaMessageWithUserSettings = KlasaMessage & { author: { settings: UserSettings } };
