@@ -2,6 +2,7 @@ import { Snowflake } from 'discord.js';
 import { KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 import CmdHandler from '../monitors/commandHandler';
+import IgnoreNotYou from '../inhibitors/ignoreNotYou';
 
 export default class CmdlessMsgEvent extends MissyEvent {
 
@@ -17,7 +18,7 @@ export default class CmdlessMsgEvent extends MissyEvent {
 	}
 
 	async run(msg: KlasaMessage, prefix: RegExp) {
-		if (await this.client.inhibitors.get('ignoreNotYou').run(msg, undefined!)) return undefined;
+		if (await (this.client.inhibitors.get('ignoreNotYou') as IgnoreNotYou).run(msg)) return undefined;
 
 		if (prefix) {
 			const reply = await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);

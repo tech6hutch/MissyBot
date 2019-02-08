@@ -54,9 +54,9 @@ export default class UnknownCmd extends MissyEvent {
 	}
 
 	async inhibit(msg: KlasaMessage, prefix: RegExp): Promise<boolean> {
-		return (<IgnoreNotYouInhibitor>this.client.inhibitors.get('ignoreNotYou')).run(msg, null, { prefix })
-			.catch((reason: true | undefined) => reason)
-			.then(value => Boolean(value));
+		return (this.client.inhibitors.get('ignoreNotYou') as IgnoreNotYouInhibitor)
+			.run(msg, undefined, { prefix })
+				.then((value: true | undefined) => Boolean(value));
 	}
 
 	async init() {
