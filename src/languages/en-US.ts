@@ -99,7 +99,7 @@ module.exports = class extends MissyLanguage {
 		INHIBITOR_DISABLED: 'This command is currently disabled.',
 		INHIBITOR_MISSING_BOT_PERMS: (missing) => `Insufficient permissions, missing: **${missing}**`,
 		INHIBITOR_NSFW: 'You may not use NSFW commands in this channel.',
-		INHIBITOR_PERMISSIONS: 'You do not have permission to use this command.',
+		INHIBITOR_PERMISSIONS: "Sorryyy, but I can't let you do that 😅",
 		INHIBITOR_REQUIRED_SETTINGS: (settings) => `The server is missing the **${settings.join(', ')}** server setting${settings.length !== 1 ? 's' : ''} and thus the command cannot run.`,
 		INHIBITOR_RUNIN: (types) => `This command is only available in ${types} channels.`,
 		INHIBITOR_RUNIN_NONE: (name) => `The ${name} command is not configured to run in any channel.`,
