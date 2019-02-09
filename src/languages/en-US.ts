@@ -180,6 +180,7 @@ module.exports = class extends MissyLanguage {
 			`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, \`${this.client.missy!.tag}\`. My creator is \`${this.client.owner!.tag}\`, he's great! I have a variety of fun commands and responses.`,
 			'',
 			'For a list of my commands: `Missy, help`',
+			'For help on a specific command: `Missy, help commandName`',
 		],
 		COMMAND_INFO_DESCRIPTION: 'Provides some information about me. 🙂',
 		COMMAND_HELP_DESCRIPTION: 'Display help for a command.',
