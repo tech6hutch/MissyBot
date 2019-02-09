@@ -13,6 +13,7 @@ export default class extends MissyCommand {
 			extendedHelp: lang => lang.get('COMMAND_TYPE_EXTENDEDHELP',
 				'Missy, type as FBI'),
 			runIn: ['text'],
+			requiredPermissions: ['CHANGE_NICKNAME'],
 		});
 	}
 

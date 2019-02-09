@@ -114,7 +114,7 @@ export default class MySwearsCmd extends MissyCommand {
 			usage: `[list|all|category:str]`,
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
-			optionalPermissions: ['MANAGE_MESSAGES'],
+			optionalPermissions: ['MANAGE_MESSAGES', 'EMBED_LINKS'],
 		});
 	}
 
