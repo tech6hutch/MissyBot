@@ -54,7 +54,7 @@ export default class extends MissyMonitor {
 	}
 
 	customPrefix({ content, guildSettings }: KlasaMessage): PrefixObjectNullable {
-		const prefix = guildSettings.get('prefix') as string | string[];
+		const prefix = (guildSettings as any).prefix as string | string[];
 		if (!prefix) return null;
 		for (const prf of Array.isArray(prefix) ? prefix : [prefix]) {
 			const testingPrefix = this.prefixes.get(prf) || this.generateNewPrefix(prf);
@@ -69,7 +69,7 @@ export default class extends MissyMonitor {
 	}
 
 	naturalPrefix({ content, guildSettings }: KlasaMessage): PrefixObjectNullable {
-		const disableNaturalPrefix = guildSettings.get('disableNaturalPrefix') as boolean;
+		const disableNaturalPrefix = (guildSettings as any).disableNaturalPrefix as boolean;
 		if (disableNaturalPrefix || !this.client.options.regexPrefix) return null;
 		const results = this.client.options.regexPrefix.exec(content);
 		return results ? { length: results[0].length, regex: this.client.options.regexPrefix } : null;
