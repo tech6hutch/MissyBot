@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { MessageEmbed, TextChannel } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
