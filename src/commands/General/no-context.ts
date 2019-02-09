@@ -8,7 +8,7 @@ export default class extends RandomImageCommand {
 		super(client, store, file, directory, {
 			enabled: false,
 			usage: '[list|quote-name:str]',
-			description: lang => lang.get('COMMAND_QUOTE_DESCRIPTION'),
+			description: lang => lang.get('COMMAND_NOCONTEXT_DESCRIPTION'),
 			// Custom
 			images: [
 				'minorities',

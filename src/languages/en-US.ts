@@ -325,7 +325,7 @@ module.exports = class extends MissyLanguage {
 				"• You're both cuties!",
 			].join('\n'), true)
 			.setFooter('Go! '.repeat(4)),
-		COMMAND_QUOTE_DESCRIPTION: 'Get a no-context quote from Missy.',
+		COMMAND_NOCONTEXT_DESCRIPTION: 'Get a no-context quote from Missy.',
 		COMMAND_INTERACTION_EXTENDEDHELP: "If you don't mention anyone, I'll assume you mean the person above you.",
 		COMMAND_ATTACK_DESCRIPTION: "I'll go on the attack!",
 		COMMAND_ATTACK: user => [`${user} <a:attack:530938382763819030>`],
