@@ -360,6 +360,7 @@ module.exports = class extends MissyLanguage {
 				`_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
 			];
 		},
+		COMMAND_QUOTE_DESCRIPTION: 'Quote a message. (Turn on developer mode in Discord in order to copy IDs and links.)',
 
 		// Custom misc.
 		LOADING_TEXT: 'Just a moment.',
