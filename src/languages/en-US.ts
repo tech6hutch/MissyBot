@@ -3,7 +3,7 @@ import MissyLanguage from '../lib/structures/base/MissyLanguage';
 import { smartJoin } from '../lib/util/util';
 import { IndexedObj } from '../lib/util/types';
 
-module.exports = class extends MissyLanguage {
+export default class extends MissyLanguage {
 
 	DISCORD_EMOJI = '<:discord:503738729463021568>';
 
@@ -368,4 +368,4 @@ module.exports = class extends MissyLanguage {
 		SENT_IMAGE: 'Sent the image 👌',
 	};
 
-};
+}

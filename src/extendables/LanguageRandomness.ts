@@ -25,4 +25,4 @@ export default class extends Extendable {
 		return typeof value === 'function' ? value(...elArgs) : value;
 	}
 
-};
+}

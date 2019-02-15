@@ -6,7 +6,7 @@ import {
 import MissyClient from '../lib/MissyClient';
 import { randomBetween } from '../lib/util/util';
 
-module.exports = class extends Task {
+export default class extends Task {
 
 	nextTimestamp = Infinity;
 	nextAt: Date | null = null;
@@ -58,4 +58,4 @@ module.exports = class extends Task {
 		return super.disable();
 	}
 
-};
+}
