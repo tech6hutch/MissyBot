@@ -7,8 +7,7 @@ export default class extends MissyMonitor {
 	// Only has a word boundary at the beginning so it matches e.g. "pooping"
 	missyPoopRegex = /\bpoop/i;
 
-	// lexID = '280175211737776128';
-	lexID = '224236171838881792'; // mine, for testing
+	lexID = '280175211737776128';
 
 	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
 		super(client, store, file, directory, { ignoreOthers: false });
