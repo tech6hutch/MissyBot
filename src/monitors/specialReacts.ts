@@ -17,9 +17,9 @@ export default class extends MissyMonitor {
 		if (msg.author === this.client.missy) {
 			if (this.missyPoopRegex.test(msg.content)) return msg.react('💩');
 		} else if (msg.author.id === this.lexID) {
-			const reactionPromise = msg.react('👰🏽');
-			if (msg.content.toLowerCase().startsWith('wife')) return [await reactionPromise, await msg.send('Lexi!')];
-			return reactionPromise;
+			if (msg.content.toLowerCase().startsWith('wife')) {
+				return [await msg.react('👰🏽'), await msg.send('Lexi!')];
+			}
 		}
 		return null;
 	}
