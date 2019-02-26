@@ -18,6 +18,7 @@ export default class extends MissyMonitor {
 			if (msg.reactable && this.missyPoopRegex.test(msg.content)) return msg.react('💩');
 		} else if (msg.author.id === this.lexID) {
 			if (msg.reactable && msg.content.toLowerCase().startsWith('wife')) {
+				if (!msg.channel.postable) return msg.react('👰🏽');
 				return [await msg.react('👰🏽'), await msg.send('Lexi!')];
 			}
 		}
