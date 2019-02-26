@@ -17,7 +17,7 @@ export default class extends MissyMonitor {
 	}
 
 	shouldRun(msg: KlasaMessage): boolean {
-		return super.shouldRun(msg) && this.regex.test(msg.content);
+		return super.shouldRun(msg) && this.regex.test(msg.content) && msg.reactable;
 	}
 
 	run(msg: KlasaMessage) {
