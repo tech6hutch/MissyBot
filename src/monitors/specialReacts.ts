@@ -15,9 +15,9 @@ export default class extends MissyMonitor {
 
 	async run(msg: KlasaMessage) {
 		if (msg.author === this.client.missy) {
-			if (this.missyPoopRegex.test(msg.content)) return msg.react('💩');
+			if (msg.reactable && this.missyPoopRegex.test(msg.content)) return msg.react('💩');
 		} else if (msg.author.id === this.lexID) {
-			if (msg.content.toLowerCase().startsWith('wife')) {
+			if (msg.reactable && msg.content.toLowerCase().startsWith('wife')) {
 				return [await msg.react('👰🏽'), await msg.send('Lexi!')];
 			}
 		}
