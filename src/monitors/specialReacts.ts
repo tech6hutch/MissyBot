@@ -24,7 +24,7 @@ export default class extends MissyMonitor {
 			case this.lexID:
 				if (msg.reactable && this.lexWifeRegex.test(msg.content)) {
 					msg.react('👰🏽');
-					return msg.send('Lexi!');
+					if (msg.channel.postable) return msg.send('Lexi!');
 				}
 		}
 		return null;
