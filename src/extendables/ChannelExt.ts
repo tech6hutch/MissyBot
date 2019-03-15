@@ -1,6 +1,6 @@
 import assert from 'assert';
 import {
-	TextChannel, DMChannel, GroupDMChannel,
+	TextChannel, DMChannel,
 	MessageOptions, MessageEmbed,
 } from 'discord.js';
 import {
@@ -11,9 +11,9 @@ import MissyClient from '../lib/MissyClient';
 import { scalarOrFirst, resolveLang } from '../lib/util/util';
 import { Sendable, MissySendAliases } from '../lib/util/types';
 
-type ExtChannel = TextChannel | DMChannel | GroupDMChannel | KlasaUser;
+type ExtChannel = TextChannel | DMChannel | KlasaUser;
 
-const ExtChannelValue = [TextChannel, DMChannel, GroupDMChannel, KlasaUser];
+const ExtChannelValue = [TextChannel, DMChannel, KlasaUser];
 
 interface ExtChannelAskMethods {
 	ask(user: KlasaUser, content: string, options?: MessageOptions): Promise<KlasaMessage>;
@@ -26,7 +26,6 @@ interface ExtChannelAskMethods {
 declare module 'discord.js' {
 	export interface TextChannel extends MissySendAliases, ExtChannelAskMethods { }
 	export interface DMChannel extends MissySendAliases, ExtChannelAskMethods { }
-	export interface GroupDMChannel extends MissySendAliases, ExtChannelAskMethods { }
 }
 
 declare module 'klasa' {
