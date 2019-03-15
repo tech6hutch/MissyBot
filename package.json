@@ -13,11 +13,12 @@
     "canvas": "^1.6.12",
     "canvas-constructor": "^1.1.2",
     "discord.js": "github:discordjs/discord.js#master",
-    "js-levenshtein": "github:tech6hutch/js-levenshtein#typings",
+    "js-levenshtein": "^1.1.6",
     "klasa": "github:kyranet/klasa#typings-refactor",
     "simple-git": "^1.107.0"
   },
   "devDependencies": {
+    "@types/js-levenshtein": "^1.1.0",
     "@types/node": "^10.12.9",
     "@types/node-fetch": "^2.1.4",
     "eslint": "^5.6.1",
