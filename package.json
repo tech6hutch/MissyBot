@@ -14,7 +14,7 @@
     "canvas-constructor": "^1.1.2",
     "discord.js": "github:discordjs/discord.js#master",
     "js-levenshtein": "^1.1.6",
-    "klasa": "github:kyranet/klasa#typings-refactor",
+    "klasa": "github:kyranet/klasa#master",
     "simple-git": "^1.107.0"
   },
   "devDependencies": {
