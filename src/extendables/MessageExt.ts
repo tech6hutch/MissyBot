@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { MessageOptions, MessageEmbed, TextChannel } from 'discord.js';
 import {
 	Extendable, KlasaMessage,
@@ -56,7 +55,6 @@ export default class extends Extendable {
 			else [options, localeResponseArgs] = [localeResponseArgs, []];
 		}
 		const response = this.language.getRandom(key, localeArgs, localeResponseArgs);
-		assert(typeof response === 'string');
 		return this.sendMessage(response, options);
 	}
 
