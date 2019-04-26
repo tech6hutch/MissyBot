@@ -12,14 +12,14 @@ export default class extends MissyCommand {
 			promptTime: 30000,
 			permissionLevel: 0,
 			description: lang => lang.get('COMMAND_SHIP_DESCRIPTION'),
-			usage: '<person1:member> [with] <person2:member>',
+			usage: '<person1:member> [with|and] <person2:member> [as:...str]',
 			usageDelim: ' ',
 		});
 	}
 
-	async run(msg: KlasaMessage, [person1, , person2]: [Member, string | undefined, Member]) {
+	async run(msg: KlasaMessage, [person1, , person2, asStr]: [Member, string | undefined, Member, string | undefined]) {
 		return msg.sendEmbed(msg.language.get('COMMAND_SHIP',
-			msg, person1, person2, new MessageEmbed().setColor(this.client.COLORS.BLUE)));
+			msg, person1, person2, asStr, new MessageEmbed().setColor(this.client.COLORS.BLUE)));
 	}
 
 }

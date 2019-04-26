@@ -308,8 +308,8 @@ export default class extends MissyLanguage {
 		COMMAND_DOG_DESCRIPTION: 'Show a random dog image!',
 		COMMAND_CAT_DESCRIPTION: 'Show a random cat image!',
 		COMMAND_SHIP_DESCRIPTION: 'Tag two people to ship them!',
-		COMMAND_SHIP: (msg, person1, person2, embed) => embed
-			.setTitle(`${person1.displayName} + ${person2.displayName}`)
+		COMMAND_SHIP: (msg, person1, person2, asStr, embed) => embed
+			.setTitle(`${person1.displayName} + ${person2.displayName}${asStr ? ` (${asStr})` : ''}`)
 			.setDescription(`I think ${person1} and ${person2} would be wonderful together! :D`)
 			.setAuthor(msg.guild ? msg.guild.me.displayName : this.client.user!.username, this.client.user!.displayAvatarURL())
 			.setThumbnail('https://raw.githubusercontent.com/twitter/twemoji/gh-pages/72x72/1f49e.png')
