@@ -57,7 +57,7 @@ export default class IconifiedDisplay {
 	async run(msg: Message, options: IconifiedDisplayRunOptions = {}): Promise<ReactionHandler> {
 		const emojis = Object.values(this.emojis);
 		return new (<typeof IconifiedDisplay>this.constructor).ReactionHandler(
-			await msg.edit(this.content, { embed: this.pages.info }),
+			await msg.edit(this.content, this.pages.info),
 			(reaction: MessageReaction, user: KlasaUser) => emojis.includes(reaction.emoji.name) && user === this.user,
 			options,
 			this,

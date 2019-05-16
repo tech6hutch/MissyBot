@@ -22,13 +22,13 @@ export default class extends MissyMonitor {
 
 				assert(profanity.words.includes(unAliasedWord), `Unknown word: ${unAliasedWord}, resolved from ${word}`);
 
-				keyValues[unAliasedWord] = (keyValues[unAliasedWord] || msg.author.settings.get('profanity')[unAliasedWord]) + 1;
+				keyValues[unAliasedWord] = (keyValues[unAliasedWord] || msg.author!.settings.get('profanity')[unAliasedWord]) + 1;
 
 				assert(!isNaN(keyValues[unAliasedWord]));
 			}
 		}
 
-		if (Object.keys(keyValues).length) msg.author.settings.update(obj);
+		if (Object.keys(keyValues).length) msg.author!.settings.update(obj);
 	}
 
 }

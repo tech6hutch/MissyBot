@@ -21,6 +21,7 @@
     "@types/js-levenshtein": "^1.1.0",
     "@types/node": "^10.14.6",
     "@types/node-fetch": "^2.3.4",
+    "@types/ws": "^6.0.1",
     "eslint": "^5.16.0",
     "eslint-config-klasa": "github:dirigeants/klasa-lint",
     "tslint": "^5.16.0"

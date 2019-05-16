@@ -26,7 +26,7 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		}
 
 		if (msg.mentions.has(this.client.user!)) {
-			return msg.send(this.memePingers.includes(msg.author.id) ?
+			return msg.send(this.memePingers.includes(msg.author!.id) ?
 				msg.language.get('EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS') :
 				msg.language.getRandom('EVENT_COMMANDLESS_MESSAGE_MENTION'));
 		}

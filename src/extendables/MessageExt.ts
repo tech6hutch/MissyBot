@@ -99,7 +99,7 @@ export default class extends Extendable {
 	async ask(this: KlasaMessage, content: string, options?: MessageOptions): Promise<KlasaMessage> {
 		const message = scalarOrFirst(await this.sendMessage(content, options));
 		return (
-			!(this.channel instanceof TextChannel) || this.channel.permissionsFor(this.guild.me)!.has('ADD_REACTIONS') ?
+			!(this.channel instanceof TextChannel) || this.channel.permissionsFor(this.channel.guild.me!)!.has('ADD_REACTIONS') ?
 				awaitReaction(this, message) :
 				awaitMessage(this)
 		).then(() => message, () => { throw message; });
@@ -119,7 +119,7 @@ export default class extends Extendable {
 	): Promise<KlasaMessage | false> {
 		await (embed ? this.send(question, { embed }) : this.send(question));
 		return await this.channel.awaitMessages(
-			message => message.author.id === this.author.id,
+			message => message.author.id === this.author!.id,
 			{ max: 1, time, errors: ['time'] }
 		).then(messages => <KlasaMessage>messages.first(), (): false => false);
 	}
@@ -130,7 +130,7 @@ const awaitReaction = async (initialMsg: KlasaMessage, qMsg: KlasaMessage): Prom
 	await qMsg.react('🇾');
 	await qMsg.react('🇳');
 	const data = await qMsg.awaitReactions(
-		reaction => reaction.users.has(initialMsg.author.id),
+		reaction => reaction.users.has(initialMsg.author!.id),
 		{ time: 20000, max: 1 },
 	);
 	qMsg.reactions.removeAll();

@@ -2,6 +2,7 @@ import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { naturalPause } from '../../lib/util/util';
+import { SaneGuild } from '../../lib/util/types';
 
 export default class extends MissyCommand {
 
@@ -18,7 +19,7 @@ export default class extends MissyCommand {
 	}
 
 	async run({ channel, guild }: KlasaMessage, [, name]: string[]) {
-		const { me, me: { nickname } } = guild;
+		const { me, me: { nickname } } = guild as SaneGuild;
 		await me.setNickname(name, 'type cmd start');
 		channel.startTyping();
 		await naturalPause('long');

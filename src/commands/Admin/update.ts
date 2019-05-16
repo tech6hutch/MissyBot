@@ -138,12 +138,13 @@ export default class extends MissyCommand {
 			if (!piece) throw this.defaultLang.get('COMMAND_LOAD_FAIL');
 			await piece.init();
 			if (this.client.shard) {
-				await this.client.shard.broadcastEval(`
-					if (String(this.shard.id) !== '${this.client.shard.id}') {
-						const piece = this.${piece.store}.load('${piece.directory}', ${JSON.stringify(path)});
-						if (piece) piece.init();
-					}
-				`);
+				throw new Error("Not implemented yet");
+				// await this.client.shard.broadcastEval(`
+				// 	if (String(this.shard.id) !== '${this.client.shard.id}') {
+				// 		const piece = this.${piece.store}.load('${piece.directory}', ${JSON.stringify(path)});
+				// 		if (piece) piece.init();
+				// 	}
+				// `);
 			}
 			return true;
 		} catch (error) {
@@ -155,9 +156,10 @@ export default class extends MissyCommand {
 		try {
 			await piece.reload();
 			if (this.client.shard) {
-				await this.client.shard.broadcastEval(`
-					if (String(this.shard.id) !== '${this.client.shard.id}') this.${piece.store}.get('${piece.name}').reload();
-				`);
+				throw new Error("Not implemented yet");
+				// await this.client.shard.broadcastEval(`
+				// 	if (String(this.shard.id) !== '${this.client.shard.id}') this.${piece.store}.get('${piece.name}').reload();
+				// `);
 			}
 			return true;
 		} catch (_) {
@@ -169,9 +171,10 @@ export default class extends MissyCommand {
 	async unloadPiece(piece: Piece) {
 		piece.unload();
 		if (this.client.shard) {
-			await this.client.shard.broadcastEval(`
-				if (String(this.shard.id) !== '${this.client.shard.id}') this.${piece.store}.get('${piece.name}').unload();
-			`);
+			throw new Error("Not implemented yet");
+			// await this.client.shard.broadcastEval(`
+			// 	if (String(this.shard.id) !== '${this.client.shard.id}') this.${piece.store}.get('${piece.name}').unload();
+			// `);
 		}
 		return true;
 	}
@@ -204,7 +207,7 @@ export default class extends MissyCommand {
 
 	_resolvePiece([store, ...path]: string[]) {
 		return (<Store<string, Piece>>this.client.pieceStores.get(store))
-			.find(piece => piece.file.length === path.length && piece.file.every((part, i) => path[i] === part));
+			.find(piece => piece.file.length === path.length && piece.file.every((part, i) => path[i] === part))!;
 	}
 
 }

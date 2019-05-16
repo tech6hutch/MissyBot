@@ -97,7 +97,7 @@ export default class extends Extendable {
 	async ask(this: ExtChannel, user: KlasaUser, content: string, options?: MessageOptions): Promise<KlasaMessage> {
 		const message = scalarOrFirst(await this.sendMessage(content, options));
 		return (
-			!(this instanceof TextChannel) || this.permissionsFor(this.guild.me)!.has('ADD_REACTIONS') ?
+			!(this instanceof TextChannel) || this.permissionsFor(this.guild.me!)!.has('ADD_REACTIONS') ?
 				awaitReaction(user, message) :
 				awaitMessage(user, this)
 		).then(() => message, () => { throw message; });

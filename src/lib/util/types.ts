@@ -1,10 +1,23 @@
-import { TextChannel, DMChannel, MessageOptions } from 'discord.js';
+import { TextChannel, DMChannel, MessageOptions, Guild, GuildMember } from 'discord.js';
 import Klasa, { KlasaMessage, KlasaUser, Command } from "klasa";
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
 
 export type Sendable = TextChannel | DMChannel | KlasaUser | KlasaMessage;
+
+export type SaneMessage = KlasaMessage & {
+	author: KlasaUser,
+};
+
+export type GuildMessage = SaneMessage & {
+	member: GuildMember,
+	guild: Guild,
+};
+
+export type SaneGuild = Guild & {
+	me: GuildMember,
+};
 
 export interface MissySendAliases {
 	sendRandom(key: string, localeArgs?: any[], localeResponseArgs?: any[], options?: MessageOptions):

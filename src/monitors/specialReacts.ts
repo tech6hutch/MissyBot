@@ -16,7 +16,7 @@ export default class extends MissyMonitor {
 	}
 
 	async run(msg: KlasaMessage) {
-		switch (msg.author.id) {
+		switch (msg.author!.id) {
 			case this.client.missyID:
 				if (msg.reactable && this.missyPoopRegex.test(msg.content)) {
 					return msg.react('💩');
