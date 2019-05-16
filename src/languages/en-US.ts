@@ -172,7 +172,7 @@ export default class extends MissyLanguage {
 			].join(' ')),
 			'Please file an issue at <https://github.com/tech6hutch/MissyBot> if you find any bugs.'
 		],
-		COMMAND_INVITE_DESCRIPTION: 'Displays the join server link of the bot.',
+		COMMAND_INVITE_DESCRIPTION: 'Displays the invite link of the bot, to invite it to your server.',
 		COMMAND_INFO: () => [
 			"Hi! I'm MissyBot!",
 			'',
