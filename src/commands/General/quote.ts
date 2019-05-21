@@ -13,7 +13,7 @@ export default class extends MissyCommand {
 		});
 	}
 
-	run(cmdMsg: KlasaMessage, [msgOrURL]: [KlasaMessage | RegExpExecArray]) {
+	async run(cmdMsg: KlasaMessage, [msgOrURL]: [KlasaMessage | RegExpExecArray]) {
 		let quotedMsg: KlasaMessage;
 
 		if (Array.isArray(msgOrURL)) {
@@ -23,7 +23,7 @@ export default class extends MissyCommand {
 			const channel = (cmdMsg.guild || this.client).channels.get(channelID);
 			if (!channel || channel.type !== 'text') throw 'Bad link';
 
-			const msg = (channel as TextChannel).messages.get(msgID);
+			const msg = await (channel as TextChannel).messages.fetch(msgID);
 			if (!msg) throw 'Bad link';
 
 			quotedMsg = msg as KlasaMessage;
