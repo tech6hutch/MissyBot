@@ -22,7 +22,8 @@ export default class extends Task {
 
 	async run(logNext = false) {
 		this.scheduleNext();
-		const { activity: { type, name } } = await this.setRandomActivity();
+		const { activity } = await this.setRandomActivity();
+		const { type, name } = activity ? activity : { type: '', name: '' };
 		if (logNext) this.client.console.log(`Changed activity to ${type} ${name}. Next change will occur ${this.nextIn(true)}.`);
 	}
 

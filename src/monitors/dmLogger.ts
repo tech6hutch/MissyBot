@@ -22,7 +22,7 @@ export default class extends MissyMonitor {
 
 	async run(msg: KlasaMessage) {
 		const { author, content } = msg;
-		const text = `${msg.edits.length > 1 ? 'Edit' : 'From'}: ${author} (${author.tag})\n${content}`;
+		const text = `${msg.edits.length > 1 ? 'Edit' : 'From'}: ${author} (${author!.tag})\n${content}`;
 		if (this.logChannel) return this.logChannel.send(text.substring(0, 2000));
 	}
 

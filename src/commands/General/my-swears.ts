@@ -17,11 +17,12 @@ const capitalize = (firstLetterOrPart =>
 class ProfanityDisplay extends IconifiedDisplay {
 
 	constructor(msg: KlasaMessage) {
-		const userProfanity = msg.author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
+		const author = msg.author!;
+		const userProfanity = author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
 		const { censor, content = '' } = MySwearsCmd.determineCensorshipAndContent(msg);
 		const template = new MessageEmbed()
 			.setColor((<MissyClient>msg.client).COLORS[censor ? 'WHITE' : 'BLACK'])
-			.setAuthor(msg.member ? msg.member.displayName : msg.author.username, msg.author.displayAvatarURL());
+			.setAuthor(msg.member ? msg.member.displayName : author.username, author.displayAvatarURL());
 
 		// To make sure I don't derp and mutate the template BEFORE super() gets called
 		Object.freeze(template);
@@ -137,7 +138,7 @@ export default class MySwearsCmd extends MissyCommand {
 	}
 
 	show(msg: KlasaMessage, category?: string) {
-		const userProfanity = msg.author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
+		const userProfanity = msg.author!.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
 		const { censor, content } = MySwearsCmd.determineCensorshipAndContent(msg);
 
 		const embed = new MessageEmbed();
@@ -158,7 +159,7 @@ export default class MySwearsCmd extends MissyCommand {
 
 		let content: string | undefined;
 		if (uncensored && !(<TextChannel>msg.channel).nsfw) {
-			if (msg.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
+			if (!msg.member || msg.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
 				content = msg.language.get('COMMAND_MYSWEARS_MOD_UNCENSORED');
 			} else {
 				uncensored = false;

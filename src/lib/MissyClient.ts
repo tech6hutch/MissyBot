@@ -114,11 +114,11 @@ export default class MissyClient extends KlasaClient {
 			const { MANAGE_GUILD } = Permissions.FLAGS;
 			options.permissionLevels = new PermissionLevels()
 				.add(0, () => true)
-				.add(6, ({ guild, member }) => guild && member.permissions.has(MANAGE_GUILD), { fetch: true })
-				.add(7, ({ guild, member }) => guild && member === guild.owner, { fetch: true })
-				.add(8, ({ author, client }) => client.speakerIDs.has(author.id) ||
+				.add(6, ({ guild, member }) => Boolean(guild && member!.permissions.has(MANAGE_GUILD)), { fetch: true })
+				.add(7, ({ guild, member }) => Boolean(guild && member === guild.owner), { fetch: true })
+				.add(8, ({ author, client }) => client.speakerIDs.has(author!.id) ||
 					author === client.owner)
-				.add(9, ({ author, client }) => client.devIDs.has(author.id) ||
+				.add(9, ({ author, client }) => client.devIDs.has(author!.id) ||
 					author === client.owner, { break: true })
 				.add(10, ({ author, client }) => author === client.owner);
 		}

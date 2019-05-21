@@ -1,7 +1,8 @@
-import { MessageEmbed, TextChannel } from 'discord.js';
+import { MessageEmbed, TextChannel, GuildMember } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
+import { GuildMessage } from '../../lib/util/types';
 
 export default class extends MissyCommand {
 
@@ -14,19 +15,23 @@ export default class extends MissyCommand {
 
 	run(cmdMsg: KlasaMessage, [msgOrURL]: [KlasaMessage | RegExpExecArray]) {
 		let quotedMsg: KlasaMessage;
+
 		if (Array.isArray(msgOrURL)) {
 			const [, guildID, channelID, msgID] = msgOrURL;
-			if (guildID !== cmdMsg.guild.id) throw 'Bad link';
-			const channel = cmdMsg.guild.channels.get(channelID);
+			if (cmdMsg.guild && guildID !== cmdMsg.guild.id) throw 'Bad link';
+
+			const channel = (cmdMsg.guild || this.client).channels.get(channelID);
 			if (!channel || channel.type !== 'text') throw 'Bad link';
+
 			const msg = (channel as TextChannel).messages.get(msgID);
 			if (!msg) throw 'Bad link';
+
 			quotedMsg = msg as KlasaMessage;
 		} else {
 			quotedMsg = msgOrURL;
 		}
 
-		const { author, member, attachments, reactions } = quotedMsg;
+		const { author, member, attachments, reactions } = quotedMsg as GuildMessage;
 		const name = member ? member.displayName : author.username;
 
 		const embed = new MessageEmbed()
