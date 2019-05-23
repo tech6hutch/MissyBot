@@ -15,7 +15,7 @@ export default class extends MissyCommand {
 			helpListName: 'no u',
 			helpUsageName: 'no <u|you>',
 			helpUsage: '[infinity]',
-			extendedHelp: lang => lang.get('COMMAND_NOU_EXTENDEDHELP', [
+			extendedHelp: lang => lang.get('COMMAND_EXAMPLES', [
 				'Missy, no u',
 				'Missy, no u infinity',
 			]),

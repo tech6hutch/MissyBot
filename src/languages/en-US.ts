@@ -236,6 +236,11 @@ export default class extends MissyLanguage {
 		COMMAND_STATS_DESCRIPTION: 'Provides some details about the bot and stats.',
 
 		// Custom commands
+		COMMAND_EXAMPLE: example => `Example: ${example}`,
+		COMMAND_EXAMPLES: (examples: string[]) => [
+			'Examples:',
+			...examples,
+		].join('\n'),
 		COMMAND_PREFIX_DESCRIPTION: 'See the prefixes you can use on this server.',
 		COMMAND_SLEEP_DESCRIPTION: 'Tell someone to get their butt to bed!',
 		COMMAND_SLEEP: (user, author) => [
@@ -282,7 +287,6 @@ export default class extends MissyLanguage {
 		COMMAND_HUG_DESCRIPTION: 'Need a hug? 🙂',
 		COMMAND_PAT_DESCRIPTION: 'There, there. ✋🏽',
 		COMMAND_TYPE_DESCRIPTION: "😮 Who's that typing?",
-		COMMAND_TYPE_EXTENDEDHELP: example => `Example: ${example}`,
 		COMMAND_MYSWEARS_EXTENDEDHELP: [
 			'I see you swearing 👀',
 			'',
@@ -297,10 +301,6 @@ export default class extends MissyLanguage {
 		COMMAND_SEND_POTATO: 'Sent them a potato 👌',
 		COMMAND_SEND_MARBLES: 'I seem to have lost all of mine @_@',
 		COMMAND_SEND_UNKNOWN: "I don't know how to send that >_<",
-		COMMAND_NOU_EXTENDEDHELP: (examples: string[]) => [
-			'Examples:',
-			...examples,
-		].join('\n'),
 		COMMAND_NOU_LOADING_TEXT: 'Rebutting your argument...',
 		COMMAND_POTATO_DESCRIPTION: 'Post a random potato!',
 		COMMAND_MEME_DESCRIPTION: "It seems I've made a meme!",
@@ -362,6 +362,7 @@ export default class extends MissyLanguage {
 			];
 		},
 		COMMAND_QUOTE_DESCRIPTION: 'Quote a message. (Turn on developer mode in Discord in order to copy IDs and links.)',
+		COMMAND_QUOTE_EXTENDEDHELP: '',
 
 		// Custom misc.
 		LOADING_TEXT: 'Just a moment.',

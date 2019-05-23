@@ -11,7 +11,7 @@ export default class extends MissyCommand {
 			description: lang => lang.get('COMMAND_TYPE_DESCRIPTION'),
 			usage: '<as> <name:...str{,32}>',
 			usageDelim: ' ',
-			extendedHelp: lang => lang.get('COMMAND_TYPE_EXTENDEDHELP',
+			extendedHelp: lang => lang.get('COMMAND_EXAMPLE',
 				'Missy, type as FBI'),
 			runIn: ['text'],
 			requiredPermissions: ['CHANGE_NICKNAME'],

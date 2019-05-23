@@ -1,35 +1,30 @@
+import assert from 'assert';
 import { MessageEmbed, TextChannel, GuildMember } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { GuildMessage } from '../../lib/util/types';
 
+type MsgResolvable = KlasaMessage | RegExpExecArray | string;
+
 export default class extends MissyCommand {
 
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
-			usage: '<id:message|url:regex/https:\\/\\/discordapp.com\\/channels\\/(\\d+)\\/(\\d+)\\/(\\d+)/>',
+			usage: '[channel:channel] <id:message|url:regex/https:\\/\\/discordapp.com\\/channels\\/(\\d+)\\/(\\d+)\\/(\\d+)/|id:str>',
+			usageDelim: ' ',
+			helpUsage: '[channel:channel] <id:message|url:link>',
 			description: lang => lang.get('COMMAND_QUOTE_DESCRIPTION'),
+			extendedHelp: lang => lang.get('COMMAND_EXAMPLES', [
+				'Missy, quote 123456789012345678',
+				'Missy, quote #general 123456789012345678',
+				'Missy, quote https://discordapp.com/channels/123456789012345678/901234567890123456/789012345678901234',
+			]),
 		});
 	}
 
-	async run(cmdMsg: KlasaMessage, [msgOrURL]: [KlasaMessage | RegExpExecArray]) {
-		let quotedMsg: KlasaMessage;
-
-		if (Array.isArray(msgOrURL)) {
-			const [, guildID, channelID, msgID] = msgOrURL;
-			if (cmdMsg.guild && guildID !== cmdMsg.guild.id) throw 'Bad link';
-
-			const channel = (cmdMsg.guild || this.client).channels.get(channelID);
-			if (!channel || channel.type !== 'text') throw 'Bad link';
-
-			const msg = await (channel as TextChannel).messages.fetch(msgID);
-			if (!msg) throw 'Bad link';
-
-			quotedMsg = msg as KlasaMessage;
-		} else {
-			quotedMsg = msgOrURL;
-		}
+	async run(cmdMsg: KlasaMessage, [maybeChannel, msgOrURLOrID]: [TextChannel | undefined, MsgResolvable]) {
+		const quotedMsg: KlasaMessage = await this.resolveMsgOrThrow(msgOrURLOrID, maybeChannel, cmdMsg);
 
 		const { author, member, attachments, reactions } = quotedMsg as GuildMessage;
 		const name = member ? member.displayName : author.username;
@@ -56,6 +51,31 @@ export default class extends MissyCommand {
 		}
 
 		return cmdMsg.sendEmbed(embed);
+	}
+
+	private async resolveMsgOrThrow(input: MsgResolvable, maybeChannel: TextChannel | undefined, contextMsg: KlasaMessage) {
+		if (Array.isArray(input)) {
+			const [, guildID, channelID, msgID] = input;
+			if (contextMsg.guild && guildID !== contextMsg.guild.id) throw 'Bad link';
+
+			const channel = (contextMsg.guild || this.client).channels.get(channelID);
+			if (!channel || channel.type !== 'text') throw 'Bad link';
+
+			const msg = await (channel as TextChannel).messages.fetch(msgID);
+			if (!msg) throw 'Bad link';
+
+			return msg as KlasaMessage;
+		} else if (input instanceof KlasaMessage) {
+			return input;
+		} else {
+			if (!maybeChannel) throw "What channel??";
+
+			const msgID = input;
+			const msg = await maybeChannel.messages.fetch(msgID);
+			if (!msg) throw 'Bad message ID';
+
+			return msg as KlasaMessage;
+		}
 	}
 
 }
