@@ -1,4 +1,4 @@
-import { MessageOptions, MessageEmbed, TextChannel, Message } from 'discord.js';
+import { MessageOptions, MessageEmbed, TextChannel, Message, Snowflake } from 'discord.js';
 import { Extendable, ExtendableStore, Monitor } from 'klasa';
 import MissyClient from '../lib/MissyClient';
 import { scalarOrFirst } from '../lib/util/util';
@@ -119,6 +119,13 @@ export default class extends Extendable {
 			message => message.author.id === this.author!.id,
 			{ max: 1, time, errors: ['time'] }
 		).then(messages => <Message>messages.first(), (): false => false);
+	}
+
+	// Misc.
+
+	async unreact(this: Message, emojiID: Snowflake) {
+		const reaction = this.reactions.get(emojiID);
+		return reaction ? reaction.users.remove(this.client.user!) : null;
 	}
 
 }
