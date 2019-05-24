@@ -14,9 +14,8 @@ export default class extends Argument {
 			user = message.guild ?
 				(message.guild.members.random() || this.client).user :
 				Math.random() >= 0.5 ? this.client.user : message.author;
-		} else {
-			const idRegexResult = Argument.regex.userOrMember.exec(arg);
-			if (idRegexResult) user = await this.client.users.fetch(idRegexResult[1]).catch(() => null);
+		} else if (Argument.regex.userOrMember.test(arg)) {
+			user = await this.client.users.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 		}
 
 		if (user) return user;

@@ -10,9 +10,8 @@ export default class extends Argument {
 		if (guild) {
 			if (arg.trim().toLowerCase() === '@someone') {
 				member = guild.members.random() || await guild.members.fetch(this.client.user!.id);
-			} else {
-				const idRegexResult = Argument.regex.userOrMember.exec(arg);
-				if (idRegexResult) member = await guild.members.fetch(idRegexResult[1]).catch(() => null);
+			} else if (Argument.regex.userOrMember.test(arg)) {
+				member = await guild.members.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 			}
 		}
 
