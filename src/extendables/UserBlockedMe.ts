@@ -1,0 +1,80 @@
+import { Extendable, KlasaClient, ExtendableStore, KlasaMessage } from 'klasa';
+import { User, GuildMember, Collection, TextChannel, Guild, Message } from 'discord.js';
+
+export interface Blocker {
+	blocksMe(contextMsg: KlasaMessage): Promise<boolean | undefined>;
+	blocksMeInGuild(guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined>;
+}
+
+declare module 'discord.js' {
+	export interface User extends Blocker {}
+	export interface GuildMember extends Blocker {}
+}
+
+const DISCORD_EMOJI_ID = '503738729463021568';
+
+export default class extends Extendable {
+
+	constructor(client: KlasaClient, store: ExtendableStore, file: string[], directory: string) {
+		super(client, store, file, directory, { appliesTo: [User, GuildMember] });
+	}
+
+	async blocksMe(this: User | GuildMember, contextMsg: KlasaMessage): Promise<boolean | undefined> {
+		const user = (this as GuildMember).user || this;
+
+		const { dmChannel } = user;
+		if (dmChannel) {
+			const dms = await dmChannel.messages.fetch({ limit: 100 }, false);
+			const maybeMsg = dms.find(dm => dm.author!.id === this.id);
+			if (maybeMsg) {
+				if (await maybeMsg.react(DISCORD_EMOJI_ID).then(() => true, () => false)) {
+					maybeMsg.reactions.remove(DISCORD_EMOJI_ID);
+					return false;
+				}
+			}
+		}
+
+		if (contextMsg.guild) {
+			const blocksMeInGuild = this.blocksMeInGuild(contextMsg.guild, contextMsg.channel as TextChannel);
+			if (blocksMeInGuild !== undefined) return blocksMeInGuild;
+		}
+
+		for (const guild of this.client.guilds.values()) {
+			const blocksMeInGuild = this.blocksMeInGuild(guild);
+			if (blocksMeInGuild !== undefined) return blocksMeInGuild;
+		}
+
+		return undefined;
+	}
+
+	private async blocksMeInGuild(this: User | GuildMember, guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
+		let maybeMsg: Message | undefined;
+
+		if (contextChannel) {
+			const msgs = await contextChannel.messages.fetch({ limit: 100 }, false);
+			maybeMsg = msgs.find(m => m.author != null && m.author.id === this.id);
+			if (maybeMsg && !maybeMsg.reactable) maybeMsg = undefined;
+		}
+
+		if (!maybeMsg) {
+			const channels = guild.channels.filter(contextChannel ?
+				c => c.type === 'text' && c.id !== contextChannel.id :
+				c => c.type === 'text') as
+				Collection<string, TextChannel>;
+
+			for (const channel of channels.values()) {
+				const msgs = await channel.messages.fetch({ limit: 100 }, false);
+				maybeMsg = msgs.find(m => m.author != null && m.author.id === this.id);
+				if (maybeMsg) {
+					if (maybeMsg.reactable) break;
+					maybeMsg = undefined;
+				}
+			}
+		}
+
+		if (!maybeMsg) return undefined;
+
+		return maybeMsg.react(DISCORD_EMOJI_ID).then(() => false, () => true);
+	}
+
+}
