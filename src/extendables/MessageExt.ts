@@ -1,35 +1,32 @@
-import { MessageOptions, MessageEmbed, TextChannel } from 'discord.js';
-import {
-	Extendable, KlasaMessage,
-	ExtendableStore, Monitor,
-} from 'klasa';
+import { MessageOptions, MessageEmbed, TextChannel, Message } from 'discord.js';
+import { Extendable, ExtendableStore, Monitor } from 'klasa';
 import MissyClient from '../lib/MissyClient';
 import { scalarOrFirst } from '../lib/util/util';
 import { Sendable, MissySendAliases } from '../lib/util/types';
 
-declare module 'klasa' {
-	export interface KlasaMessage extends MissySendAliases {
+declare module 'discord.js' {
+	export interface Message extends MissySendAliases {
 		readonly client: MissyClient;
 
 		readonly localPrefix: string;
 
-		ask(this: KlasaMessage, content: string, options?: MessageOptions): Promise<KlasaMessage>;
-		awaitReply(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed):
+		ask(this: Message, content: string, options?: MessageOptions): Promise<Message>;
+		awaitReply(this: Message, question: string, time?: number, embed?: MessageEmbed):
 			Promise<string | false>;
-		awaitMsg(this: KlasaMessage, question: string, time?: number, embed?: MessageEmbed):
-			Promise<KlasaMessage | false>;
+		awaitMsg(this: Message, question: string, time?: number, embed?: MessageEmbed):
+			Promise<Message | false>;
 	}
 }
 
 export default class extends Extendable {
 
 	constructor(client: MissyClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [KlasaMessage] });
+		super(client, store, file, directory, { appliesTo: [Message] });
 	}
 
 	// Getters
 
-	get localPrefix(this: KlasaMessage): string {
+	get localPrefix(this: Message): string {
 		const prefix = this.prefixLength ? this.content.slice(0, this.prefixLength) : <string | string[]>this.guildSettings.get('prefix');
 		if (this.prefix === (<Monitor & { prefixMention: RegExp }>this.client.monitors.get('commandHandler')).prefixMention) return `@${this.client.user!.tag}`;
 		if (Array.isArray(prefix)) return prefix[0];
@@ -47,9 +44,9 @@ export default class extends Extendable {
 	 * @param options The D.JS message options plus Language arguments
 	 */
 	sendRandom(
-		this: KlasaMessage,
+		this: Message,
 		key: string, localeArgs: any[] = [], localeResponseArgs: any[] = [], options: MessageOptions = {},
-	): Promise<KlasaMessage | KlasaMessage[]> {
+	): Promise<Message | Message[]> {
 		if (!Array.isArray(localeResponseArgs)) {
 			if (!Array.isArray(localeArgs)) [options, localeArgs] = [localeArgs, []];
 			else [options, localeResponseArgs] = [localeResponseArgs, []];
@@ -64,7 +61,7 @@ export default class extends Extendable {
 	 * @param options.loadingText Text to send before the callback
 	 * @returns Resolves to the return of cb
 	 */
-	async sendLoading<T = KlasaMessage>(this: KlasaMessage, cb: (msg: KlasaMessage) => T, {
+	async sendLoading<T = Message>(this: Message, cb: (msg: Message) => T, {
 		loadingText = this.language.get('LOADING_TEXT'),
 	} = {}): Promise<T> {
 		const loadingMsg = scalarOrFirst(await this.sendMessage(loadingText));
@@ -84,10 +81,10 @@ export default class extends Extendable {
 	 * @param options.doneText Text to send to this.channel after the callback
 	 * @returns Resolves to a confirmation message in this.channel and the return of cb
 	 */
-	async sendLoadingFor<T = KlasaMessage>(this: KlasaMessage, channel: Sendable, cb: (msg: Sendable) => T, {
+	async sendLoadingFor<T = Message>(this: Message, channel: Sendable, cb: (msg: Sendable) => T, {
 		loadingText = this.language.get('LOADING_TEXT'),
 		doneText = this.language.get('SENT_IMAGE'),
-	} = {}): Promise<[KlasaMessage, T]> {
+	} = {}): Promise<[Message, T]> {
 		await this.send(loadingText);
 		// eslint-disable-next-line callback-return
 		const response = await cb(channel);
@@ -96,7 +93,7 @@ export default class extends Extendable {
 
 	// Awaiting responses
 
-	async ask(this: KlasaMessage, content: string, options?: MessageOptions): Promise<KlasaMessage> {
+	async ask(this: Message, content: string, options?: MessageOptions): Promise<Message> {
 		const message = scalarOrFirst(await this.sendMessage(content, options));
 		return (
 			!(this.channel instanceof TextChannel) || this.channel.permissionsFor(this.channel.guild.me!)!.has('ADD_REACTIONS') ?
@@ -106,7 +103,7 @@ export default class extends Extendable {
 	}
 
 	async awaitReply(
-		this: KlasaMessage,
+		this: Message,
 		question: string, time = 60000, embed?: MessageEmbed,
 	): Promise<string | false> {
 		return this.awaitMsg(question, time, embed)
@@ -114,19 +111,19 @@ export default class extends Extendable {
 	}
 
 	async awaitMsg(
-		this: KlasaMessage,
+		this: Message,
 		question: string, time = 60000, embed?: MessageEmbed,
-	): Promise<KlasaMessage | false> {
+	): Promise<Message | false> {
 		await (embed ? this.send(question, { embed }) : this.send(question));
 		return await this.channel.awaitMessages(
 			message => message.author.id === this.author!.id,
 			{ max: 1, time, errors: ['time'] }
-		).then(messages => <KlasaMessage>messages.first(), (): false => false);
+		).then(messages => <Message>messages.first(), (): false => false);
 	}
 
 }
 
-const awaitReaction = async (initialMsg: KlasaMessage, qMsg: KlasaMessage): Promise<true> => {
+const awaitReaction = async (initialMsg: Message, qMsg: Message): Promise<true> => {
 	await qMsg.react('🇾');
 	await qMsg.react('🇳');
 	const data = await qMsg.awaitReactions(
@@ -138,7 +135,7 @@ const awaitReaction = async (initialMsg: KlasaMessage, qMsg: KlasaMessage): Prom
 	throw null;
 };
 
-const awaitMessage = async (initialMsg: KlasaMessage): Promise<true> => {
+const awaitMessage = async (initialMsg: Message): Promise<true> => {
 	const messages = await initialMsg.channel.awaitMessages(
 		mes => mes.author === initialMsg.author,
 		{ time: 20000, max: 1 },

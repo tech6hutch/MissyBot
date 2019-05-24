@@ -22,7 +22,7 @@ export default class CmdlessMsgEvent extends MissyEvent {
 
 		if (prefix) {
 			const reply = await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
-			return reply ? this.handlePrefixlessCommand(reply) : undefined;
+			return reply ? this.handlePrefixlessCommand(reply as KlasaMessage) : undefined;
 		}
 
 		if (msg.mentions.has(this.client.user!)) {
