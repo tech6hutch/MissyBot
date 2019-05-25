@@ -68,7 +68,7 @@ export default class extends Extendable {
 
 			for (const channel of channels.values()) {
 				const msgs = await channel.messages.fetch({ limit: 100 }, false);
-				maybeMsg = msgs.find(m => m.author != null && m.author.id === this.id);
+				maybeMsg = msgs.find(m => m.author !== null && m.author.id === this.id);
 				if (maybeMsg) {
 					if (maybeMsg.reactable) break;
 					maybeMsg = undefined;
