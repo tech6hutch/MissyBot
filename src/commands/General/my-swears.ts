@@ -78,7 +78,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 				const emoji = emojiRegex.exec(cat);
 				emojis[cat] = emoji ? emoji[0] : '❓';
 				return emojis;
-			}, {})
+			}, {} as Record<string, string>)
 		});
 	}
 
