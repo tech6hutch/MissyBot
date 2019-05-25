@@ -32,6 +32,8 @@ export default class extends Extendable {
 				if (await maybeMsg.react(DISCORD_EMOJI_ID).then(() => true, () => false)) {
 					maybeMsg.reactions.remove(DISCORD_EMOJI_ID);
 					return false;
+				} else {
+					return true;
 				}
 			}
 		}
