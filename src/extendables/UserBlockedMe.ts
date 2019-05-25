@@ -19,7 +19,8 @@ export default class extends Extendable {
 		super(client, store, file, directory, { appliesTo: [User, GuildMember] });
 	}
 
-	async blocksMe(this: User | GuildMember, context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined> {
+	async blocksMe(this: User | GuildMember,
+			context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined> {
 		const user = (this as GuildMember).user || this;
 
 		if (user.id === this.client.user!.id) return false;
@@ -51,7 +52,13 @@ export default class extends Extendable {
 		return undefined;
 	}
 
-	private async _blocksMeInGuild(this: User | GuildMember, guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
+	private async _blocksMeInGuild(this: User | GuildMember,
+			guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
+		if (!await guild.members.fetch({ user: this, cache: false })
+			.then(() => true, () => false)) {
+			return undefined;
+		}
+
 		let maybeMsg: Message | undefined;
 
 		if (contextChannel) {
