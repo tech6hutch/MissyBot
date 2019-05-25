@@ -1,4 +1,4 @@
-import { GuildMember } from 'discord.js';
+import { GuildMember, TextChannel } from 'discord.js';
 import { Argument, Possible, KlasaMessage } from 'klasa';
 
 export default class extends Argument {
@@ -9,7 +9,8 @@ export default class extends Argument {
 		const { guild } = message;
 		if (guild) {
 			if (arg.trim().toLowerCase() === '@someone') {
-				member = guild.members.random() || await guild.members.fetch(this.client.user!.id);
+				member = await guild.members.randomWhoBlocksMeNot(message.channel as TextChannel) ||
+					await guild.members.fetch((Math.random() >= 0.5 ? this.client.user : message.author)!.id);
 			} else if (Argument.regex.userOrMember.test(arg)) {
 				member = await guild.members.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 			}

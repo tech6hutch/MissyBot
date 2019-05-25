@@ -1,9 +1,9 @@
 import { Extendable, KlasaClient, ExtendableStore, KlasaMessage } from 'klasa';
-import { User, GuildMember, Collection, TextChannel, Guild, Message } from 'discord.js';
+import { User, GuildMember, Collection, TextChannel, Guild, Message, Channel } from 'discord.js';
 
 export interface Blocker {
-	blocksMe(contextMsg: KlasaMessage): Promise<boolean | undefined>;
-	blocksMeInGuild(guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined>;
+	blocksMe(context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined>;
+	_blocksMeInGuild(guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined>;
 }
 
 declare module 'discord.js' {
@@ -19,8 +19,10 @@ export default class extends Extendable {
 		super(client, store, file, directory, { appliesTo: [User, GuildMember] });
 	}
 
-	async blocksMe(this: User | GuildMember, contextMsg: KlasaMessage): Promise<boolean | undefined> {
+	async blocksMe(this: User | GuildMember, context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined> {
 		const user = (this as GuildMember).user || this;
+
+		if (user.id === this.client.user!.id) return false;
 
 		const { dmChannel } = user;
 		if (dmChannel) {
@@ -34,20 +36,20 @@ export default class extends Extendable {
 			}
 		}
 
-		if (contextMsg.guild) {
-			const blocksMeInGuild = this.blocksMeInGuild(contextMsg.guild, contextMsg.channel as TextChannel);
+		if (context.guild) {
+			const blocksMeInGuild = this._blocksMeInGuild(context.guild, context.channel as TextChannel);
 			if (blocksMeInGuild !== undefined) return blocksMeInGuild;
 		}
 
 		for (const guild of this.client.guilds.values()) {
-			const blocksMeInGuild = this.blocksMeInGuild(guild);
+			const blocksMeInGuild = this._blocksMeInGuild(guild);
 			if (blocksMeInGuild !== undefined) return blocksMeInGuild;
 		}
 
 		return undefined;
 	}
 
-	private async blocksMeInGuild(this: User | GuildMember, guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
+	private async _blocksMeInGuild(this: User | GuildMember, guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
 		let maybeMsg: Message | undefined;
 
 		if (contextChannel) {
