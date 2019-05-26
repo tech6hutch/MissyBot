@@ -1,4 +1,4 @@
-import { Extendable, KlasaClient, ExtendableStore, KlasaMessage } from 'klasa';
+import { Extendable, KlasaClient, ExtendableStore } from 'klasa';
 import { User, GuildMember, Collection, TextChannel, Guild, Message, Channel } from 'discord.js';
 
 export interface Blocker {
