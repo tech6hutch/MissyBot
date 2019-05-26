@@ -1,5 +1,5 @@
-import { Extendable, KlasaClient, ExtendableStore } from 'klasa';
 import { User, GuildMember, Collection, TextChannel, Guild, Message, Channel } from 'discord.js';
+import { Extendable, KlasaClient, ExtendableStore } from 'klasa';
 
 export interface Blocker {
 	blocksMe(context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined>;
