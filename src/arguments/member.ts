@@ -6,13 +6,11 @@ export default class extends Argument {
 	async run(arg: string, possible: Possible, message: KlasaMessage) {
 		let member: GuildMember | null = null;
 
-		const { guild } = message;
-		if (guild) {
+		if (message.guild) {
 			if (arg.trim().toLowerCase() === '@someone') {
-				member = (message.channel as TextChannel).members.random() ||
-					await guild.members.fetch((Math.random() >= 0.5 ? this.client.user : message.author)!);
+				member = (message.channel as TextChannel).members.random() || null;
 			} else if (Argument.regex.userOrMember.test(arg)) {
-				member = await guild.members.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
+				member = await message.guild.members.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 			}
 		}
 
