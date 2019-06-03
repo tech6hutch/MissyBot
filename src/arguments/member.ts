@@ -9,8 +9,8 @@ export default class extends Argument {
 		const { guild } = message;
 		if (guild) {
 			if (arg.trim().toLowerCase() === '@someone') {
-				member = await guild.members.randomWhoBlocksMeNot(message.channel as TextChannel) ||
-					await guild.members.fetch((Math.random() >= 0.5 ? this.client.user : message.author)!.id);
+				member = (message.channel as TextChannel).members.random() ||
+					await guild.members.fetch((Math.random() >= 0.5 ? this.client.user : message.author)!);
 			} else if (Argument.regex.userOrMember.test(arg)) {
 				member = await guild.members.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 			}

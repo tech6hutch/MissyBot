@@ -1,6 +1,5 @@
 import { User, TextChannel } from 'discord.js';
 import { Argument, Possible, KlasaMessage, KlasaClient, ArgumentStore } from 'klasa';
-import { GuildMessage } from '../lib/util/types';
 
 export default class extends Argument {
 
@@ -12,11 +11,10 @@ export default class extends Argument {
 		let user: User | null = null;
 
 		if (arg.trim().toLowerCase() === '@someone') {
-			if (message.guild) {
-				user = await message.guild.members.randomWhoBlocksMeNot(message.channel as TextChannel)
-					.then(maybeMember => maybeMember ? maybeMember.user : null);
-			}
-			if (!user) user = Math.random() >= 0.5 ? this.client.user : message.author;
+			const maybeMember = message.channel instanceof TextChannel && message.channel.members.random();
+			user = maybeMember ?
+				maybeMember.user :
+				Math.random() >= 0.5 ? this.client.user : message.author;
 		} else if (Argument.regex.userOrMember.test(arg)) {
 			user = await this.client.users.fetch(Argument.regex.userOrMember.exec(arg)![1]).catch(() => null);
 		}
