@@ -13,8 +13,8 @@ export default class extends MissyFinalizer {
 
 		const notYouPromise = msg.channel.awaitMessages(
 			(m: KlasaMessage) => {
-				const match = this.regex.exec(m.content.replace(this.mentionsRegex, ''));
-				return !!match && match[0].length + 5 >= m.content.length;
+				const contentWithoutMentions = m.content.replace(this.mentionsRegex, '');
+				return this.regex.test(contentWithoutMentions) && this.regex.exec(contentWithoutMentions)![0].length + 5 >= m.content.length;
 			},
 			{ max: 1, time: 10000, errors: ['time'] }
 		) as Promise<Collection<string, KlasaMessage>>;
