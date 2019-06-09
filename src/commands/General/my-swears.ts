@@ -110,8 +110,8 @@ ProfanityDisplay.ReactionHandler = ProfanityReactionHandler;
 
 export default class MySwearsCmd extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			usage: `[list|all|category:str]`,
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),

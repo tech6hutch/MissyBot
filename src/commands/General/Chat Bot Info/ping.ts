@@ -6,8 +6,8 @@ import { scalarOrFirst } from '../../../lib/util/util';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			guarded: true,
 			description: language => language.get('COMMAND_PING_DESCRIPTION')
 		});

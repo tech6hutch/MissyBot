@@ -9,8 +9,8 @@ type RunReturn = Promise<KlasaMessage | KlasaMessage[]>;
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			aliases: ['commands'],
 			guarded: true,
 			description: language => language.get('COMMAND_HELP_DESCRIPTION'),

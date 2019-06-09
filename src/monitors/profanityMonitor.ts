@@ -7,8 +7,8 @@ import { IndexedObj } from '../lib/util/types';
 
 export default class extends MissyMonitor {
 
-	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
-		super(client, store, file, directory, { ignoreOthers: false });
+	constructor(store: MonitorStore, file: string[], directory: string) {
+		super(store, file, directory, { ignoreOthers: false });
 	}
 
 	async run(msg: KlasaMessage) {

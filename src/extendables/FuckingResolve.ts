@@ -10,8 +10,8 @@ declare module 'klasa' {
 
 export default class extends Extendable {
 
-	constructor(client: MissyClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [Settings] });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: [Settings] });
 	}
 
 	/**

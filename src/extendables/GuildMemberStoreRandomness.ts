@@ -27,8 +27,8 @@ function shuffleArray(array: any[]): void {
 
 export default class extends Extendable {
 
-	constructor(client: KlasaClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [GuildMemberStore] });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: [GuildMemberStore] });
 	}
 
 	/**

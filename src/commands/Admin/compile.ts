@@ -5,8 +5,8 @@ import ExecCmd from './exec';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			aliases: ['c'],
 			description: 'Compile this TS project, into JS.',
 		});

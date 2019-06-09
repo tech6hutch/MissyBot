@@ -9,8 +9,8 @@ type MsgResolvable = KlasaMessage | RegExpExecArray | string;
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			usage: '[channel:channel] <id:message|url:regex/https:\\/\\/discordapp.com\\/channels\\/(\\d+)\\/(\\d+)\\/(\\d+)/|id:str>',
 			usageDelim: ' ',
 			helpUsage: '[channel:channel] <id:message|url:link>',

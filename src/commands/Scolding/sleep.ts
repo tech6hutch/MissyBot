@@ -7,8 +7,8 @@ import { naturalPause } from '../../lib/util/util';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			aliases: ['bedtime', 'bed'],
 			description: lang => lang.get('COMMAND_SLEEP_DESCRIPTION'),
 			usage: '[who:mention]',

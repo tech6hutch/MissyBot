@@ -10,8 +10,8 @@ export default class extends RandomImageCommand {
 
 	sfwImage = 'nice-try';
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			description: lang => lang.get('COMMAND_LEWD_DESCRIPTION'),
 			usage: '[list|image-name:str]',
 			// Custom

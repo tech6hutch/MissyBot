@@ -4,8 +4,8 @@ import MissyEvent from '../lib/structures/base/MissyEvent';
 
 export default class extends MissyEvent {
 
-	constructor(client: MissyClient, store: EventStore, file: string[], directory: string) {
-		super(client, store, file, directory, { once: true });
+	constructor(store: EventStore, file: string[], directory: string) {
+		super(store, file, directory, { once: true });
 	}
 
 	async run() {

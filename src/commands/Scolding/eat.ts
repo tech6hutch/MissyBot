@@ -5,8 +5,8 @@ import MissyCommand from '../../lib/structures/base/MissyCommand';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			description: lang => lang.get('COMMAND_EAT_DESCRIPTION'),
 			usage: '[breakfast|lunch|dinner|supper|snack|something] [who:mention]',
 			usageDelim: ' ',

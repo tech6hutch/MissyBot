@@ -5,8 +5,8 @@ import MissyClient from '../../../lib/MissyClient';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			// "no u", with a space, so that the help command's custom resolver accepts that string
 			aliases: ['no', 'no u'],
 			description: 'no u 🔀',

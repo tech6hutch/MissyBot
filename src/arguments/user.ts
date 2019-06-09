@@ -3,8 +3,8 @@ import { Argument, Possible, KlasaMessage, KlasaClient, ArgumentStore } from 'kl
 
 export default class extends Argument {
 
-	constructor(client: KlasaClient, store: ArgumentStore, file: string[], directory: string) {
-		super(client, store, file, directory, { aliases: ['mention'] });
+	constructor(store: ArgumentStore, file: string[], directory: string) {
+		super(store, file, directory, { aliases: ['mention'] });
 	}
 
 	async run(arg: string, possible: Possible, message: KlasaMessage) {

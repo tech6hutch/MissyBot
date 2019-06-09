@@ -25,8 +25,8 @@ export default class extends MissyMonitor {
 	mentionOnly: RegExp | null = null;
 	prefixFlags = this.client.options.prefixCaseInsensitive ? 'i' : '';
 
-	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
-		super(client, store, file, directory, { ignoreOthers: false });
+	constructor(store: MonitorStore, file: string[], directory: string) {
+		super(store, file, directory, { ignoreOthers: false });
 		this.ignoreEdits = !this.client.options.commandEditing;
 	}
 

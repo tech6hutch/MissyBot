@@ -11,8 +11,8 @@ export default class extends MissyMonitor {
 
 	lexID = '280175211737776128';
 
-	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
-		super(client, store, file, directory, { ignoreOthers: false });
+	constructor(store: MonitorStore, file: string[], directory: string) {
+		super(store, file, directory, { ignoreOthers: false });
 	}
 
 	async run(msg: KlasaMessage) {

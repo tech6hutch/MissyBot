@@ -15,8 +15,8 @@ const DISCORD_EMOJI_ID = '503738729463021568';
 
 export default class extends Extendable {
 
-	constructor(client: KlasaClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [User, GuildMember] });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: [User, GuildMember] });
 	}
 
 	async blocksMe(this: User | GuildMember,

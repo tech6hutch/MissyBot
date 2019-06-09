@@ -7,8 +7,8 @@ const rebootKeys = ['message', 'timestamp'].map(key => `restart.${key}`);
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			permissionLevel: 10,
 			guarded: true,
 			description: language => language.get('COMMAND_REBOOT_DESCRIPTION')

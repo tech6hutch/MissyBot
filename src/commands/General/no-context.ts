@@ -4,8 +4,8 @@ import RandomImageCommand from '../../lib/structures/RandomImageCommand';
 
 export default class extends RandomImageCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			enabled: false,
 			usage: '[list|quote-name:str]',
 			description: lang => lang.get('COMMAND_NOCONTEXT_DESCRIPTION'),
