@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { MessageEmbed, TextChannel, GuildMember } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
 import MissyClient from '../../lib/MissyClient';
@@ -26,12 +25,15 @@ export default class extends MissyCommand {
 	async run(cmdMsg: KlasaMessage, [maybeChannel, msgOrURLOrID]: [TextChannel | undefined, MsgResolvable]) {
 		const quotedMsg: KlasaMessage = await this.resolveMsgOrThrow(msgOrURLOrID, maybeChannel, cmdMsg);
 
-		const { author, member, attachments, reactions } = quotedMsg as GuildMessage;
+		const { author, member, attachments, reactions } = quotedMsg;
+		if (!author) throw 'Message has no author';
+
 		const name = member ? member.displayName : author.username;
+		const color = member ? member.displayColor : 0;
 
 		const embed = new MessageEmbed()
 			.setAuthor(name, author.displayAvatarURL())
-			.setColor(member.displayColor)
+			.setColor(color)
 			.setDescription(quotedMsg.content)
 			.addField(`_ _`, `[🔗](${quotedMsg.url})`)
 			.setTimestamp(quotedMsg.createdAt);
@@ -68,7 +70,7 @@ export default class extends MissyCommand {
 		} else if (input instanceof KlasaMessage) {
 			return input;
 		} else {
-			if (!maybeChannel) throw "What channel??";
+			if (!maybeChannel) throw 'What channel??';
 
 			const msgID = input;
 			const msg = await maybeChannel.messages.fetch(msgID);
