@@ -10,21 +10,28 @@ export default class extends MissyCommand {
 	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
 		super(client, store, file, directory, {
 			description: 'Tell me to say something.',
-			permissionLevel: 8,
+			permissionLevel: 1,
 			usage: '[channel:channel] <text:...str>',
 			usageDelim: ' ',
 		});
 	}
 
-	async run(msg: KlasaMessage, [channel = msg, text]: [Sendable, string]) {
-		const prevMsg: KlasaMessage | undefined = (<any>msg)[this.msgSymbol];
+	async run(msg: KlasaMessage, [channel = msg, rawText]: [Sendable, string]) {
+		const text = this.client.speakerIDs.has(msg.author!.id) && msg.flags.shh
+			? rawText
+			: `_${msg.author} told me to say:_ ${rawText}`;
+		return this.sendOrEdit(channel, text, msg);
+	}
+
+	async sendOrEdit(channel: Sendable, text: string, cmdMsg: KlasaMessage) {
+		const prevMsg: KlasaMessage | undefined = (<any>cmdMsg)[this.msgSymbol];
 		const saidMsg = await (prevMsg ?
 			prevMsg.edit(text) :
 			channel.send(text)) as KlasaMessage | KlasaMessage[];
-		(<any>msg)[this.msgSymbol] = saidMsg;
-		return msg === channel ?
+		(<any>cmdMsg)[this.msgSymbol] = saidMsg;
+		return cmdMsg === channel ?
 			saidMsg :
-			msg.send(`👌 I ${prevMsg ? 'edited' : 'posted'} it there.`);
+			cmdMsg.send(`👌 I ${prevMsg ? 'edited' : 'posted'} it there.`);
 	}
 
-};
+}

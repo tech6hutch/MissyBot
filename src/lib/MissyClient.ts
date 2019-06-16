@@ -38,9 +38,10 @@ export default class MissyClient extends KlasaClient {
 	PREFIX: string;
 	PREFIX_PLAIN: string;
 
-	missyID: Snowflake;
-	otherIDs: {
-		moonbeam: Snowflake;
+	readonly ownerID: Snowflake;
+	readonly missyID: Snowflake;
+	readonly otherIDs: {
+		moonbeam: Snowflake,
 	};
 
 	/**
@@ -130,13 +131,14 @@ export default class MissyClient extends KlasaClient {
 		this.PREFIX = 'Missy,';
 		this.PREFIX_PLAIN = 'Missy';
 
+		this.ownerID = '224236171838881792';
 		this.missyID = '398127472564240387';
 		this.otherIDs = {
 			moonbeam: '214442156788678658',
 		};
 
-		this.speakerIDs = new Set([this.missyID, this.otherIDs.moonbeam]);
-		this.devIDs = new Set([this.missyID]);
+		this.speakerIDs = new Set([this.ownerID, this.missyID, this.otherIDs.moonbeam]);
+		this.devIDs = new Set([this.ownerID, this.missyID]);
 
 		this.ignoredChannels = new Set();
 

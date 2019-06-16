@@ -16,6 +16,10 @@ export default class extends MissyEvent {
 	async run() {
 		await this.client.fetchApplication();
 		if (!this.client.options.ownerID) this.client.options.ownerID = this.client.application.owner!.id;
+		if (this.client.ownerID !== this.client.options.ownerID) {
+			console.error('Wrong owner ID');
+			process.exit(1);
+		}
 
 		this.client.users.fetch(this.client.missyID)
 			.catch(e => this.client.emit('wtf', ["Missy wasn't found:", e].join('\n')));
