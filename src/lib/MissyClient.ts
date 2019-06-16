@@ -160,4 +160,4 @@ export default class MissyClient extends KlasaClient {
 		return this.users.get(this.missyID);
 	}
 
-};
+}
