@@ -17,7 +17,7 @@ export default class extends MissyCommand {
 
 	async run(msg: KlasaMessage, [who = this.client.user!]: [User?]): Promise<KlasaMessage | KlasaMessage[] | never> {
 		if (who.id === this.client.user!.id) {
-			if (msg.author!.id === this.client.owner!.id) {
+			if (this.client.options.owners.includes(msg.author!.id)) {
 				await msg.channel.send('Aw, boo. Yes sir');
 				await naturalPause();
 				return (<RebootCmd><MissyCommand>this.store.get('reboot')).run(msg);

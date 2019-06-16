@@ -1,8 +1,9 @@
 import { AssertionError } from 'assert';
 import { TextChannel } from 'discord.js';
-import { util, EventStore } from 'klasa';
-import MissyClient from '../lib/MissyClient';
+import { util, EventStore, Settings } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
+
+let retries = 0;
 
 export default class extends MissyEvent {
 
@@ -13,9 +14,20 @@ export default class extends MissyEvent {
 		});
 	}
 
-	async run() {
-		await this.client.fetchApplication();
-		if (!this.client.options.ownerID) this.client.options.ownerID = this.client.application.owner!.id;
+	async run(): Promise<boolean> {
+		try {
+			await this.client.fetchApplication();
+		} catch (err) {
+			if (++retries === 3) return process.exit();
+			this.client.emit('warning', `Unable to fetchApplication at this time, waiting 5 seconds and retrying. Retries left: ${retries - 3}`);
+			await util.sleep(5000);
+			return this.run();
+		}
+
+		// Single owner for now until Teams Support is truly added
+		if (!this.client.options.owners.length) this.client.options.owners.push(this.client.application.owner!.id);
+
+		this.client.mentionPrefix = new RegExp(`^<@!?${this.client.user!.id}>`);
 
 		this.client.users.fetch(this.client.missyID)
 			.catch(e => this.client.emit('wtf', ["Missy wasn't found:", e].join('\n')));
@@ -32,11 +44,15 @@ export default class extends MissyEvent {
 		if (errorChannel instanceof TextChannel) stderr.setChannel(errorChannel);
 		else this.client.emit('error', "Couldn't find error Discord channel");
 
-		this.client.settings = this.client.gateways.clientStorage.get(this.client.user!.id, true);
+		const clientStorage = this.client.gateways.get('clientStorage')!;
 		// Added for consistency with other datastores, Client#clients does not exist
-		// @ts-ignore using private property "cache" (also arg mismatch for this.client @_@)
-		this.client.gateways.clientStorage.cache.set(this.client.user!.id, this.client);
+		// @ts-ignore using private property "cache"
+		clientStorage.cache.set(this.client.user!.id, this.client as Record<string, any> & { settings: Settings; });
+		this.client.settings = clientStorage.create(this.client, this.client.user!.id);
 		await this.client.gateways.sync();
+
+		// Init the schedule
+		await this.client.schedule.init();
 
 		// Init all the pieces
 		await Promise.all(this.client.pieceStores
@@ -46,16 +62,13 @@ export default class extends MissyEvent {
 		util.initClean(this.client);
 		this.client.ready = true;
 
-		// Init the schedule
-		await this.client.schedule.init();
-
 		if (this.client.options.readyMessage !== null) {
 			this.client.emit('log', util.isFunction(this.client.options.readyMessage) ?
 				this.client.options.readyMessage(this.client) :
 				this.client.options.readyMessage);
 		}
 
-		this.client.emit('klasaReady');
+		return this.client.emit('klasaReady');
 	}
 
 }

@@ -2,11 +2,11 @@ import { Extendable, Settings, ExtendableStore, KlasaGuild, Language, SchemaPiec
 import MissyClient from '../lib/MissyClient';
 import { AnyObj } from '../lib/util/types';
 
-declare module 'klasa' {
-	interface Settings {
-		fuckingResolve(path: string | string[], guild?: KlasaGuild, language?: Language): any;
-	}
-}
+// declare module 'klasa' {
+// 	interface Settings {
+// 		fuckingResolve(path: string | string[], guild?: KlasaGuild, language?: Language): any;
+// 	}
+// }
 
 export default class extends Extendable {
 
