@@ -3,7 +3,6 @@ import {
 	Task, Duration, constants,
 	TaskStore,
 } from 'klasa';
-import MissyClient from '../lib/MissyClient';
 import { randomBetween } from '../lib/util/util';
 
 export default class extends Task {
@@ -12,8 +11,8 @@ export default class extends Task {
 	nextAt: Date | null = null;
 	timeout: NodeJS.Timer | null = null;
 
-	constructor(client: MissyClient, store: TaskStore, file: string[], directory: string) {
-		super(client, store, file, directory);
+	constructor(store: TaskStore, file: string[], directory: string) {
+		super(store, file, directory);
 	}
 
 	nextIn(showIn?: boolean) {
