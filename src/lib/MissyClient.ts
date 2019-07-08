@@ -1,6 +1,7 @@
 import './preload';
 
 import { AssertionError } from 'assert';
+import path from 'path';
 import git from 'simple-git/promise';
 import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
 import {
@@ -78,6 +79,11 @@ export default class MissyClient extends KlasaClient {
 				clientStorage: {},
 				users: {},
 			},
+			providers: {
+				json: {
+					baseDirectory: path.resolve(path.dirname(require.main!.filename), '../data'),
+				},
+			},
 			console: {
 				stdout: new MissyStdoutStream(),
 				stderr: new MissyStderrStream(),
@@ -85,7 +91,7 @@ export default class MissyClient extends KlasaClient {
 			// Custom options
 			missyLogChannel: '499959509653913600',
 			missyErrorChannel: '499959529522331653',
-		}, options);
+		} as MissyClientOptions, options);
 
 		if (!options.gateways!.clientStorage!.schema) {
 			options.gateways!.clientStorage!.schema = new Schema()
