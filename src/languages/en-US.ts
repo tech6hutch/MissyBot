@@ -177,7 +177,7 @@ export default class extends MissyLanguage {
 			"Hi! I'm MissyBot!",
 			'',
 			// eslint-disable-next-line max-len
-			`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, \`${this.client.missy!.tag}\`. My creator is \`${this.client.owner!.tag}\`, he's great! I have a variety of fun commands and responses.`,
+			`As my name might imply, I'm a Discord bot. I'm based off of the real Missy, \`${this.client.missy.tag}\`. My creator is \`${this.client.hutch.tag}\`, he's great! I have a variety of fun commands and responses.`,
 			'',
 			'For a list of my commands: `Missy, help`',
 			'For help on a specific command: `Missy, help commandName`',

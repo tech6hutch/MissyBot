@@ -53,6 +53,6 @@ export namespace GuildSettings {
 }
 
 export namespace UserSettings {
-	export type Profanity = IndexedObj<number>;
 	export const Profanity = 'profanity';
+	export type ProfanityCount = number;
 }

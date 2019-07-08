@@ -1,10 +1,9 @@
-import assert from 'assert';
 import { readJSON } from 'fs-nextra';
 import MissyClient from './lib/MissyClient';
 
 readJSON('config.json')
 	.then(({ token }: { token?: string }) => {
-		assert(token);
+		if (!token) throw new TypeError('Token not found');
 		new MissyClient().login(token);
 	})
 	.catch((e: any) => {
