@@ -1,5 +1,4 @@
 import { EventStore } from 'klasa';
-import MissyClient from '../lib/MissyClient';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 
 export default class extends MissyEvent {
