@@ -1,5 +1,5 @@
 import { User, GuildMember, Collection, TextChannel, Guild, Message, Channel } from 'discord.js';
-import { Extendable, KlasaClient, ExtendableStore } from 'klasa';
+import { Extendable, ExtendableStore } from 'klasa';
 
 export interface Blocker {
 	blocksMe(context: { guild: Guild | null, channel: Channel }): Promise<boolean | undefined>;
@@ -52,6 +52,7 @@ export default class extends Extendable {
 		return undefined;
 	}
 
+	// This *is* used, so don't remove it.
 	private async _blocksMeInGuild(this: User | GuildMember,
 			guild: Guild, contextChannel?: TextChannel): Promise<boolean | undefined> {
 		if (!await guild.members.fetch({ user: this, cache: false })

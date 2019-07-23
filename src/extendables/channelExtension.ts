@@ -7,7 +7,6 @@ import {
 	Extendable, KlasaUser,
 	ExtendableStore, KlasaMessage,
 } from 'klasa';
-import MissyClient from '../lib/MissyClient';
 import { scalarOrFirst, resolveLang } from '../lib/util/util';
 import { Sendable, MissySendAliases } from '../lib/util/types';
 
