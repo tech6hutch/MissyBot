@@ -1,5 +1,5 @@
 import { User, TextChannel } from 'discord.js';
-import { Argument, Possible, KlasaMessage, KlasaClient, ArgumentStore } from 'klasa';
+import { Argument, Possible, KlasaMessage, ArgumentStore } from 'klasa';
 
 export default class extends Argument {
 
