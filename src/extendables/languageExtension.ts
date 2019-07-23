@@ -1,4 +1,4 @@
-import { Extendable, Language, KlasaClient, ExtendableStore } from 'klasa';
+import { Extendable, Language, ExtendableStore } from 'klasa';
 import { arrayRandom } from '../lib/util/util';
 
 declare module 'klasa' {
@@ -9,9 +9,8 @@ declare module 'klasa' {
 
 export default class extends Extendable {
 
-	constructor(client: KlasaClient, store: ExtendableStore, file: string[], directory: string) {
-		// @ts-ignore because Language is abstract and it doesn't like that
-		super(client, store, file, directory, { appliesTo: [Language] });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: [Language] });
 	}
 
 	/**
