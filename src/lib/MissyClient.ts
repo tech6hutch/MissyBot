@@ -45,16 +45,6 @@ export default class MissyClient extends KlasaClient {
 	readonly PREFIX: string;
 	readonly PREFIX_PLAIN: string;
 
-	// /**
-	//  * People who can speak for the bot (use, e.g., the "say" command)
-	//  */
-	// speakerIDs: Set<Snowflake>;
-
-	// /**
-	//  * Developers of the bot (including Missy)
-	//  */
-	// devIDs: Set<Snowflake>;
-
 	/**
 	 * Channels ignored as part of the "not you" system
 	 */
