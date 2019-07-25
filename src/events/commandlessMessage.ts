@@ -1,8 +1,14 @@
-import { Snowflake } from 'discord.js';
+import { Snowflake, TextChannel, DMChannel, User, Message } from 'discord.js';
 import { KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 import CmdHandler from '../monitors/commandHandler';
 import IgnoreNotYou from '../inhibitors/ignoreNotYou';
+
+const cmdWatchingSymbol = Symbol();
+
+type ChannelWithCmdWatchingMap = (TextChannel | DMChannel) & {
+	[cmdWatchingSymbol]?: Map<User, number>
+};
 
 export default class CmdlessMsgEvent extends MissyEvent {
 
@@ -21,8 +27,21 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		if (await (this.client.inhibitors.get('ignoreNotYou') as IgnoreNotYou).run(msg)) return undefined;
 
 		if (prefix) {
-			const reply = await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
-			return reply ? this.handlePrefixlessCommand(reply as KlasaMessage) : undefined;
+			const cmdWatchingMap = CmdlessMsgEvent.acquireCmdWatchingMapFor(msg);
+			const user = msg.author!;
+
+			// Increment for user
+			cmdWatchingMap.set(user, (cmdWatchingMap.get(user) || 0) + 1);
+
+			// Wait for the next message; it's handled by the command handler
+			await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
+
+			// Decrement for user
+			cmdWatchingMap.set(user, cmdWatchingMap.get(user)! - 1);
+			// Remove if zero (or otherwise falsy)
+			if (!cmdWatchingMap.get(user)) cmdWatchingMap.delete(user);
+
+			return undefined;
 		}
 
 		if (msg.mentions.has(this.client.user!)) {
@@ -34,23 +53,21 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		return undefined;
 	}
 
-	async handlePrefixlessCommand(msg: KlasaMessage) {
-		const { cmdHandler } = this;
+	static acquireCmdWatchingMapFor({ channel }: { channel: TextChannel | DMChannel }): Map<User, number> {
+		const cmdWatchingMap = (channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol] || new Map<User, number>();
+		(channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol] = cmdWatchingMap;
+		return cmdWatchingMap;
+	}
 
-		// If there's a prefix, the regular command handler will handle it.
-		if (cmdHandler.parseCommand(msg).prefix !== undefined) return undefined;
+	static getCmdWatchingMapFor({ channel }: { channel: TextChannel | DMChannel }): Map<User, number> | undefined {
+		return (channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol];
+	}
 
-		const commandText = msg.content.trim().split(' ')[0].toLowerCase();
-		const prefix = null;
-		const prefixLength = 0;
-
-		if (!commandText) return this.client.emit('commandlessMessage', msg, prefix, prefixLength);
-
-		const command = this.client.commands.get(commandText);
-		if (!command) return this.client.emit('commandUnknown', msg, commandText, prefix, prefixLength);
-
-		// @ts-ignore KlasaMessage#_registerCommand is private (also some other prefix null bs idk)
-		return cmdHandler.runCommand(msg._registerCommand({ command, prefix, prefixLength }));
+	static shouldObeyPrefixLessCommand(msg: Message): boolean {
+		const maybeCmdWatchingMap = CmdlessMsgEvent.getCmdWatchingMapFor(msg);
+		return !!maybeCmdWatchingMap &&
+			// Only if there's one and only one collector
+			maybeCmdWatchingMap.get(msg.author!) === 1;
 	}
 
 }
