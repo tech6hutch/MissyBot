@@ -8,8 +8,8 @@ export default class extends MissyCommand {
 
 	msgSymbol = Symbol('say command');
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			description: 'Tell me to say something.',
 			permissionLevel: 0,
 			usage: '[channel:channel] <text:...str>',

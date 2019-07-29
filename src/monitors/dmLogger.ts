@@ -7,8 +7,8 @@ export default class extends MissyMonitor {
 
 	logChannel: Sendable | null = null;
 
-	constructor(client: MissyClient, store: MonitorStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: MonitorStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			ignoreBots: false,
 			ignoreOthers: false,
 			ignoreWebhooks: false,

@@ -2,5 +2,6 @@
 node_modules
 package-lock.json
 config.json
-bwd
+config-test.json
+data
 dist

@@ -20,8 +20,8 @@ declare module 'discord.js' {
 
 export default class extends Extendable {
 
-	constructor(client: MissyClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: [Message] });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: [Message] });
 	}
 
 	// Getters

@@ -1,7 +1,9 @@
 import './preload';
 
+import { AssertionError } from 'assert';
+import path from 'path';
 import git from 'simple-git/promise';
-import { Permissions, Snowflake } from 'discord.js';
+import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
 import {
 	KlasaClient, Schema, PermissionLevels,
 	KlasaClientOptions, ConsoleOptions,
@@ -22,6 +24,11 @@ export interface MissyClientOptions extends KlasaClientOptions {
 	missyErrorChannel?: Snowflake;
 }
 
+const USER_IDS = {
+	HUTCH: '224236171838881792',
+	MISSY: '398127472564240387',
+};
+
 const COLORS = {
 	WHITE: 0xFFFFFF,
 	BLACK: 0x111111,
@@ -35,24 +42,8 @@ export default class MissyClient extends KlasaClient {
 
 	COLORS: typeof COLORS;
 
-	PREFIX: string;
-	PREFIX_PLAIN: string;
-
-	readonly ownerID: Snowflake;
-	readonly missyID: Snowflake;
-	readonly otherIDs: {
-		moonbeam: Snowflake,
-	};
-
-	/**
-	 * People who can speak for the bot (use, e.g., the "say" command)
-	 */
-	speakerIDs: Set<Snowflake>;
-
-	/**
-	 * Developers of the bot (including Missy)
-	 */
-	devIDs: Set<Snowflake>;
+	readonly PREFIX: string;
+	readonly PREFIX_PLAIN: string;
 
 	/**
 	 * Channels ignored as part of the "not you" system
@@ -78,6 +69,11 @@ export default class MissyClient extends KlasaClient {
 				clientStorage: {},
 				users: {},
 			},
+			providers: {
+				json: {
+					baseDirectory: path.resolve(path.dirname(require.main!.filename), '../data'),
+				},
+			},
 			console: {
 				stdout: new MissyStdoutStream(),
 				stderr: new MissyStderrStream(),
@@ -85,7 +81,7 @@ export default class MissyClient extends KlasaClient {
 			// Custom options
 			missyLogChannel: '499959509653913600',
 			missyErrorChannel: '499959529522331653',
-		}, options);
+		} as MissyClientOptions, options);
 
 		if (!options.gateways!.clientStorage!.schema) {
 			options.gateways!.clientStorage!.schema = new Schema()
@@ -95,7 +91,7 @@ export default class MissyClient extends KlasaClient {
 				.add('schedules', 'any', { array: true, configurable: false })
 				// Custom
 				.add('restart', folder => folder
-					.add('message', 'messagepromise')
+					.add('message', 'message')
 					.add('timestamp', 'number', { min: 0 }));
 		}
 
@@ -117,11 +113,8 @@ export default class MissyClient extends KlasaClient {
 				.add(0, () => true)
 				.add(6, ({ guild, member }) => Boolean(guild && member!.permissions.has(MANAGE_GUILD)), { fetch: true })
 				.add(7, ({ guild, member }) => Boolean(guild && member === guild.owner), { fetch: true })
-				.add(8, ({ author, client }) => client.speakerIDs.has(author!.id) ||
-					author === client.owner)
-				.add(9, ({ author, client }) => client.devIDs.has(author!.id) ||
-					author === client.owner, { break: true })
-				.add(10, ({ author, client }) => author === client.owner);
+				.add(9, ({ author, client }) => client.owners.has(author!), { break: true })
+				.add(10, ({ author, client }) => client.owners.has(author!));
 		}
 
 		super(options);
@@ -130,15 +123,6 @@ export default class MissyClient extends KlasaClient {
 
 		this.PREFIX = 'Missy,';
 		this.PREFIX_PLAIN = 'Missy';
-
-		this.ownerID = '224236171838881792';
-		this.missyID = '398127472564240387';
-		this.otherIDs = {
-			moonbeam: '214442156788678658',
-		};
-
-		this.speakerIDs = new Set([this.ownerID, this.missyID, this.otherIDs.moonbeam]);
-		this.devIDs = new Set([this.ownerID, this.missyID]);
 
 		this.ignoredChannels = new Set();
 
@@ -158,8 +142,33 @@ export default class MissyClient extends KlasaClient {
 		return `https://discordapp.com/oauth2/authorize?client_id=${this.application.id}&permissions=${permissions}&scope=bot`;
 	}
 
-	get missy() {
-		return this.users.get(this.missyID);
+	get hutch(): User {
+		return this.users.get(USER_IDS.HUTCH)!;
+	}
+
+	get missy(): User {
+		return this.users.get(USER_IDS.MISSY)!;
+	}
+
+	async login(token: string): Promise<string> {
+		token = await super.login(token);
+
+		await Promise.all(Object.entries(USER_IDS).map(([name, id]) =>
+			this.users.fetch(id, true)
+				.catch(e => this.emit('wtf', `${name} wasn't found:\n${e}`))
+		));
+
+		// Channel setup for console log and error
+		const { stdout, stderr } = this.options.console;
+		if (!(stdout && stderr)) throw new AssertionError();
+		const logChannel = this.channels.get(this.options.missyLogChannel);
+		if (logChannel instanceof TextChannel) stdout.setChannel(logChannel);
+		else this.emit('error', "Couldn't find log Discord channel");
+		const errorChannel = this.channels.get(this.options.missyErrorChannel);
+		if (errorChannel instanceof TextChannel) stderr.setChannel(errorChannel);
+		else this.emit('error', "Couldn't find error Discord channel");
+
+		return token;
 	}
 
 }

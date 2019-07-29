@@ -8,7 +8,7 @@ export default class extends MissyEvent {
 		const { message: msg } = reaction;
 		return (
 			msg.author === this.client.user &&
-			this.client.devIDs.has(user.id) &&
+			this.client.owners.has(user) &&
 			reaction.emoji.name === '🗑' &&
 			!msg.deleted &&
 			msg.deletable

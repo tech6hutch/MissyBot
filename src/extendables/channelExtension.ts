@@ -7,7 +7,6 @@ import {
 	Extendable, KlasaUser,
 	ExtendableStore, KlasaMessage,
 } from 'klasa';
-import MissyClient from '../lib/MissyClient';
 import { scalarOrFirst, resolveLang } from '../lib/util/util';
 import { Sendable, MissySendAliases } from '../lib/util/types';
 
@@ -34,8 +33,8 @@ declare module 'klasa' {
 
 export default class extends Extendable {
 
-	constructor(client: MissyClient, store: ExtendableStore, file: string[], directory: string) {
-		super(client, store, file, directory, { appliesTo: ExtChannelValue });
+	constructor(store: ExtendableStore, file: string[], directory: string) {
+		super(store, file, directory, { appliesTo: ExtChannelValue });
 	}
 
 	// Sending responses

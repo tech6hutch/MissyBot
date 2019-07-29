@@ -6,8 +6,8 @@ import { exec, codeBlock, scalarOrFirst } from '../../lib/util/util';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			aliases: ['execute'],
 			description: 'Execute commands in the terminal, use with EXTREME CAUTION.',
 			guarded: true,
@@ -23,7 +23,7 @@ export default class extends MissyCommand {
 				.catch(error => ({ stdout: null, stderr: error }));
 			const output = result.stdout ? `**\`OUTPUT\`**${codeBlock('prolog', result.stdout)}` : '';
 			const outerr = result.stderr ? `**\`ERROR\`**${codeBlock('prolog', result.stderr)}` : '';
-	
+
 			return scalarOrFirst(await msg.sendMessage([output, outerr].join('\n') || 'Done. There was no output to stdout or stderr.'));
 		}, { loadingText: 'Executing your command...' });
 	}

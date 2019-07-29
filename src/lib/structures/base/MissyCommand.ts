@@ -31,8 +31,8 @@ export default abstract class MissyCommand extends Command {
 	/** Replaces the default usage, if present */
 	helpNearlyFullUsage: string | null;
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
-		super(client, store, file, directory, options);
+	constructor(store: CommandStore, file: string[], directory: string, options: MissyCommandOptions = {}) {
+		super(store, file, directory, options);
 
 		// @ts-ignore using .freeze()
 		this.optionalPermissions = new Permissions(options.optionalPermissions).freeze();

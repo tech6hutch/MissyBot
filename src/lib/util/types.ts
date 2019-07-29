@@ -1,5 +1,5 @@
 import { TextChannel, DMChannel, MessageOptions, Guild, GuildMember } from 'discord.js';
-import Klasa, { KlasaMessage, KlasaUser, Command } from "klasa";
+import Klasa, { KlasaMessage, KlasaUser, Command, SchemaFolder } from 'klasa';
 
 export type IndexedObj<T> = Record<string, T>;
 export type AnyObj = IndexedObj<any>;
@@ -28,7 +28,17 @@ export interface MissySendAliases {
 	sendLoadingFor<T = KlasaMessage>(channel: Sendable, cb: (msg: Sendable) => T | Promise<T>, options?: {
 		loadingText?: string,
 		doneText?: string,
-	}): Promise<[KlasaMessage, T]>
+	}): Promise<[KlasaMessage, T]>;
+}
+
+export namespace ClientSettings {
+	// TODO: add core settings
+	export namespace Restart {
+		export type Message = string;
+		export const Message = 'restart.message';
+		export type Timestamp = number;
+		export const Timestamp = 'restart.timestamp';
+	}
 }
 
 export namespace GuildSettings {
@@ -43,6 +53,7 @@ export namespace GuildSettings {
 }
 
 export namespace UserSettings {
-	export type Profanity = IndexedObj<number>;
+	export type Profanity = SchemaFolder;
 	export const Profanity = 'profanity';
+	export type ProfanityCount = number;
 }

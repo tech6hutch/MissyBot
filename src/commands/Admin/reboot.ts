@@ -1,14 +1,12 @@
 import { CommandStore, KlasaMessage } from 'klasa';
-import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
 import { getFriendlyDuration, scalarOrFirst } from '../../lib/util/util';
-
-const rebootKeys = ['message', 'timestamp'].map(key => `restart.${key}`);
+import { ClientSettings } from '../../lib/util/types';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			permissionLevel: 10,
 			guarded: true,
 			description: language => language.get('COMMAND_REBOOT_DESCRIPTION')
@@ -16,23 +14,26 @@ export default class extends MissyCommand {
 	}
 
 	async run(msg: KlasaMessage): Promise<never> {
-		const values: [KlasaMessage, number] = [
-			scalarOrFirst(await msg.sendLocale('COMMAND_REBOOT')),
-			Date.now(),
-		];
+		const { Restart } = ClientSettings;
 		return this.shutdown(
-			this.client.settings!.update(rebootKeys.map((key, i) => [key, values[i]]))
-				.then(result => result.errors.length && this.client.emit('error', result.errors.join('\n')))
+			this.client.settings!.update([
+				[Restart.Message, scalarOrFirst(await msg.sendLocale('COMMAND_REBOOT'))],
+				[Restart.Timestamp, Date.now()],
+			])
+				.then(({ errors }) => { if (errors.length) this.client.emit('error', errors.join('\n')); })
 		);
 	}
 
 	async init() {
 		const { client, client: { settings } } = this;
 
-		const [message, timestamp] = await Promise
-			.all(<[Promise<KlasaMessage>, number]>rebootKeys.map(async key => settings!.fuckingResolve(key)))
-			.catch((): [null, null] => [null, null]);
-		await settings!.reset(rebootKeys);
+		const { Restart } = ClientSettings;
+		const [message, timestamp] = await settings!
+			.resolve(Restart.Message, Restart.Timestamp)
+			.catch(() => [null, null]) as
+			[KlasaMessage | null, number | null];
+
+		await settings!.reset([Restart.Message, Restart.Timestamp]);
 
 		if (message) message.sendLocale('COMMAND_REBOOT_SUCCESS', [timestamp && getFriendlyDuration(timestamp)]);
 		else client.emit('info', 'No restart channel');

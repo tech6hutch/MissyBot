@@ -42,14 +42,13 @@ class Asset extends Piece {
 	assetLoaded: Promise<void>;
 
 	/**
-	 * @param client The Klasa Client
 	 * @param store The Asset store
 	 * @param file The path from the pieces folder to the asset JS file
 	 * @param directory The base directory to the pieces folder
 	 * @param options Optional Asset settings
 	 */
-	constructor(client: MissyClient, store: AssetStore, file: string[], directory: string, options: AssetOptions = {}) {
-		super(client, store, file, directory, options);
+	constructor(store: AssetStore, file: string[], directory: string, options: AssetOptions = {}) {
+		super(store, file, directory, options);
 
 		this.title = options.title || this.name
 			.split('-')
@@ -108,8 +107,8 @@ class Asset extends Piece {
 	static extend(options: AssetOptions = {}) {
 		return class extends Asset {
 
-			constructor(client: MissyClient, store: AssetStore, file: string[], directory: string) {
-				super(client, store, file, directory, options);
+			constructor(store: AssetStore, file: string[], directory: string) {
+				super(store, file, directory, options);
 			}
 
 		};

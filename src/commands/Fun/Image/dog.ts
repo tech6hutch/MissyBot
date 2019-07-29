@@ -10,8 +10,8 @@ export default class extends MissyCommand {
 
 	dogEmojis = ['🐶', '🐕', '🐩'];
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			aliases: ['randomdog', 'woof', 'bitch'],
 			description: lang => lang.get('COMMAND_DOG_DESCRIPTION'),
 		});

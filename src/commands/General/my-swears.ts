@@ -18,7 +18,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 
 	constructor(msg: KlasaMessage) {
 		const author = msg.author!;
-		const userProfanity = author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
+		const userProfanityFolder = author.settings.get(UserSettings.Profanity) as UserSettings.Profanity;
 		const { censor, content = '' } = MySwearsCmd.determineCensorshipAndContent(msg);
 		const template = new MessageEmbed()
 			.setColor((<MissyClient>msg.client).COLORS[censor ? 'WHITE' : 'BLACK'])
@@ -45,7 +45,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 
 				for (const [cat, catWords] of profanity.byCategory) {
 					const numWords = catWords.length;
-					const numSwears = catWords.reduce((sum, word) => sum + userProfanity[word], 0);
+					const numSwears = catWords.reduce((sum, word) => sum + <UserSettings.ProfanityCount>userProfanityFolder.get(word), 0);
 					infoPage.addField(cat, [
 						`Words: ${numWords}`,
 						`Your swears: ${numSwears}`,
@@ -69,7 +69,7 @@ class ProfanityDisplay extends IconifiedDisplay {
 				pages[cat] = new MessageEmbed(template)
 					.setTitle(cat)
 					.setDescription(catWords.map(word =>
-						`${capitalize(censor ? profanity.censors.get(word)! : word)}: ${userProfanity[word]}`
+						`${capitalize(censor ? profanity.censors.get(word)! : word)}: ${userProfanityFolder.get(word)}`
 					).join('\n'));
 				return pages;
 			}, {}),
@@ -110,8 +110,8 @@ ProfanityDisplay.ReactionHandler = ProfanityReactionHandler;
 
 export default class MySwearsCmd extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			usage: `[list|all|category:str]`,
 			description: '🗣 👀',
 			extendedHelp: lang => lang.get('COMMAND_MYSWEARS_EXTENDEDHELP'),
@@ -147,7 +147,7 @@ export default class MySwearsCmd extends MissyCommand {
 		for (const [cat, catWords] of category ? [<[string, string[]]>[category, profanity.byCategory.get(category)!]] : profanity.byCategory) {
 			assert(catWords.every(word => (typeof word === 'string') && (word in userProfanity)));
 			embed.addField(cat, catWords.map(word =>
-				`${capitalize(censor ? profanity.censors.get(word)! : word)}: ${userProfanity[word]}`
+				`${capitalize(censor ? profanity.censors.get(word)! : word)}: ${userProfanity.get(word)}`
 			).join('\n'));
 		}
 

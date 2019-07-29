@@ -4,8 +4,8 @@ import MissyClient from '../../lib/MissyClient';
 
 export default class extends MissyCommand {
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string) {
-		super(client, store, file, directory, {
+	constructor(store: CommandStore, file: string[], directory: string) {
+		super(store, file, directory, {
 			description: '<:discord:503738729463021568>😮',
 			usage: '<name:str> [...]',
 			usageDelim: ' ',

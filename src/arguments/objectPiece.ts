@@ -3,8 +3,8 @@ import MissyClient from '../lib/MissyClient';
 
 export default class extends Argument {
 
-	constructor(client: MissyClient, store: ArgumentStore, file: string[], directory: string) {
-		super(client, store, file, directory, { enabled: false });
+	constructor(store: ArgumentStore, file: string[], directory: string) {
+		super(store, file, directory, { enabled: false });
 	}
 
 	run(arg: string, possible: Possible, message: KlasaMessage) {

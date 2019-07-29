@@ -16,8 +16,8 @@ export default class RandomImageCommand extends MissyCommand {
 	images: string[];
 	loadingTextFn: (lang: Language) => string;
 
-	constructor(client: MissyClient, store: CommandStore, file: string[], directory: string, options: RandomImageCommandOptions) {
-		super(client, store, file, directory, options);
+	constructor(store: CommandStore, file: string[], directory: string, options: RandomImageCommandOptions) {
+		super(store, file, directory, options);
 
 		if (!Array.isArray(options.images)) throw new TypeError('options.images must be an array of strings and/or string arrays');
 		this.images = options.images;

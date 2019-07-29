@@ -6,7 +6,7 @@ export default class extends MissyEvent {
 
 	async run(oldUser: KlasaUser, newUser: KlasaUser) {
 		assert(oldUser.id === newUser.id);
-		return newUser.id === this.client.missyID && oldUser.avatar !== newUser.avatar &&
+		return newUser.id === this.client.missy.id && oldUser.avatar !== newUser.avatar &&
 			this.copyUserAvatar(newUser);
 	}
 
