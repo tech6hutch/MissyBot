@@ -14,6 +14,7 @@ import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
 import profanity from './profanity';
 import { mergeDefault } from './util/util';
+import { USER_IDS } from './util/constants';
 
 export interface MissyClientOptions extends KlasaClientOptions {
 	console?: ConsoleOptions & {
@@ -23,11 +24,6 @@ export interface MissyClientOptions extends KlasaClientOptions {
 	missyLogChannel?: Snowflake;
 	missyErrorChannel?: Snowflake;
 }
-
-const USER_IDS = {
-	HUTCH: '224236171838881792',
-	MISSY: '398127472564240387',
-};
 
 const COLORS = {
 	WHITE: 0xFFFFFF,
