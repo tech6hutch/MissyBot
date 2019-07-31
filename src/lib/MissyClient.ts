@@ -5,10 +5,11 @@ import path from 'path';
 import git from 'simple-git/promise';
 import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
 import {
-	KlasaClient, Schema, PermissionLevels,
+	KlasaClient, Schema, PermissionLevels, Store,
 	KlasaClientOptions, ConsoleOptions,
 } from 'klasa';
 import MissyCommand from './structures/base/MissyCommand';
+import MissyLanguage from './structures/base/MissyLanguage';
 import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
 import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
@@ -31,10 +32,20 @@ const COLORS = {
 	BLUE: 0x0074D9,
 };
 
+export class MissyLanguageStore extends Store<string, MissyLanguage, typeof MissyLanguage> {
+	public readonly default: MissyLanguage;
+	constructor(client: KlasaClient) {
+		super(client, 'languages', MissyLanguage);
+		throw new Error("This is just for types; don't instantiate it.");
+	}
+}
+
 export default class MissyClient extends KlasaClient {
 
 	// @ts-ignore assigned in the parent class
 	options: Required<MissyClientOptions>;
+	// @ts-ignore this too
+	languages: MissyLanguageStore;
 
 	COLORS: typeof COLORS;
 
