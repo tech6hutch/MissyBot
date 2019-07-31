@@ -55,7 +55,7 @@ export const ensureArray = <T>(arrayOrScalar: T[] | T): T[] =>
 /**
  * @param array An array to retrieve a random element from
  */
-export const arrayRandom = <T>(array: T[]): T =>
+export const arrayRandom = <T>(array: readonly T[]): T =>
 	array[Math.floor(Math.random() * array.length)];
 
 /**
