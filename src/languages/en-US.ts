@@ -2,12 +2,23 @@ import { util, constants, KlasaMessage } from 'klasa';
 import MissyLanguage from '../lib/structures/base/MissyLanguage';
 import { smartJoin } from '../lib/util/util';
 import { IndexedObj } from '../lib/util/types';
+import RandomResponse, { rr } from '../lib/util/RandomResponse';
+import { KlasaUser } from 'klasa';
+
+type PlayingActivity = [string, { type: string }?];
+
+type ValueFn = (...args: any[]) => string | string[];
+
+type Value =
+	| string | string[] | ValueFn
+	| PlayingActivity[]
+	| RandomResponse;
 
 export default class extends MissyLanguage {
 
 	DISCORD_EMOJI = '<:discord:503738729463021568>';
 
-	language: IndexedObj<string | string[] | any[] | ((...args: any[]) => string | string[])> = {
+	language: IndexedObj<Value> = {
 		PREFIX_REMINDER: ({ prefix, disableNaturalPrefix }) => {
 			const prefixes = [];
 			if (!disableNaturalPrefix) prefixes.push(this.client.PREFIX_PLAIN);
@@ -329,38 +340,36 @@ export default class extends MissyLanguage {
 		COMMAND_NOCONTEXT_DESCRIPTION: 'Get a no-context quote from Missy.',
 		COMMAND_INTERACTION_EXTENDEDHELP: "If you don't mention anyone, I'll assume you mean the person above you.",
 		COMMAND_ATTACK_DESCRIPTION: "I'll go on the attack!",
-		COMMAND_ATTACK: user => [`${user} <a:attack:530938382763819030>`],
+		COMMAND_ATTACK: rr({
+			everyone: [ user => `${user} <a:attack:530938382763819030>` ],
+		}),
 		COMMAND_SLAP_DESCRIPTION: 'If you really want me to, I can slap someone. ✋🏽',
-		COMMAND_SLAP: user => {
-			const a = [
-				`If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
-			];
-			return [
-				...a,
-				...a,
-				...a,
-				`_\\*Slaps ${user} hard across the face\\*_ ...Oh! I'm sorry! I hit too hard ;-;`,
-			];
-		},
+		COMMAND_SLAP: rr({
+			everyone: [
+				user => `If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
+			],
+			everyoneRare: [
+				user => `_\\*Slaps ${user} hard across the face\\*_ ...Oh! I'm sorry! I hit too hard ;-;`,
+			],
+		}),
 		COMMAND_PUNCH_DESCRIPTION: 'Falcon, PAWWWWNCH! 👊🏽',
-		COMMAND_PUNCH: user => [`_\\*Lightly punches ${user}'s arm\\*_`],
+		COMMAND_PUNCH: rr({
+			everyone: [user => `_\\*Lightly punches ${user}'s arm\\*_`],
+		}),
 		COMMAND_SPANK_DESCRIPTION: 'Has someone been naughty? Pleasedontmakemedothis',
-		COMMAND_SPANK: user => {
-			const a = [
-				`Does not spank ${user}`,
-				`Swats in the direction of ${user}'s butt, but doesn't make contact`,
-				`Pats ${user}'s back`,
-				`Lightly smacks the side of ${user}'s butt with her fingertips`,
-				`Lets ${user} off with a warning`,
-			].map(s => `_\\*${s}\\*_`);
-			return [
-				...a,
-				...a,
-				...a,
+		COMMAND_SPANK: rr({
+			everyone: [
+				user => `_\\*Does not spank ${user}\\*_`,
+				user => `_\\*Swats in the direction of ${user}'s butt, but doesn't make contact\\*_`,
+				user => `_\\*Pats ${user}'s back\\*_`,
+				user => `_\\*Lightly smacks the side of ${user}'s butt with her fingertips\\*_`,
+				user => `_\\*Lets ${user} off with a warning\\*_`,
+			],
+			everyoneRare: [
 				// eslint-disable-next-line max-len
-				`_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
-			];
-		},
+				user => `_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
+			],
+		}),
 		COMMAND_QUOTE_DESCRIPTION: 'Quote a message. (Turn on developer mode in Discord in order to copy IDs and links.)',
 		COMMAND_QUOTE_EXTENDEDHELP: '',
 
