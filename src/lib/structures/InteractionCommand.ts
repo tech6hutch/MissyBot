@@ -15,7 +15,7 @@ export default class InteractionCommand extends MissyCommand {
 	}
 
 	run(msg: KlasaMessage, [user = getAboveUser(msg)]) {
-		return msg.sendRandom(`COMMAND_${this.name.toUpperCase()}`, [user]);
+		return msg.sendLocale(`COMMAND_${this.name.toUpperCase()}`, [user]);
 	}
 
 }
