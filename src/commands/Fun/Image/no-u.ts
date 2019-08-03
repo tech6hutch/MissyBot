@@ -23,6 +23,10 @@ export default class extends MissyCommand {
 	}
 
 	async run(msg: KlasaMessage, [, infinity]: [string, string?]) {
+		return this.noU(msg, !!infinity);
+	}
+
+	noU(msg: KlasaMessage, infinity = false) {
 		return msg.sendLoading(
 			() => this.client.assets.get(`no-u${infinity ? '-infinity' : ''}`).uploadTo(msg),
 			{ loadingText: msg.language.get('COMMAND_NOU_LOADING_TEXT') }
