@@ -66,19 +66,23 @@ export default class extends MissyLanguage {
 
 		// Custom events
 		EVENT_COMMANDLESS_MESSAGE_LISTEN: 'Yes? 👂',
-		EVENT_COMMANDLESS_MESSAGE_MENTION: [
-			'Did someone mention me?',
-			'You called?',
-			'Yay! Mentions!',
-		],
+		EVENT_COMMANDLESS_MESSAGE_MENTION: this.rr({
+			everyone: [
+				'Did someone mention me?',
+				'You called?',
+				'Yay! Mentions!',
+			],
+		}),
 		EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS: 'Was it Hutch or Kru this time? XD',
-		EVENT_COMMAND_UNKNOWN_UNKNOWN: [
-			"I don't know what that means, sorry @_@",
-			"I'm so confused @_@",
-			"I'm too dumb, sorry XD",
-			"I'm a potato!",
-			"I didn't get that @_@",
-		],
+		EVENT_COMMAND_UNKNOWN_UNKNOWN: this.rr({
+			everyone: [
+				"I don't know what that means, sorry @_@",
+				"I'm so confused @_@",
+				"I'm too dumb, sorry XD",
+				"I'm a potato!",
+				"I didn't get that @_@",
+			],
+		}),
 		EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 		// Monitors
@@ -98,12 +102,14 @@ export default class extends MissyLanguage {
 		INHIBITOR_RUNIN_NONE: (name) => `The ${name} command is not configured to run in any channel.`,
 
 		// Custom finalizers
-		FINALIZER_NOTYOU: [
-			'Oh, sorry! Ping me when you want me.',
-			"Alright, I'll go play somewhere else until @'d",
-			'Understood 👍 To get my attention, @mention me',
-		],
-		FINALIZER_DELETE_FLAG_NO_DELETE: '❌ | I couldn\'t delete your message, sorry :/',
+		FINALIZER_NOTYOU: this.rr({
+			everyone: [
+				'Oh, sorry! Ping me when you want me.',
+				"Alright, I'll go play somewhere else until @'d",
+				'Understood 👍 To get my attention, @mention me',
+			],
+		}),
+		FINALIZER_DELETE_FLAG_NO_DELETE: "❌ | I couldn't delete your message, sorry :/",
 
 		// Core commands
 		COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and servers from the bot.',

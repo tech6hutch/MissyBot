@@ -3,10 +3,9 @@ import MissyClient from '../../MissyClient';
 import RandomResponse, { RandomResponseArgs } from '../../util/RandomResponse';
 import { IndexedObj } from '../../util/types';
 
-export type ValueFn = (...args: any[]) => string | string[];
-
 export type Value =
-	| string | string[] | ValueFn
+	| string | string[]
+	| ((...args: any[]) => string | string[])
 	| RandomResponse;
 
 export default abstract class MissyLanguage extends Language {
