@@ -1,18 +1,10 @@
-import { util, constants, KlasaMessage } from 'klasa';
-import MissyLanguage from '../lib/structures/base/MissyLanguage';
+import { util, constants as klasaConstants, KlasaMessage } from 'klasa';
+import MissyLanguage, { Value } from '../lib/structures/base/MissyLanguage';
 import { smartJoin } from '../lib/util/util';
 import { IndexedObj } from '../lib/util/types';
-import RandomResponse, { rr } from '../lib/util/RandomResponse';
-import { KlasaUser } from 'klasa';
+import CommandNoU from '../commands/Fun/Image/no-u';
 
-type PlayingActivity = [string, { type: string }?];
-
-type ValueFn = (...args: any[]) => string | string[];
-
-type Value =
-	| string | string[] | ValueFn
-	| PlayingActivity[]
-	| RandomResponse;
+const { TIME } = klasaConstants;
 
 export default class extends MissyLanguage {
 
@@ -166,7 +158,7 @@ export default class extends MissyLanguage {
 		COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
 		COMMAND_PING: (ping, embed) => embed
 			.addField(`${this.DISCORD_EMOJI} Ping:`, 'Pinging Discord...')
-			.addField('💓 Heartbeat:', `${Math.round(constants.TIME.MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
+			.addField('💓 Heartbeat:', `${Math.round(TIME.MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
 			.setFooter("Bots have faster heartbeats than humans, so don't worry if mine is really high!"),
 		COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
 		COMMAND_PINGPONG: (diff, embed) => {
@@ -254,44 +246,58 @@ export default class extends MissyLanguage {
 		].join('\n'),
 		COMMAND_PREFIX_DESCRIPTION: 'See the prefixes you can use on this server.',
 		COMMAND_SLEEP_DESCRIPTION: 'Tell someone to get their butt to bed!',
-		COMMAND_SLEEP: (user, author) => [
-			`Go to sleep, ${user}!`,
-			`${user}, make sure you're getting enough sleep, little one!`,
-			`${user}, ${author} says it's bedtime.`,
-			`${user}, get your butt to sleep, little one.`,
-			`Please sleep buttercup ${user}`,
-		],
-		COMMAND_SLEEP_SELF: [
-			"But I'm a robot, I don't need to sleep ;-;",
-			"You can't tell me to sleep!",
-			['Nooooooo', "It's not bedtime yet!"],
-			(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
-		],
+		COMMAND_SLEEP: this.rr({
+			everyone: [
+				user => `Go to sleep, ${user}!`,
+				user => `${user}, make sure you're getting enough sleep, little one!`,
+				(user, { author }: KlasaMessage) => `${user}, ${author} says it's bedtime.`,
+				user => `${user}, get your butt to sleep, little one.`,
+				user => `Please sleep buttercup ${user}`,
+			],
+			self: [
+				"But I'm a robot, I don't need to sleep ;-;",
+				"You can't tell me to sleep!",
+				['Nooooooo', "It's not bedtime yet!"],
+				(_user, msg: KlasaMessage) => {
+					(this.client.commands.get('no-u') as CommandNoU).noU(msg);
+					return 'no u';
+				},
+			],
+		}),
 		COMMAND_LEWD_DESCRIPTION: 'Nice try. 😝',
 		COMMAND_LEWD_LOADING_TEXT: '<.<\n>.>',
 		COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
 		COMMAND_EAT_DESCRIPTION: 'Tell someone to eat.',
-		COMMAND_EAT: (something, user, author) => [
-			`Eat ${something}, ${user}!`,
-			`${user}, make sure you're eating enough, little one!`,
-			`${user}, ${author} says to eat ${something}.`,
-			`${user}, eat ${something}, little one.`,
-		],
-		COMMAND_EAT_SELF: [
-			"But I'm a robot, I don't need to eat ;-;",
-			(msg: KlasaMessage) => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
-			(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
-		],
-		COMMAND_FAKEBAN: [
-			'Please give them another chance ;-;',
-			"Won't you give them another chance? For me?",
-			'Awww, are you going to ban them?',
-		],
-		COMMAND_FAKEKICK: [
-			'Aw, do we have to?',
-			'Have you tried asking them nicely?',
-			"I bet they'll behave from now on. Right?",
-		],
+		COMMAND_EAT: this.rr({
+			everyone: [
+				(user, something: string) => `Eat ${something}, ${user}!`,
+				user => `${user}, make sure you're eating enough, little one!`,
+				(user, something: string, { author }: KlasaMessage) => `${user}, ${author} says to eat ${something}.`,
+				(user, something: string) => `${user}, eat ${something}, little one.`,
+			],
+			self: [
+				"But I'm a robot, I don't need to eat ;-;",
+				() => `But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`,
+				(_user, _something, msg: KlasaMessage) => {
+					(this.client.commands.get('no-u') as CommandNoU).noU(msg);
+					return 'no u';
+				},
+			],
+		}),
+		COMMAND_FAKEBAN: this.rr({
+			everyone: [
+				'Please give them another chance ;-;',
+				"Won't you give them another chance? For me?",
+				'Awww, are you going to ban them?',
+			],
+		}),
+		COMMAND_FAKEKICK: this.rr({
+			everyone: [
+				'Aw, do we have to?',
+				'Have you tried asking them nicely?',
+				"I bet they'll behave from now on. Right?",
+			],
+		}),
 		COMMAND_BIRTHDAY_DESCRIPTION: 'Wish someone (or multiple people) a happy birthday 🎂',
 		COMMAND_BIRTHDAY: 'Happy birthday!',
 		COMMAND_BIRTHDAY_MENTIONS: users => `Happy birthday, ${smartJoin(users)}!`,
@@ -340,11 +346,11 @@ export default class extends MissyLanguage {
 		COMMAND_NOCONTEXT_DESCRIPTION: 'Get a no-context quote from Missy.',
 		COMMAND_INTERACTION_EXTENDEDHELP: "If you don't mention anyone, I'll assume you mean the person above you.",
 		COMMAND_ATTACK_DESCRIPTION: "I'll go on the attack!",
-		COMMAND_ATTACK: rr({
+		COMMAND_ATTACK: this.rr({
 			everyone: [ user => `${user} <a:attack:530938382763819030>` ],
 		}),
 		COMMAND_SLAP_DESCRIPTION: 'If you really want me to, I can slap someone. ✋🏽',
-		COMMAND_SLAP: rr({
+		COMMAND_SLAP: this.rr({
 			everyone: [
 				user => `If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
 			],
@@ -353,11 +359,11 @@ export default class extends MissyLanguage {
 			],
 		}),
 		COMMAND_PUNCH_DESCRIPTION: 'Falcon, PAWWWWNCH! 👊🏽',
-		COMMAND_PUNCH: rr({
+		COMMAND_PUNCH: this.rr({
 			everyone: [user => `_\\*Lightly punches ${user}'s arm\\*_`],
 		}),
 		COMMAND_SPANK_DESCRIPTION: 'Has someone been naughty? Pleasedontmakemedothis',
-		COMMAND_SPANK: rr({
+		COMMAND_SPANK: this.rr({
 			everyone: [
 				user => `_\\*Does not spank ${user}\\*_`,
 				user => `_\\*Swats in the direction of ${user}'s butt, but doesn't make contact\\*_`,

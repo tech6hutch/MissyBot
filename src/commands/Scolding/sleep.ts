@@ -16,17 +16,13 @@ export default class extends MissyCommand {
 	}
 
 	async run(msg: KlasaMessage, [who = this.client.user!]: [User?]): Promise<KlasaMessage | KlasaMessage[] | never> {
-		if (who.id === this.client.user!.id) {
-			if (this.client.options.owners.includes(msg.author!.id)) {
-				await msg.channel.send('Aw, boo. Yes sir');
-				await naturalPause();
-				return (<RebootCmd><MissyCommand>this.store.get('reboot')).run(msg);
-			}
-
-			return msg.sendRandom('COMMAND_SLEEP_SELF', [who, msg.author], [msg]);
+		if (who.id === this.client.user!.id && await msg.hasAtLeastPermissionLevel(10)) {
+			await msg.channel.send('Aw, boo. Yes sir');
+			await naturalPause();
+			return (<RebootCmd><MissyCommand>this.store.get('reboot')).run(msg);
 		}
 
-		return msg.sendRandom('COMMAND_SLEEP', [who, msg.author]);
+		return msg.sendLocale('COMMAND_SLEEP', [who, msg]);
 	}
 
 }

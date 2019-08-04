@@ -1,6 +1,5 @@
 import { User } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
-import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
 
 export default class extends MissyCommand {
@@ -14,11 +13,11 @@ export default class extends MissyCommand {
 	}
 
 	async run(msg: KlasaMessage, [meal, who = this.client.user!]: [string | undefined, User?]) {
-		return msg.sendRandom(
-			who.id === this.client.user!.id || !meal ? 'COMMAND_EAT_SELF' : 'COMMAND_EAT',
-			[meal, who, msg.author],
-			[msg]
-		);
+		if (!meal) {
+			who = this.client.user!;
+			meal = 'something';
+		}
+		return msg.sendLocale('COMMAND_EAT', [who, meal, msg]);
 	}
 
 }
