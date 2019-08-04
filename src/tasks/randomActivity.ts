@@ -3,9 +3,21 @@ import {
 	Task, Duration, constants,
 	TaskStore,
 } from 'klasa';
-import { randomBetween } from '../lib/util/util';
+import { randomBetween, arrayRandom } from '../lib/util/util';
 
-export default class extends Task {
+export type PlayingActivity = [string, ActivityOptions?];
+
+export default class RandomActivityTask extends Task {
+
+	static activities: PlayingActivity[] = [
+		['with myself 🎮'],
+		['with potatoes! 🥔'],
+		['with myself (why is this so funny? 🤔)'],
+		['for your command 💂', { type: 'WATCHING' }],
+		["with myself (seriously, guys, what's so funny? @_@)"],
+		['EDM 💃🏽', { type: 'LISTENING' }],
+		['rock music 🤘', { type: 'LISTENING' }],
+	];
 
 	nextTimestamp = Infinity;
 	nextAt: Date | null = null;
@@ -27,7 +39,8 @@ export default class extends Task {
 	}
 
 	setRandomActivity() {
-		return this.client.user!.setActivity(...this.client.languages.default.getRandom<[string, ActivityOptions]>('PLAYING_ACTIVITY'));
+		const act = arrayRandom(RandomActivityTask.activities);
+		return this.client.user!.setActivity(...act);
 	}
 
 	scheduleNext(delay = constants.TIME.MINUTE * randomBetween(15, 120)) {

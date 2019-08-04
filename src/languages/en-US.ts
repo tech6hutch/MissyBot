@@ -23,16 +23,6 @@ export default class extends MissyLanguage {
 			}${smartJoin(prefixes.map(pre => `\`${pre}\``))}.`;
 		},
 
-		PLAYING_ACTIVITY: [
-			['with myself 🎮'],
-			['with potatoes! 🥔'],
-			['with myself (why is this so funny? 🤔)'],
-			['for your command 💂', { type: 'WATCHING' }],
-			["with myself (seriously, guys, what's so funny? @_@)"],
-			['EDM 💃🏽', { type: 'LISTENING' }],
-			['rock music 🤘', { type: 'LISTENING' }],
-		],
-
 		// Resolver and prompts
 
 		RESOLVER_MULTI_TOO_FEW: (name, min = 1) => `Provided too few ${name}s. Atleast ${min} ${min === 1 ? 'is' : 'are'} required.`,

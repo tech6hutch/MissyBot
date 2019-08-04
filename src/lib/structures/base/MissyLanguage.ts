@@ -3,13 +3,10 @@ import MissyClient from '../../MissyClient';
 import RandomResponse, { RandomResponseArgs } from '../../util/RandomResponse';
 import { IndexedObj } from '../../util/types';
 
-export type PlayingActivity = [string] | [string, { type: string }];
-
 export type ValueFn = (...args: any[]) => string | string[];
 
 export type Value =
 	| string | string[] | ValueFn
-	| PlayingActivity[]
 	| RandomResponse;
 
 export default abstract class MissyLanguage extends Language {
