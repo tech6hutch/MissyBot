@@ -32,20 +32,10 @@ const COLORS = {
 	BLUE: 0x0074D9,
 };
 
-export class MissyLanguageStore extends Store<string, MissyLanguage, typeof MissyLanguage> {
-	public readonly default: MissyLanguage;
-	constructor(client: KlasaClient) {
-		super(client, 'languages', MissyLanguage);
-		throw new Error("This is just for types; don't instantiate it.");
-	}
-}
-
 export default class MissyClient extends KlasaClient {
 
 	// @ts-ignore assigned in the parent class
 	options: Required<MissyClientOptions>;
-	// @ts-ignore this too
-	languages: MissyLanguageStore;
 
 	COLORS: typeof COLORS;
 

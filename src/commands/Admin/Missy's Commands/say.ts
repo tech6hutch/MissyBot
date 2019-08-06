@@ -1,6 +1,5 @@
 import { MessageOptions, MessageEditOptions } from 'discord.js';
 import { CommandStore, KlasaMessage } from 'klasa';
-import MissyClient from '../../../lib/MissyClient';
 import MissyCommand from '../../../lib/structures/base/MissyCommand';
 import { Sendable } from '../../../lib/util/types';
 
@@ -18,7 +17,7 @@ export default class extends MissyCommand {
 	}
 
 	async run(msg: KlasaMessage, [channel = msg, rawText]: [Sendable, string]) {
-		const text = this.client.speakerIDs.has(msg.author!.id) && msg.flags.shh
+		const text = this.client.owners.has(msg.author!) && msg.flags.shh
 			? rawText
 			: `_${msg.author} told me to say:_ ${rawText}`;
 		return this.sendOrEdit(channel, text, msg);
@@ -26,7 +25,7 @@ export default class extends MissyCommand {
 
 	async sendOrEdit(channel: Sendable, text: string, cmdMsg: KlasaMessage) {
 		const options: MessageOptions & MessageEditOptions = {
-			disableEveryone: !this.client.speakerIDs.has(cmdMsg.author!.id),
+			disableEveryone: !this.client.owners.has(cmdMsg.author!),
 		};
 
 		const prevMsg: KlasaMessage | undefined = (<any>cmdMsg)[this.msgSymbol];
