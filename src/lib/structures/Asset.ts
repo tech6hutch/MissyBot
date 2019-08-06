@@ -3,7 +3,6 @@ import { join } from 'path';
 import { readFile } from 'fs-nextra';
 import { MessageOptions, FileOptions } from 'discord.js';
 import { Piece, PieceOptions, KlasaMessage } from 'klasa';
-import MissyClient from '../MissyClient';
 import AssetStore from './AssetStore';
 import { capitalizeFirstLetter } from '../util/util';
 import { Sendable } from '../util/types';
@@ -24,9 +23,6 @@ export interface AssetOptions extends PieceOptions {
  * @extends {Piece}
  */
 class Asset extends Piece {
-
-	// @ts-ignore assigned in the parent class
-	readonly client: MissyClient;
 
 	title: string;
 

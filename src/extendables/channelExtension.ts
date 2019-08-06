@@ -39,19 +39,6 @@ export default class extends Extendable {
 
 	// Sending responses
 
-	sendRandom(
-		this: ExtChannel,
-		key: string, localeArgs: any[] = [], localeResponseArgs: any[] = [], options: MessageOptions = {},
-	): Promise<KlasaMessage | KlasaMessage[]> {
-		if (!Array.isArray(localeResponseArgs)) {
-			if (!Array.isArray(localeArgs)) [options, localeArgs] = [localeArgs, []];
-			else [options, localeResponseArgs] = [localeResponseArgs, []];
-		}
-		const response = resolveLang(this).getRandom(key, localeArgs, localeResponseArgs);
-		assert(typeof response === 'string');
-		return this.sendMessage(response, options);
-	}
-
 	/**
 	 * @param cb The callback function to call in the middle
 	 * @param options Extra options

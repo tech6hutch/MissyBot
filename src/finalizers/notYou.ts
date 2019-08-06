@@ -30,7 +30,7 @@ export default class extends MissyFinalizer {
 
 	ignoreChannel(msg: KlasaMessage) {
 		this.client.ignoredChannels.add(msg.channel.id);
-		return msg.channel.sendRandom('FINALIZER_NOTYOU');
+		return msg.channel.sendLocale('FINALIZER_NOTYOU');
 	}
 
 }

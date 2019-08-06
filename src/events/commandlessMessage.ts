@@ -3,6 +3,7 @@ import { KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 import CmdHandler from '../monitors/commandHandler';
 import IgnoreNotYou from '../inhibitors/ignoreNotYou';
+import { USER_IDS } from '../lib/util/constants';
 
 const cmdWatchingSymbol = Symbol();
 
@@ -13,10 +14,8 @@ type ChannelWithCmdWatchingMap = (TextChannel | DMChannel) & {
 export default class CmdlessMsgEvent extends MissyEvent {
 
 	memePingers: Snowflake[] = [
-		// Hutch
-		'224236171838881792',
-		// Kru
-		'168161111210852352',
+		USER_IDS.HUTCH,
+		'168161111210852352', // Kru
 	];
 
 	get cmdHandler(): CmdHandler {
@@ -45,9 +44,9 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		}
 
 		if (msg.mentions.has(this.client.user!)) {
-			return msg.send(this.memePingers.includes(msg.author!.id) ?
-				msg.language.get('EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS') :
-				msg.language.getRandom('EVENT_COMMANDLESS_MESSAGE_MENTION'));
+			return msg.sendLocale(this.memePingers.includes(msg.author!.id) ?
+				'EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS' :
+				'EVENT_COMMANDLESS_MESSAGE_MENTION');
 		}
 
 		return undefined;

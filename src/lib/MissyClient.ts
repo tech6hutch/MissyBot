@@ -5,15 +5,17 @@ import path from 'path';
 import git from 'simple-git/promise';
 import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
 import {
-	KlasaClient, Schema, PermissionLevels,
+	KlasaClient, Schema, PermissionLevels, Store,
 	KlasaClientOptions, ConsoleOptions,
 } from 'klasa';
 import MissyCommand from './structures/base/MissyCommand';
+import MissyLanguage from './structures/base/MissyLanguage';
 import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
 import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
 import profanity from './profanity';
 import { mergeDefault } from './util/util';
+import { USER_IDS } from './util/constants';
 
 export interface MissyClientOptions extends KlasaClientOptions {
 	console?: ConsoleOptions & {
@@ -23,11 +25,6 @@ export interface MissyClientOptions extends KlasaClientOptions {
 	missyLogChannel?: Snowflake;
 	missyErrorChannel?: Snowflake;
 }
-
-const USER_IDS = {
-	HUTCH: '224236171838881792',
-	MISSY: '398127472564240387',
-};
 
 const COLORS = {
 	WHITE: 0xFFFFFF,

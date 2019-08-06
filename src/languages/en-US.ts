@@ -1,13 +1,16 @@
-import { util, constants, KlasaMessage } from 'klasa';
-import MissyLanguage from '../lib/structures/base/MissyLanguage';
+import { util, constants as klasaConstants, KlasaMessage } from 'klasa';
+import MissyLanguage, { Value } from '../lib/structures/base/MissyLanguage';
 import { smartJoin } from '../lib/util/util';
 import { IndexedObj } from '../lib/util/types';
+import CommandNoU from '../commands/Fun/Image/no-u';
+
+const { TIME } = klasaConstants;
 
 export default class extends MissyLanguage {
 
 	DISCORD_EMOJI = '<:discord:503738729463021568>';
 
-	language: IndexedObj<string | string[] | any[] | ((...args: any[]) => string | string[])> = {
+	language: IndexedObj<Value> = {
 		PREFIX_REMINDER: ({ prefix, disableNaturalPrefix }) => {
 			const prefixes = [];
 			if (!disableNaturalPrefix) prefixes.push(this.client.PREFIX_PLAIN);
@@ -19,16 +22,6 @@ export default class extends MissyLanguage {
 				` in this server is set to `
 			}${smartJoin(prefixes.map(pre => `\`${pre}\``))}.`;
 		},
-
-		PLAYING_ACTIVITY: [
-			['with myself 🎮'],
-			['with potatoes! 🥔'],
-			['with myself (why is this so funny? 🤔)'],
-			['for your command 💂', { type: 'WATCHING' }],
-			["with myself (seriously, guys, what's so funny? @_@)"],
-			['EDM 💃🏽', { type: 'LISTENING' }],
-			['rock music 🤘', { type: 'LISTENING' }],
-		],
 
 		// Resolver and prompts
 
@@ -73,19 +66,23 @@ export default class extends MissyLanguage {
 
 		// Custom events
 		EVENT_COMMANDLESS_MESSAGE_LISTEN: 'Yes? 👂',
-		EVENT_COMMANDLESS_MESSAGE_MENTION: [
-			'Did someone mention me?',
-			'You called?',
-			'Yay! Mentions!',
-		],
+		EVENT_COMMANDLESS_MESSAGE_MENTION: this.rr({
+			everyone: [
+				'Did someone mention me?',
+				'You called?',
+				'Yay! Mentions!',
+			],
+		}),
 		EVENT_COMMANDLESS_MESSAGE_MENTION_MEMERS: 'Was it Hutch or Kru this time? XD',
-		EVENT_COMMAND_UNKNOWN_UNKNOWN: [
-			"I don't know what that means, sorry @_@",
-			"I'm so confused @_@",
-			"I'm too dumb, sorry XD",
-			"I'm a potato!",
-			"I didn't get that @_@",
-		],
+		EVENT_COMMAND_UNKNOWN_UNKNOWN: this.rr({
+			everyone: [
+				"I don't know what that means, sorry @_@",
+				"I'm so confused @_@",
+				"I'm too dumb, sorry XD",
+				"I'm a potato!",
+				"I didn't get that @_@",
+			],
+		}),
 		EVENT_COMMAND_UNKNOWN_MARBLES: "They're nice, and all, but I seem to have lost all of mine @_@",
 
 		// Monitors
@@ -105,12 +102,14 @@ export default class extends MissyLanguage {
 		INHIBITOR_RUNIN_NONE: (name) => `The ${name} command is not configured to run in any channel.`,
 
 		// Custom finalizers
-		FINALIZER_NOTYOU: [
-			'Oh, sorry! Ping me when you want me.',
-			"Alright, I'll go play somewhere else until @'d",
-			'Understood 👍 To get my attention, @mention me',
-		],
-		FINALIZER_DELETE_FLAG_NO_DELETE: '❌ | I couldn\'t delete your message, sorry :/',
+		FINALIZER_NOTYOU: this.rr({
+			everyone: [
+				'Oh, sorry! Ping me when you want me.',
+				"Alright, I'll go play somewhere else until @'d",
+				'Understood 👍 To get my attention, @mention me',
+			],
+		}),
+		FINALIZER_DELETE_FLAG_NO_DELETE: "❌ | I couldn't delete your message, sorry :/",
 
 		// Core commands
 		COMMAND_BLACKLIST_DESCRIPTION: 'Blacklists or un-blacklists users and servers from the bot.',
@@ -155,7 +154,7 @@ export default class extends MissyLanguage {
 		COMMAND_LOAD_DESCRIPTION: 'Load a piece from your bot.',
 		COMMAND_PING: (ping, embed) => embed
 			.addField(`${this.DISCORD_EMOJI} Ping:`, 'Pinging Discord...')
-			.addField('💓 Heartbeat:', `${Math.round(constants.TIME.MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
+			.addField('💓 Heartbeat:', `${Math.round(TIME.MINUTE / ping)} bpm (1 every ${Math.round(ping)} ms)`)
 			.setFooter("Bots have faster heartbeats than humans, so don't worry if mine is really high!"),
 		COMMAND_PING_DESCRIPTION: 'Check my connection to Discord.',
 		COMMAND_PINGPONG: (diff, embed) => {
@@ -243,44 +242,58 @@ export default class extends MissyLanguage {
 		].join('\n'),
 		COMMAND_PREFIX_DESCRIPTION: 'See the prefixes you can use on this server.',
 		COMMAND_SLEEP_DESCRIPTION: 'Tell someone to get their butt to bed!',
-		COMMAND_SLEEP: (user, author) => [
-			`Go to sleep, ${user}!`,
-			`${user}, make sure you're getting enough sleep, little one!`,
-			`${user}, ${author} says it's bedtime.`,
-			`${user}, get your butt to sleep, little one.`,
-			`Please sleep buttercup ${user}`,
-		],
-		COMMAND_SLEEP_SELF: [
-			"But I'm a robot, I don't need to sleep ;-;",
-			"You can't tell me to sleep!",
-			['Nooooooo', "It's not bedtime yet!"],
-			(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
-		],
+		COMMAND_SLEEP: this.rr({
+			everyone: [
+				user => `Go to sleep, ${user}!`,
+				user => `${user}, make sure you're getting enough sleep, little one!`,
+				(user, { author }: KlasaMessage) => `${user}, ${author} says it's bedtime.`,
+				user => `${user}, get your butt to sleep, little one.`,
+				user => `Please sleep buttercup ${user}`,
+			],
+			self: [
+				"But I'm a robot, I don't need to sleep ;-;",
+				"You can't tell me to sleep!",
+				['Nooooooo', "It's not bedtime yet!"],
+				(_user, msg: KlasaMessage) => {
+					(this.client.commands.get('no-u') as CommandNoU).noU(msg);
+					return 'no u';
+				},
+			],
+		}),
 		COMMAND_LEWD_DESCRIPTION: 'Nice try. 😝',
 		COMMAND_LEWD_LOADING_TEXT: '<.<\n>.>',
 		COMMAND_LEWD_NSFW_HINT: '(Psst, try this command in a NSFW channel for a surprise! 🤐)',
 		COMMAND_EAT_DESCRIPTION: 'Tell someone to eat.',
-		COMMAND_EAT: (something, user, author) => [
-			`Eat ${something}, ${user}!`,
-			`${user}, make sure you're eating enough, little one!`,
-			`${user}, ${author} says to eat ${something}.`,
-			`${user}, eat ${something}, little one.`,
-		],
-		COMMAND_EAT_SELF: [
-			"But I'm a robot, I don't need to eat ;-;",
-			(msg: KlasaMessage) => msg.send(`But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`),
-			(msg: KlasaMessage) => this.client.commands.get('no-u').run(msg, []),
-		],
-		COMMAND_FAKEBAN: [
-			'Please give them another chance ;-;',
-			"Won't you give them another chance? For me?",
-			'Awww, are you going to ban them?',
-		],
-		COMMAND_FAKEKICK: [
-			'Aw, do we have to?',
-			'Have you tried asking them nicely?',
-			"I bet they'll behave from now on. Right?",
-		],
+		COMMAND_EAT: this.rr({
+			everyone: [
+				(user, something: string) => `Eat ${something}, ${user}!`,
+				user => `${user}, make sure you're eating enough, little one!`,
+				(user, something: string, { author }: KlasaMessage) => `${user}, ${author} says to eat ${something}.`,
+				(user, something: string) => `${user}, eat ${something}, little one.`,
+			],
+			self: [
+				"But I'm a robot, I don't need to eat ;-;",
+				() => `But I'm already eating. I have ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB of heap memory in my belly.`,
+				(_user, _something, msg: KlasaMessage) => {
+					(this.client.commands.get('no-u') as CommandNoU).noU(msg);
+					return 'no u';
+				},
+			],
+		}),
+		COMMAND_FAKEBAN: this.rr({
+			everyone: [
+				'Please give them another chance ;-;',
+				"Won't you give them another chance? For me?",
+				'Awww, are you going to ban them?',
+			],
+		}),
+		COMMAND_FAKEKICK: this.rr({
+			everyone: [
+				'Aw, do we have to?',
+				'Have you tried asking them nicely?',
+				"I bet they'll behave from now on. Right?",
+			],
+		}),
 		COMMAND_BIRTHDAY_DESCRIPTION: 'Wish someone (or multiple people) a happy birthday 🎂',
 		COMMAND_BIRTHDAY: 'Happy birthday!',
 		COMMAND_BIRTHDAY_MENTIONS: users => `Happy birthday, ${smartJoin(users)}!`,
@@ -329,38 +342,36 @@ export default class extends MissyLanguage {
 		COMMAND_NOCONTEXT_DESCRIPTION: 'Get a no-context quote from Missy.',
 		COMMAND_INTERACTION_EXTENDEDHELP: "If you don't mention anyone, I'll assume you mean the person above you.",
 		COMMAND_ATTACK_DESCRIPTION: "I'll go on the attack!",
-		COMMAND_ATTACK: user => [`${user} <a:attack:530938382763819030>`],
+		COMMAND_ATTACK: this.rr({
+			everyone: [ user => `${user} <a:attack:530938382763819030>` ],
+		}),
 		COMMAND_SLAP_DESCRIPTION: 'If you really want me to, I can slap someone. ✋🏽',
-		COMMAND_SLAP: user => {
-			const a = [
-				`If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
-			];
-			return [
-				...a,
-				...a,
-				...a,
-				`_\\*Slaps ${user} hard across the face\\*_ ...Oh! I'm sorry! I hit too hard ;-;`,
-			];
-		},
+		COMMAND_SLAP: this.rr({
+			everyone: [
+				user => `If I must...\n\n_\\*Slaps ${user} on the cheek!\\* ...except it's more of a firm pat._`,
+			],
+			everyoneRare: [
+				user => `_\\*Slaps ${user} hard across the face\\*_ ...Oh! I'm sorry! I hit too hard ;-;`,
+			],
+		}),
 		COMMAND_PUNCH_DESCRIPTION: 'Falcon, PAWWWWNCH! 👊🏽',
-		COMMAND_PUNCH: user => [`_\\*Lightly punches ${user}'s arm\\*_`],
+		COMMAND_PUNCH: this.rr({
+			everyone: [user => `_\\*Lightly punches ${user}'s arm\\*_`],
+		}),
 		COMMAND_SPANK_DESCRIPTION: 'Has someone been naughty? Pleasedontmakemedothis',
-		COMMAND_SPANK: user => {
-			const a = [
-				`Does not spank ${user}`,
-				`Swats in the direction of ${user}'s butt, but doesn't make contact`,
-				`Pats ${user}'s back`,
-				`Lightly smacks the side of ${user}'s butt with her fingertips`,
-				`Lets ${user} off with a warning`,
-			].map(s => `_\\*${s}\\*_`);
-			return [
-				...a,
-				...a,
-				...a,
+		COMMAND_SPANK: this.rr({
+			everyone: [
+				user => `_\\*Does not spank ${user}\\*_`,
+				user => `_\\*Swats in the direction of ${user}'s butt, but doesn't make contact\\*_`,
+				user => `_\\*Pats ${user}'s back\\*_`,
+				user => `_\\*Lightly smacks the side of ${user}'s butt with her fingertips\\*_`,
+				user => `_\\*Lets ${user} off with a warning\\*_`,
+			],
+			everyoneRare: [
 				// eslint-disable-next-line max-len
-				`_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
-			];
-		},
+				user => `_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
+			],
+		}),
 		COMMAND_QUOTE_DESCRIPTION: 'Quote a message. (Turn on developer mode in Discord in order to copy IDs and links.)',
 		COMMAND_QUOTE_EXTENDEDHELP: '',
 

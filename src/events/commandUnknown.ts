@@ -56,7 +56,7 @@ export default class UnknownCmd extends MissyEvent {
 		if (text === 'not you') return this.notYou.ignoreChannel(msg);
 
 		if (prefix === this.client.mentionPrefix) {
-			return msg.sendRandom('EVENT_COMMAND_UNKNOWN_UNKNOWN');
+			return msg.sendLocale('EVENT_COMMAND_UNKNOWN_UNKNOWN');
 		}
 	}
 

@@ -1,5 +1,4 @@
 import { CommandStore, KlasaMessage } from 'klasa';
-import MissyClient from '../../lib/MissyClient';
 import MissyCommand from '../../lib/structures/base/MissyCommand';
 
 export default class extends MissyCommand {
@@ -13,7 +12,7 @@ export default class extends MissyCommand {
 	}
 
 	run(msg: KlasaMessage) {
-		return msg.sendRandom('COMMAND_FAKEBAN');
+		return msg.sendLocale('COMMAND_FAKEBAN');
 	}
 
 }

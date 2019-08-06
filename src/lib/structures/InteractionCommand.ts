@@ -1,6 +1,5 @@
 import { CommandStore, KlasaMessage } from 'klasa';
 import { mergeDefault, getAboveUser } from '../util/util';
-import MissyClient from '../MissyClient';
 import MissyCommand, { MissyCommandOptions } from './base/MissyCommand';
 
 export default class InteractionCommand extends MissyCommand {
@@ -16,7 +15,7 @@ export default class InteractionCommand extends MissyCommand {
 	}
 
 	run(msg: KlasaMessage, [user = getAboveUser(msg)]) {
-		return msg.sendRandom(`COMMAND_${this.name.toUpperCase()}`, [user]);
+		return msg.sendLocale(`COMMAND_${this.name.toUpperCase()}`, [user]);
 	}
 
 }

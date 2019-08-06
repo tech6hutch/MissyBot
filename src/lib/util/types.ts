@@ -20,8 +20,6 @@ export type SaneGuild = Guild & {
 };
 
 export interface MissySendAliases {
-	sendRandom(key: string, localeArgs?: any[], localeResponseArgs?: any[], options?: MessageOptions):
-		Promise<KlasaMessage | KlasaMessage[]>;
 	sendLoading<T = KlasaMessage>(cb: (msg: KlasaMessage) => T | Promise<T>, options?: {
 		loadingText?: string,
 	}): Promise<T>;

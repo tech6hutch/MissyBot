@@ -37,25 +37,6 @@ export default class extends Extendable {
 	// Sending responses
 
 	/**
-	 * Sends a message that will be editable via command editing (if nothing is attached)
-	 * @param key The Language key to send
-	 * @param localeArgs The language arguments to pass
-	 * @param localeResponseArgs The language response arguments to pass
-	 * @param options The D.JS message options plus Language arguments
-	 */
-	sendRandom(
-		this: Message,
-		key: string, localeArgs: any[] = [], localeResponseArgs: any[] = [], options: MessageOptions = {},
-	): Promise<Message | Message[]> {
-		if (!Array.isArray(localeResponseArgs)) {
-			if (!Array.isArray(localeArgs)) [options, localeArgs] = [localeArgs, []];
-			else [options, localeResponseArgs] = [localeResponseArgs, []];
-		}
-		const response = this.language.getRandom(key, localeArgs, localeResponseArgs);
-		return this.sendMessage(response, options);
-	}
-
-	/**
 	 * @param cb The callback function to call in the middle
 	 * @param options Extra options
 	 * @param options.loadingText Text to send before the callback
