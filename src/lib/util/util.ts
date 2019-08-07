@@ -33,10 +33,10 @@ export const nthLast: IndexIntoAt = (indexable: any, n: number): any =>
 	indexable[indexable.length - n];
 
 /**
- * @param string The string to capitalize
+ * @param str The string to capitalize
  */
-export const capitalizeFirstLetter = (string: string): string =>
-	string.charAt(0).toUpperCase() + string.substring(1);
+export const capitalizeFirstLetter = (str: string): string =>
+	str.charAt(0).toUpperCase() + str.substring(1);
 
 /**
  * @param arrayOrScalar Something that may or may not be an array
