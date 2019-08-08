@@ -3,6 +3,7 @@ import MissyLanguage, { Value } from '../lib/structures/base/MissyLanguage';
 import { smartJoin } from '../lib/util/util';
 import { IndexedObj } from '../lib/util/types';
 import CommandNoU from '../commands/Fun/Image/no-u';
+import assert = require('assert');
 
 const { TIME } = klasaConstants;
 
@@ -379,5 +380,48 @@ export default class extends MissyLanguage {
 		LOADING_TEXT: 'Just a moment.',
 		SENT_IMAGE: 'Sent the image 👌',
 	};
+
+	// static readonly vowels: readonly string[] = ['a', 'e', 'i', 'o', 'u'];
+
+	// /**
+	//  * Get the plural form of a (lowercase) word.
+	//  *
+	//  * It follows simple rules, returning undefined in lieu of consulting a
+	//  * dictionary. Also, it will return incorrect results for words with an
+	//  * irregular plural form, like child -> ~~children~~ childs.
+	//  */
+	// static pluralize(word: string): string | undefined {
+	// 	if (!word) return '';
+	// 	if (word !== word.toLowerCase()) {
+	// 		console.warn(`Non-lowercase word '${word.replace("'", "\\'")}' passed to en-US pluralize()`);
+	// 		return undefined;
+	// 	}
+
+	// 	const lastLetter = word[word.length - 1];
+	// 	const nextToLast = word.length >= 2 ? word[word.length - 2] : '';
+	// 	const lastTwoLetters = lastLetter + nextToLast;
+	// 	assert(lastLetter.length === 1 && nextToLast.length === 1);
+	// 	assert(lastTwoLetters.length === 2);
+
+	// 	if (lastLetter === 'y')
+	// 		return this.vowels.includes(nextToLast) ?
+	// 			`${word}s` :
+	// 			`${word.slice(0, -1)}ies`;
+
+	// 	if (lastLetter === 'o')
+	// 		return this.vowels.includes(nextToLast) ?
+	// 			`${word}s` :
+	// 			undefined;
+
+	// 	if (lastLetter === 'f' || lastTwoLetters === 'fe')
+	// 		return lastTwoLetters === 'ff' ?
+	// 			`${word}s` :
+	// 			undefined;
+
+	// 	if (['s', 'x', 'sh', 'ch'].some(s => word.endsWith(s)))
+	// 		return `${word}es`;
+
+	// 	return undefined;
+	// }
 
 }

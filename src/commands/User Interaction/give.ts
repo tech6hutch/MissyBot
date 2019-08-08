@@ -5,13 +5,13 @@ export default class extends MissyCommand {
 
 	constructor(store: CommandStore, file: string[], directory: string) {
 		super(store, file, directory, {
-			aliases: ['pats'],
-			description: lang => lang.get('COMMAND_PAT_DESCRIPTION'),
+			usage: '<hugs|pats>',
+			usageDelim: ' '
 		});
 	}
 
-	run(msg: KlasaMessage) {
-		return msg.send('_Pat pat_');
+	run(msg: KlasaMessage, [gift]: ['hugs' | 'pats']): Promise<KlasaMessage> {
+		return (this.store.get(gift) as MissyCommand).run(msg, []) as Promise<KlasaMessage>;
 	}
 
 }
