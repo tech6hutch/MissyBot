@@ -373,6 +373,8 @@ export default class extends MissyLanguage {
 				user => `_\\*Forces ${user} over her lap\\*_ Take that! _\\*Spanks\\*_ And that! _\\*Spanks\\*_...\n\nNow be good, or I'll pull your pants down next time! ...What? Why are you looking at me like that?`,
 			],
 		}),
+		COMMAND_TARGET_DESCRIPTION: "Target a user, so you don't have to keep typing their name when you want to do a bunch of stuff to them.",
+		COMMAND_TARGET_EXTENDEDHELP: 'Wears off after 30 seconds of not doing anything to the target, or after doing "target stop".',
 		COMMAND_QUOTE_DESCRIPTION: 'Quote a message. (Turn on developer mode in Discord in order to copy IDs and links.)',
 		COMMAND_QUOTE_EXTENDEDHELP: '',
 

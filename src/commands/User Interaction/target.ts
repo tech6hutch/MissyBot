@@ -9,7 +9,8 @@ export default class extends MissyCommand {
 	constructor(store: CommandStore, file: string[], directory: string) {
 		super(store, file, directory, {
 			usage: '<stop|target:user>',
-			description: language => language.get('COMMAND_TARGET_DESCRIPTION')
+			description: lang => lang.get('COMMAND_TARGET_DESCRIPTION'),
+			extendedHelp: lang => lang.get('COMMAND_TARGET_EXTENDEDHELP'),
 		});
 	}
 
