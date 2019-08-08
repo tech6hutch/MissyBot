@@ -5,14 +5,22 @@ export default class extends MissyCommand {
 
 	constructor(store: CommandStore, file: string[], directory: string) {
 		super(store, file, directory, {
-			usage: '<target:user>',
-			description: language => language.get('COMMAND_PING_DESCRIPTION')
+			usage: '<stop|target:user>',
+			description: language => language.get('COMMAND_TARGET_DESCRIPTION')
 		});
 	}
 
-	async run(msg: KlasaMessage, [user]: [KlasaUser]) {
-		// todo
-		return null;
+	async run(msg: KlasaMessage, [arg]: ['stop' | KlasaUser]) {
+		const author = msg.author as KlasaUser;
+
+		if (arg === 'stop') {
+			const userWasTargetingAnyone = this.client.userTargets.delete(author);
+			return msg.sendLocale('COMMAND_TARGET_STOP', [{ author, userWasTargetingAnyone }]);
+		} else {
+			const target = arg;
+			this.client.userTargets.set(author, target);
+			return msg.sendLocale('COMMAND_TARGET', [{ author, target }]);
+		}
 	}
 
 }

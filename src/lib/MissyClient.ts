@@ -3,10 +3,10 @@ import './preload';
 import { AssertionError } from 'assert';
 import path from 'path';
 import git from 'simple-git/promise';
-import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
+import { Permissions, Snowflake, TextChannel } from 'discord.js';
 import {
 	KlasaClient, Schema, PermissionLevels,
-	KlasaClientOptions, ConsoleOptions,
+	KlasaClientOptions, ConsoleOptions, KlasaUser,
 } from 'klasa';
 import MissyCommand from './structures/base/MissyCommand';
 import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
@@ -45,6 +45,13 @@ export default class MissyClient extends KlasaClient {
 	 * Channels ignored as part of the "not you" system
 	 */
 	ignoredChannels: Set<Snowflake>;
+
+	/**
+	 * The user that each user targets, if any
+	 *
+	 * (See the target command)
+	 */
+	userTargets: WeakMap<KlasaUser, KlasaUser>;
 
 	assets: AssetStore;
 
@@ -121,6 +128,7 @@ export default class MissyClient extends KlasaClient {
 		this.PREFIX_PLAIN = 'Missy';
 
 		this.ignoredChannels = new Set();
+		this.userTargets = new WeakMap();
 
 		this.assets = new AssetStore(this);
 		this.registerStore(this.assets);
@@ -138,12 +146,12 @@ export default class MissyClient extends KlasaClient {
 		return `https://discordapp.com/oauth2/authorize?client_id=${this.application.id}&permissions=${permissions}&scope=bot`;
 	}
 
-	get hutch(): User {
-		return this.users.get(USER_IDS.HUTCH)!;
+	get hutch() {
+		return this.users.get(USER_IDS.HUTCH)! as KlasaUser;
 	}
 
-	get missy(): User {
-		return this.users.get(USER_IDS.MISSY)!;
+	get missy() {
+		return this.users.get(USER_IDS.MISSY)! as KlasaUser;
 	}
 
 	async login(token: string): Promise<string> {
