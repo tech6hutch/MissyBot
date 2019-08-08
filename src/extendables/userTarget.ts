@@ -4,6 +4,7 @@ import MissyClient from '../lib/MissyClient';
 declare module 'klasa' {
 	export interface KlasaUser {
 		target: KlasaUser | undefined;
+		hasTarget: boolean;
 		startTargeting(target: KlasaUser): void;
 		/**
 	  * @returns whether the user was targeting anyone
@@ -21,6 +22,10 @@ export default class extends Extendable {
 	get target(this: KlasaUser): KlasaUser | undefined {
 		this.client.emit('log', `got the target of ${this.username}`);
 		return (this.client as MissyClient).userTargets.get(this);
+	}
+
+	get hasTarget(this: KlasaUser): boolean {
+		return (this.client as MissyClient).userTargets.has(this);
 	}
 
 	startTargeting(this: KlasaUser, target: KlasaUser) {

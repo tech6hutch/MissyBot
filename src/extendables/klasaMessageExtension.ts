@@ -12,16 +12,18 @@ export default class extends Extendable {
 	}
 
 	_prefixLess(this: KlasaMessage): CachedPrefix | null {
-		return (this.client.options.noPrefixDM && this.channel.type === 'dm') || authorIsWatched(this)
-			? { length: 0, regex: null! }
-			: null;
+		return (this.client.options.noPrefixDM && this.channel.type === 'dm')
+			|| this.author && (this.author as KlasaUser).hasTarget
+			|| authorIsWatched(this)
+				? { length: 0, regex: null! }
+				: null;
 	}
 
 }
 
 function authorIsWatched(msg: KlasaMessage): boolean {
-	const author = msg.author as KlasaUser;
-	if (msg.channel.isUserWatched(author)) {
+	const author = msg.author as KlasaUser | null;
+	if (author && msg.channel.isUserWatched(author)) {
 		const watchInfo = msg.channel.getUserWatchingInfo(author)!;
 		const duration = Date.now() - watchInfo.listeningSince;
 		if (duration < thirtySeconds) return true;
