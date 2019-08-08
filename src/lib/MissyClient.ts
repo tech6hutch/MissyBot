@@ -5,11 +5,10 @@ import path from 'path';
 import git from 'simple-git/promise';
 import { Permissions, Snowflake, TextChannel, User } from 'discord.js';
 import {
-	KlasaClient, Schema, PermissionLevels, Store,
+	KlasaClient, Schema, PermissionLevels,
 	KlasaClientOptions, ConsoleOptions,
 } from 'klasa';
 import MissyCommand from './structures/base/MissyCommand';
-import MissyLanguage from './structures/base/MissyLanguage';
 import { MissyStdoutStream, MissyStderrStream, MissyStream } from './MissyStreams';
 import AssetStore from './structures/AssetStore';
 // import ObjectStore from './structures/ObjectStore';
