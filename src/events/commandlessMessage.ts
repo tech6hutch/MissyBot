@@ -1,15 +1,12 @@
-import { Snowflake, TextChannel, DMChannel, User, Message } from 'discord.js';
-import { KlasaMessage } from 'klasa';
+import { Snowflake } from 'discord.js';
+import { KlasaUser, KlasaMessage } from 'klasa';
 import MissyEvent from '../lib/structures/base/MissyEvent';
 import CmdHandler from '../monitors/commandHandler';
 import IgnoreNotYou from '../inhibitors/ignoreNotYou';
+import { sleep } from '../lib/util/util';
 import { USER_IDS } from '../lib/util/constants';
 
-const cmdWatchingSymbol = Symbol();
-
-type ChannelWithCmdWatchingMap = (TextChannel | DMChannel) & {
-	[cmdWatchingSymbol]?: Map<User, number>
-};
+const thirtySeconds = 30_000;
 
 export default class CmdlessMsgEvent extends MissyEvent {
 
@@ -26,19 +23,20 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		if (await (this.client.inhibitors.get('ignoreNotYou') as IgnoreNotYou).run(msg)) return undefined;
 
 		if (prefix) {
-			const cmdWatchingMap = CmdlessMsgEvent.acquireCmdWatchingMapFor(msg);
-			const user = msg.author!;
+			const user = msg.author as KlasaUser;
 
-			// Increment for user
-			cmdWatchingMap.set(user, (cmdWatchingMap.get(user) || 0) + 1);
+			msg.sendLocale('EVENT_COMMANDLESS_MESSAGE_LISTEN');
+			msg.channel.watchUser(user);
 
-			// Wait for the next message; it's handled by the command handler
-			await msg.awaitMsg(msg.language.get('EVENT_COMMANDLESS_MESSAGE_LISTEN'), 30000);
-
-			// Decrement for user
-			cmdWatchingMap.set(user, cmdWatchingMap.get(user)! - 1);
-			// Remove if zero (or otherwise falsy)
-			if (!cmdWatchingMap.get(user)) cmdWatchingMap.delete(user);
+			sleep(thirtySeconds).then(() => {
+				const info = msg.channel.getUserWatchingInfo(user);
+				if (info) {
+					const duration = Date.now() - info.listeningSince;
+					if (duration >= thirtySeconds) {
+						msg.channel.stopWatchingUser(user);
+					}
+				}
+			});
 
 			return undefined;
 		}
@@ -50,23 +48,6 @@ export default class CmdlessMsgEvent extends MissyEvent {
 		}
 
 		return undefined;
-	}
-
-	static acquireCmdWatchingMapFor({ channel }: { channel: TextChannel | DMChannel }): Map<User, number> {
-		const cmdWatchingMap = (channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol] || new Map<User, number>();
-		(channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol] = cmdWatchingMap;
-		return cmdWatchingMap;
-	}
-
-	static getCmdWatchingMapFor({ channel }: { channel: TextChannel | DMChannel }): Map<User, number> | undefined {
-		return (channel as ChannelWithCmdWatchingMap)[cmdWatchingSymbol];
-	}
-
-	static shouldObeyPrefixLessCommand(msg: Message): boolean {
-		const maybeCmdWatchingMap = CmdlessMsgEvent.getCmdWatchingMapFor(msg);
-		return !!maybeCmdWatchingMap &&
-			// Only if there's one and only one collector
-			maybeCmdWatchingMap.get(msg.author!) === 1;
 	}
 
 }

@@ -1,6 +1,6 @@
 import {
-	TextChannel, DMChannel,
-	MessageOptions, MessageEmbed,
+	TextChannel, DMChannel, User,
+	MessageOptions, MessageEmbed, Snowflake,
 } from 'discord.js';
 import {
 	Extendable, KlasaUser,
@@ -8,26 +8,33 @@ import {
 } from 'klasa';
 import { scalarOrFirst, resolveLang } from '../lib/util/util';
 import { Sendable, MissySendAliases } from '../lib/util/types';
+import MissyClient, { UserWatchingInfo } from '../lib/MissyClient';
 
 type ExtChannel = TextChannel | DMChannel | KlasaUser;
 
 const ExtChannelValue = [TextChannel, DMChannel, KlasaUser];
 
-interface ExtChannelAskMethods {
+interface ChannelExtensions {
 	ask(user: KlasaUser, content: string, options?: MessageOptions): Promise<KlasaMessage>;
 	awaitReply(this: ExtChannel, user: KlasaUser, question: string, time?: number, embed?: MessageEmbed):
 		Promise<string | false>;
 	awaitMsg(user: KlasaUser, question: string, time?: number, embed?: MessageEmbed):
 		Promise<KlasaMessage | false>;
+
+	isUserWatched(user: KlasaUser): boolean;
+	getUserWatchingInfo(user: KlasaUser): UserWatchingInfo | undefined;
+	watchUser(user: KlasaUser): void;
+	stopWatchingUser(user: KlasaUser): boolean;
+	_getWatchingKeyFor(user: KlasaUser): Snowflake;
 }
 
 declare module 'discord.js' {
-	export interface TextChannel extends MissySendAliases, ExtChannelAskMethods { }
-	export interface DMChannel extends MissySendAliases, ExtChannelAskMethods { }
+	export interface TextChannel extends MissySendAliases, ChannelExtensions { }
+	export interface DMChannel extends MissySendAliases, ChannelExtensions { }
 }
 
 declare module 'klasa' {
-	export interface KlasaUser extends MissySendAliases, ExtChannelAskMethods { }
+	export interface KlasaUser extends MissySendAliases, ChannelExtensions { }
 }
 
 export default class extends Extendable {
@@ -105,6 +112,32 @@ export default class extends Extendable {
 			message => message.author.id === user.id,
 			{ max: 1, time, errors: ['time'] },
 		).then(messages => <KlasaMessage>messages.first(), (): false => false);
+	}
+
+	// Data and stuff
+
+	isUserWatched(this: ExtChannel, user: KlasaUser): boolean {
+		return (this.client as MissyClient).watchedForUnPrefixedCommands.has(this._getWatchingKeyFor(user));
+	}
+
+	getUserWatchingInfo(this: ExtChannel, user: KlasaUser): UserWatchingInfo | undefined {
+		return (this.client as MissyClient).watchedForUnPrefixedCommands.get(this._getWatchingKeyFor(user));
+	}
+
+	watchUser(this: ExtChannel, user: KlasaUser) {
+		(this.client as MissyClient).watchedForUnPrefixedCommands.set(this._getWatchingKeyFor(user), {
+			listeningSince: Date.now(),
+		});
+	}
+
+	stopWatchingUser(this: ExtChannel, user: KlasaUser): boolean {
+		return (this.client as MissyClient).watchedForUnPrefixedCommands.delete(this._getWatchingKeyFor(user));
+	}
+
+	// This IS used, so don't delete it
+	private _getWatchingKeyFor(this: ExtChannel, user: KlasaUser): Snowflake {
+		const id = this instanceof User ? this.dmChannel.id : this.id;
+		return `${id}-${user.id}`;
 	}
 
 }

@@ -25,6 +25,8 @@ export interface MissyClientOptions extends KlasaClientOptions {
 	missyErrorChannel?: Snowflake;
 }
 
+export type UserWatchingInfo = { listeningSince: number };
+
 const COLORS = {
 	WHITE: 0xFFFFFF,
 	BLACK: 0x111111,
@@ -52,6 +54,11 @@ export default class MissyClient extends KlasaClient {
 	 * (See the target command)
 	 */
 	userTargets: WeakMap<KlasaUser, KlasaUser>;
+
+	/**
+	 * A map of channelID-userID for listening for un-prefixed commands
+	 */
+	watchedForUnPrefixedCommands: Map<Snowflake, UserWatchingInfo>;
 
 	assets: AssetStore;
 
@@ -129,6 +136,7 @@ export default class MissyClient extends KlasaClient {
 
 		this.ignoredChannels = new Set();
 		this.userTargets = new WeakMap();
+		this.watchedForUnPrefixedCommands = new Map();
 
 		this.assets = new AssetStore(this);
 		this.registerStore(this.assets);
